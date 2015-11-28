@@ -36,7 +36,6 @@ namespace HostServer
             if (PointDictionary.TryGetValue(pointNum, out pi))
             {
                 pi.Host.PointsNumber--;
-                //Console.WriteLine("remove point: host.pointsnumber = {0}", PointDictionary[pointNum].Host.PointsNumber);
                 PointDictionary.Remove(pointNum);
             }
         }

@@ -58,7 +58,6 @@
     <Compile Include="IModule.cs" />
     <Compile Include="IPoint.cs" />
     <Compile Include="MainModule.cs" />
-    <Compile Include="Matrix.cs" />
     <Compile Include="ModuleInfo.cs" />
     <Compile Include="ParcsException.cs" />
     <Compile Include="Point.cs" />

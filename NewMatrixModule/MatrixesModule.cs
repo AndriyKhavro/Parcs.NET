@@ -11,7 +11,7 @@ namespace NewMatrixModule
 {
     public class MatrixesModule : MainModule
     {
-        const string fileName = "resMatrix.matr";
+        const string fileName = "resMatrix.mtr";
         public static void Main(string[] args)
         {
             (new MatrixesModule()).RunModule();
@@ -25,12 +25,12 @@ namespace NewMatrixModule
             string file1 = Console.ReadLine();
             Console.WriteLine("Enter the fileName of the second matrix:");
             string file2 = Console.ReadLine();
-            MyMatrix A, B;
+            Matrix A, B;
 
             try
             {
-                A = MyMatrix.LoadFromFile(file1);
-                B = MyMatrix.LoadFromFile(file2);
+                A = Matrix.LoadFromFile(file1);
+                B = Matrix.LoadFromFile(file2);
             }
 
             catch (FileNotFoundException)
@@ -52,7 +52,7 @@ namespace NewMatrixModule
                 points[i].ExecuteClass("NewMatrixModule.MultMatrix");
             }
 
-            var resMatrix = new MyMatrix(A.Height, B.Width);
+            var resMatrix = new Matrix(A.Height, B.Width);
             DateTime time = DateTime.Now;
             Console.WriteLine("Waiting for a result...");
 
@@ -60,7 +60,7 @@ namespace NewMatrixModule
             {
                 channels[0].WriteObject(A);
                 channels[0].WriteObject(B);
-                resMatrix = (MyMatrix)channels[0].ReadObject(typeof(MyMatrix));
+                resMatrix = (Matrix)channels[0].ReadObject(typeof(Matrix));
             }
 
             if (pointsNum == 2 || pointsNum == 3 || pointsNum == 5)
@@ -75,7 +75,7 @@ namespace NewMatrixModule
             
                 for (int i = 0; i < pointsNum; ++i)
                 {
-                    var subMatrix = (MyMatrix)channels[i].ReadObject(typeof(MyMatrix));
+                    var subMatrix = (Matrix)channels[i].ReadObject(typeof(Matrix));
                     resMatrix.FillSubMatrix(subMatrix, i * (A.Height / pointsNum), 0);
                 }
             }
@@ -93,10 +93,10 @@ namespace NewMatrixModule
 
                 Console.WriteLine("Sending finished: time = {0}", Math.Round((DateTime.Now - time).TotalSeconds, 3));
             
-                resMatrix.FillSubMatrix((MyMatrix)channels[0].ReadObject(), 0, 0);
-                resMatrix.FillSubMatrix((MyMatrix)channels[1].ReadObject(), 0, B.Width / 2);
-                resMatrix.FillSubMatrix((MyMatrix)channels[2].ReadObject(), resMatrix.Height / 2, 0);
-                resMatrix.FillSubMatrix((MyMatrix)channels[3].ReadObject(), resMatrix.Height / 2, resMatrix.Width / 2);
+                resMatrix.FillSubMatrix((Matrix)channels[0].ReadObject(), 0, 0);
+                resMatrix.FillSubMatrix((Matrix)channels[1].ReadObject(), 0, B.Width / 2);
+                resMatrix.FillSubMatrix((Matrix)channels[2].ReadObject(), resMatrix.Height / 2, 0);
+                resMatrix.FillSubMatrix((Matrix)channels[3].ReadObject(), resMatrix.Height / 2, resMatrix.Width / 2);
 
             }
 
@@ -127,19 +127,19 @@ namespace NewMatrixModule
                 channels[7].WriteObject(B.SubMatrix(B.Height / 2, B.Width / 2, B.Height / 2 + B.Height % 2, B.Width / 2 + B.Width % 2));
                 Console.WriteLine("Sending finished: time = {0}", Math.Round((DateTime.Now - time).TotalSeconds, 3));
             
-                MyMatrix[,] Parts = new MyMatrix[2, 2];
+                Matrix[,] Parts = new Matrix[2, 2];
 
-                Parts[0, 0] = (MyMatrix)channels[0].ReadObject();
-                Parts[0, 0].Add((MyMatrix)channels[1].ReadObject());
+                Parts[0, 0] = (Matrix)channels[0].ReadObject();
+                Parts[0, 0].Add((Matrix)channels[1].ReadObject());
                 resMatrix.FillSubMatrix(Parts[0, 0], 0, 0);
-                Parts[0, 1] = (MyMatrix)channels[2].ReadObject();
-                Parts[0, 1].Add((MyMatrix)channels[3].ReadObject());
+                Parts[0, 1] = (Matrix)channels[2].ReadObject();
+                Parts[0, 1].Add((Matrix)channels[3].ReadObject());
                 resMatrix.FillSubMatrix(Parts[0, 1], 0, resMatrix.Width / 2);
-                Parts[1, 0] = (MyMatrix)channels[4].ReadObject();
-                Parts[1, 0].Add((MyMatrix)channels[5].ReadObject());
+                Parts[1, 0] = (Matrix)channels[4].ReadObject();
+                Parts[1, 0].Add((Matrix)channels[5].ReadObject());
                 resMatrix.FillSubMatrix(Parts[1, 0], resMatrix.Height / 2, 0);
-                Parts[1, 1] = (MyMatrix)channels[6].ReadObject();
-                Parts[1, 1].Add((MyMatrix)channels[7].ReadObject());
+                Parts[1, 1] = (Matrix)channels[6].ReadObject();
+                Parts[1, 1].Add((Matrix)channels[7].ReadObject());
 
                 resMatrix.FillSubMatrix(Parts[1, 1], resMatrix.Height / 2, resMatrix.Width / 2);
 

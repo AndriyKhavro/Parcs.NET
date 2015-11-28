@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NewMatrixModule
 {
     [Serializable]
-    public class MyMatrix
+    public class Matrix
     {
         private int[,] _data;
         public int Height { get; private set; }
         public int Width { get; private set; }
-        private const int _maxRandomValue = 100;
+        private const int MaxRandomValue = 100;
 
-        public MyMatrix(int heigth, int width, bool randomFill = false)
+        public Matrix(int heigth, int width, bool randomFill = false)
         {
             Height = heigth;
             Width = width;
@@ -28,12 +24,12 @@ namespace NewMatrixModule
 
 
 
-        public MyMatrix SubMatrix(int top, int left, int height, int width)
+        public Matrix SubMatrix(int top, int left, int height, int width)
         {
-            MyMatrix subMatrix = null;
+            Matrix subMatrix = null;
             if ((top >= 0) && (left >= 0) && (top + height <= Height) && (left + width <= Width))
             {
-                subMatrix = new MyMatrix(height, width);
+                subMatrix = new Matrix(height, width);
                 for (int i = 0; i < height; i++)
                 {
                     for (int j = 0; j < width; j++)
@@ -58,12 +54,10 @@ namespace NewMatrixModule
                 _data[x, y] = value;
             }
         }
-
-
-
-        public MyMatrix Add(MyMatrix matrix)
+        
+        public Matrix Add(Matrix matrix)
         {
-            if (matrix.Width != this.Width || matrix.Height != this.Height)
+            if (matrix.Width != Width || matrix.Height != Height)
             {
                 Console.WriteLine("Different dimentions");
                 return null;
@@ -80,17 +74,17 @@ namespace NewMatrixModule
             return this;
         }
 
-        public MyMatrix MultiplyBy(MyMatrix matrix)
+        public Matrix MultiplyBy(Matrix matrix)
         {
-            MyMatrix resultMatrix = null;
-            if (this.Width != matrix.Height)
+            Matrix resultMatrix = null;
+            if (Width != matrix.Height)
             {
                 Console.WriteLine("Cannot multiply matrixes with such dimentions");
             }
 
             else
             {
-                resultMatrix = new MyMatrix(Height, matrix.Width);
+                resultMatrix = new Matrix(Height, matrix.Width);
                 for (int i = 0; i < Height; i++)
                 {
                     for (int j = 0; j < matrix.Width; j++)
@@ -108,7 +102,7 @@ namespace NewMatrixModule
             return resultMatrix;
         }
 
-        public void Assign(MyMatrix matrix)
+        public void Assign(Matrix matrix)
         {
             Height = matrix.Height;
             Width = matrix.Width;
@@ -122,9 +116,9 @@ namespace NewMatrixModule
             }
         }
 
-        public void FillSubMatrix(MyMatrix source, int top, int left)
+        public void FillSubMatrix(Matrix source, int top, int left)
         {
-            if (top + source.Height <= this.Height && left + source.Width <= this.Width)
+            if (top + source.Height <= Height && left + source.Width <= Width)
             {
                 for (int i = 0; i < source.Height; i++)
                 {
@@ -143,12 +137,12 @@ namespace NewMatrixModule
             {
                 for (int j = 0; j < Width; ++j)
                 {
-                    _data[i, j] = rand.Next(_maxRandomValue);
+                    _data[i, j] = rand.Next(MaxRandomValue);
                 }
             }
         }
 
-        public static MyMatrix LoadFromFile(string filePath)
+        public static Matrix LoadFromFile(string filePath)
         {
             using (var stream = new FileStream(filePath, FileMode.Open))
             {
@@ -156,14 +150,14 @@ namespace NewMatrixModule
             }
         }
 
-        private static MyMatrix LoadFromStream(Stream stream)
+        private static Matrix LoadFromStream(Stream stream)
         {
             using (var reader = new BinaryReader(stream))
             {
                 var m = reader.ReadInt32();
                 var n = reader.ReadInt32();
 
-                var matrix = new MyMatrix(m, n);
+                var matrix = new Matrix(m, n);
 
                 for (var i = 0; i < m; i++)
                 {
@@ -196,9 +190,5 @@ namespace NewMatrixModule
             }
 
         }
-
-
-
-
     }
 }

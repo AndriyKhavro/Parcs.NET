@@ -11,8 +11,8 @@ namespace NewMatrixModule
     {
         public void Run(ModuleInfo info)
         {
-            MyMatrix m = (MyMatrix)info.Parent.ReadObject(typeof(MyMatrix));
-            MyMatrix m1 = (MyMatrix)info.Parent.ReadObject(typeof(MyMatrix));
+            Matrix m = (Matrix)info.Parent.ReadObject(typeof(Matrix));
+            Matrix m1 = (Matrix)info.Parent.ReadObject(typeof(Matrix));
             info.Parent.WriteObject(m.MultiplyBy(m1));
         }
     }

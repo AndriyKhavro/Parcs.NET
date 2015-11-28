@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DaemonPr", "Daemon\DaemonPr.csproj", "{6F5C397E-9D66-4D4A-B543-6987036B33BE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{73E7DB23-BE33-4C7F-89B5-E27523E71496} = {73E7DB23-BE33-4C7F-89B5-E27523E71496}
@@ -11,11 +13,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HostServer", "HostServer\HostServer.csproj", "{2498923D-C53A-4E07-AFFE-1ABDFC7837BA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFirstModule", "MyFirstModule\MyFirstModule.csproj", "{639A859D-4EFA-4B4C-A45F-1041A2553EBE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatrixModule", "MatrixModule\MatrixModule.csproj", "{320EF8BF-6FC9-4489-B57C-C3626DF10967}"
-	ProjectSection(ProjectDependencies) = postProject
-		{73E7DB23-BE33-4C7F-89B5-E27523E71496} = {73E7DB23-BE33-4C7F-89B5-E27523E71496}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatrixGenerator", "MatrixGenerator\MatrixGenerator.csproj", "{E987257F-20CD-4EF6-955D-165C6F03959A}"
 EndProject
@@ -43,10 +40,6 @@ Global
 		{639A859D-4EFA-4B4C-A45F-1041A2553EBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{639A859D-4EFA-4B4C-A45F-1041A2553EBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{639A859D-4EFA-4B4C-A45F-1041A2553EBE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{320EF8BF-6FC9-4489-B57C-C3626DF10967}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{320EF8BF-6FC9-4489-B57C-C3626DF10967}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{320EF8BF-6FC9-4489-B57C-C3626DF10967}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{320EF8BF-6FC9-4489-B57C-C3626DF10967}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E987257F-20CD-4EF6-955D-165C6F03959A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E987257F-20CD-4EF6-955D-165C6F03959A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E987257F-20CD-4EF6-955D-165C6F03959A}.Release|Any CPU.ActiveCfg = Release|Any CPU

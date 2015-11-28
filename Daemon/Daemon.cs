@@ -7,7 +7,6 @@ using System.Net;
 using System.Net.Sockets;
 using Parcs;
 using System.IO;
-using System.IO.IsolatedStorage;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 
@@ -39,9 +38,6 @@ namespace DaemonPr
             _listener = new TcpListener(ip, port);
             Console.WriteLine("Accepting connections from clients, IP: {0}, port: {1}", ip.ToString(), port);
             RunListener();
-            //Thread listenerThread = new Thread(RunListener);
-            //listenerThread.Start();
-
         }
 
 
@@ -79,7 +75,6 @@ namespace DaemonPr
                 using (BinaryWriter writer = new BinaryWriter(clientStream))
                 {
                     channel = new Channel(reader, writer, true);
-                    //Console.WriteLine("Channel was created");
 
                     while (true)
                     {
@@ -170,22 +165,12 @@ namespace DaemonPr
 
         private void LoadFile(IChannel channel, IJob curJob)
         {
-            //  try 
-            //  {
-            //int filesNum = channel.ReadData(typeof(int));
-            //for (int i = 0; i < filesNum; i++) 
-            //{
             string fileName = channel.ReadFile();
-            //string filename = (string)chan.ReadData(typeof(string));
+
             if (!curJob.AddFile(fileName))
             {
                 throw new ParcsException("File was not sent");
-                //channel.WriteData(true);
             }
-            //else
-            //{
-            //    channel.WriteData(false);
-            //}
         }
 
         private void DeletePoint(int jobNum, int pointNum)
@@ -202,37 +187,7 @@ namespace DaemonPr
                 }
             }
         }
-
-        //~Daemon() { Dispose(false); }
-
-        //public void Dispose() { Dispose(true); }
-
-        //private void Dispose(bool disposing)
-        //{
-        //    if (disposing)
-        //    {
-        //        GC.SuppressFinalize(this);
-        //    }
-
-        //    foreach (var stream in _clientStreamList)
-        //    { stream.Close(); }
-        //    foreach (var client in _clientList)
-        //    { client.Close(); }
-
-        //    _listener.Stop();
-        //    foreach (var file in _filesToDelete)
-        //    {
-        //        try
-        //        {
-        //            File.Delete(file);
-        //        }
-        //        catch { }
-        //    }
-
-
-        //}
-
-
+        
         public static void Main(string[] args)
         {
             Daemon daemon = new Daemon();
