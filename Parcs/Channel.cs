@@ -118,6 +118,11 @@ namespace Parcs
             return ReadObject(formatter);
         }
 
+        public T ReadObject<T>()
+        {
+            return (T) ReadObject(typeof (T));
+        }
+
         protected virtual object ReadObject(BinaryFormatter formatter)
         {
             int numberOfBytes = _reader.ReadInt32();

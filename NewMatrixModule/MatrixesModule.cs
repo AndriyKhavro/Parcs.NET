@@ -11,7 +11,8 @@ namespace NewMatrixModule
 {
     public class MatrixesModule : MainModule
     {
-        const string fileName = "resMatrix.mtr";
+        private const string fileName = "resMatrix.mtr";
+
         public static void Main(string[] args)
         {
             (new MatrixesModule()).RunModule();
@@ -25,12 +26,12 @@ namespace NewMatrixModule
             string file1 = Console.ReadLine();
             Console.WriteLine("Enter the fileName of the second matrix:");
             string file2 = Console.ReadLine();
-            Matrix A, B;
+            Matrix a, b;
 
             try
             {
-                A = Matrix.LoadFromFile(file1);
-                B = Matrix.LoadFromFile(file2);
+                a = Matrix.LoadFromFile(file1);
+                b = Matrix.LoadFromFile(file2);
             }
 
             catch (FileNotFoundException)
@@ -39,10 +40,9 @@ namespace NewMatrixModule
                 return;
             }
 
-            Console.WriteLine("Enter the number of points (possible options: 1 2 3 4 5 8): ");
+            Console.WriteLine("Enter the number of points (possible options: 1 2 3 4 5 8 16 32): ");
 
             int pointsNum = int.Parse(Console.ReadLine());
-            if (pointsNum > 5) pointsNum = 8;
             var points = new IPoint[pointsNum];
             var channels = new IChannel[pointsNum];
             for (int i = 0; i < pointsNum; ++i)
@@ -52,101 +52,198 @@ namespace NewMatrixModule
                 points[i].ExecuteClass("NewMatrixModule.MultMatrix");
             }
 
-            var resMatrix = new Matrix(A.Height, B.Width);
+            var resMatrix = new Matrix(a.Height, b.Width);
             DateTime time = DateTime.Now;
             Console.WriteLine("Waiting for a result...");
 
             if (pointsNum == 1)
             {
-                channels[0].WriteObject(A);
-                channels[0].WriteObject(B);
+                channels[0].WriteObject(a);
+                channels[0].WriteObject(b);
                 resMatrix = (Matrix)channels[0].ReadObject(typeof(Matrix));
             }
 
-            if (pointsNum == 2 || pointsNum == 3 || pointsNum == 5)
+            else if (pointsNum == 2)
             {
-                for (int i = 0; i < pointsNum; ++i)
+                var matrixPairs = Divide2(a, b).ToArray();
+                channels[0].WriteObject(matrixPairs[0].Item1);
+                channels[0].WriteObject(matrixPairs[0].Item2);
+                channels[1].WriteObject(matrixPairs[1].Item1);
+                channels[1].WriteObject(matrixPairs[1].Item2);
+
+                Console.WriteLine("Sending finished: time = {0}", Math.Round((DateTime.Now - time).TotalSeconds, 3));
+
+                Join2(resMatrix, channels.Select(c => new Lazy<Matrix>(c.ReadObject<Matrix>)).ToArray());
+            }
+
+            else if (pointsNum == 4)
+            {
+                var matrixPairs = Divide4(a, b).ToArray();
+                for (int i = 0; i < matrixPairs.Length; i++)
                 {
-                    channels[i].WriteObject(A.SubMatrix(0, 0, A.Height / pointsNum + ((i == pointsNum - 1) ? A.Height % pointsNum : 0), A.Width));
-                    channels[i].WriteObject(B);
+                    channels[i].WriteObject(matrixPairs[i].Item1);
+                    channels[i].WriteObject(matrixPairs[i].Item2);
                 }
 
                 Console.WriteLine("Sending finished: time = {0}", Math.Round((DateTime.Now - time).TotalSeconds, 3));
-            
-                for (int i = 0; i < pointsNum; ++i)
+
+                //join
+                Join4(resMatrix, channels.Select(c => new Lazy<Matrix>(c.ReadObject<Matrix>)).ToArray());
+            }
+
+            else if (pointsNum == 8)
+            {
+                var matrixPairs = Divide8(a, b).ToArray();
+                for (int i = 0; i < matrixPairs.Length; i++)
                 {
-                    var subMatrix = (Matrix)channels[i].ReadObject(typeof(Matrix));
-                    resMatrix.FillSubMatrix(subMatrix, i * (A.Height / pointsNum), 0);
+                    channels[i].WriteObject(matrixPairs[i].Item1);
+                    channels[i].WriteObject(matrixPairs[i].Item2);
                 }
-            }
-
-            if (pointsNum == 4)
-            {
-                channels[0].WriteObject(A.SubMatrix(0, 0, A.Height / 2, A.Width));
-                channels[0].WriteObject(B.SubMatrix(0, 0, B.Height, B.Width / 2));
-                channels[1].WriteObject(A.SubMatrix(0, 0, A.Height / 2, A.Width));
-                channels[1].WriteObject(B.SubMatrix(0, B.Width / 2, B.Height, B.Width / 2 + B.Width % 2));
-                channels[2].WriteObject(A.SubMatrix(A.Height / 2, 0, A.Height / 2 + A.Height % 2, B.Width));
-                channels[2].WriteObject(B.SubMatrix(0, 0, B.Height, B.Width / 2));
-                channels[3].WriteObject(A.SubMatrix(A.Height / 2, 0, A.Height / 2 + A.Height % 2, B.Width));
-                channels[3].WriteObject(B.SubMatrix(0, B.Width / 2, B.Height, B.Width / 2 + B.Width % 2));
 
                 Console.WriteLine("Sending finished: time = {0}", Math.Round((DateTime.Now - time).TotalSeconds, 3));
-            
-                resMatrix.FillSubMatrix((Matrix)channels[0].ReadObject(), 0, 0);
-                resMatrix.FillSubMatrix((Matrix)channels[1].ReadObject(), 0, B.Width / 2);
-                resMatrix.FillSubMatrix((Matrix)channels[2].ReadObject(), resMatrix.Height / 2, 0);
-                resMatrix.FillSubMatrix((Matrix)channels[3].ReadObject(), resMatrix.Height / 2, resMatrix.Width / 2);
 
+                Join8(resMatrix, channels.Select(c => new Lazy<Matrix>(c.ReadObject<Matrix>)).ToArray());
             }
 
-            if (pointsNum == 8)
+            else if (pointsNum == 16) //8 * 2
             {
-                channels[0].WriteObject(A.SubMatrix(0, 0, A.Height / 2, A.Width / 2));
-                channels[0].WriteObject(B.SubMatrix(0, 0, B.Height / 2, B.Width / 2));
+                var matrixPairs8 = Divide8(a, b).ToArray();
+                for (int i = 0; i < 8; i++)
+                {
+                    var m2 = Divide2(matrixPairs8[i].Item1, matrixPairs8[i].Item2).ToArray();
+                    channels[i*2].WriteObject(m2[0].Item1);
+                    channels[i*2].WriteObject(m2[0].Item2);
+                    channels[i*2 + 1].WriteObject(m2[1].Item1);
+                    channels[i*2 + 1].WriteObject(m2[1].Item2);
+                }
 
-                channels[1].WriteObject(A.SubMatrix(0, A.Width / 2, A.Height / 2, A.Width / 2 + A.Width % 2));
-                channels[1].WriteObject(B.SubMatrix(B.Height / 2, 0, B.Height / 2 + B.Height % 2, B.Width / 2));
-
-                channels[2].WriteObject(A.SubMatrix(0, 0, A.Height / 2, A.Width / 2));
-                channels[2].WriteObject(B.SubMatrix(0, B.Width / 2, B.Height / 2, B.Width / 2 + B.Width % 2));
-
-                channels[3].WriteObject(A.SubMatrix(0, A.Width / 2, A.Height / 2, A.Width / 2 + A.Width % 2));
-                channels[3].WriteObject(B.SubMatrix(B.Height / 2, B.Width / 2, B.Height / 2 + B.Height % 2, B.Width / 2 + B.Width % 2));
-
-                channels[4].WriteObject(A.SubMatrix(A.Height / 2, 0, A.Height / 2 + A.Height % 2, A.Width / 2));
-                channels[4].WriteObject(B.SubMatrix(0, 0, B.Height / 2, B.Width / 2));
-
-                channels[5].WriteObject(A.SubMatrix(A.Height / 2, A.Width / 2, A.Height / 2 + A.Height % 2, A.Width / 2 + A.Width % 2));
-                channels[5].WriteObject(B.SubMatrix(B.Height / 2, 0, B.Height / 2 + B.Height % 2, B.Width / 2));
-
-                channels[6].WriteObject(A.SubMatrix(A.Height / 2, 0, A.Height / 2 + A.Height % 2, A.Width / 2));
-                channels[6].WriteObject(B.SubMatrix(0, B.Width / 2, B.Height / 2, B.Width / 2 + B.Width % 2));
-
-                channels[7].WriteObject(A.SubMatrix(A.Height / 2, A.Width / 2, A.Height / 2 + A.Height % 2, A.Width / 2 + A.Width % 2));
-                channels[7].WriteObject(B.SubMatrix(B.Height / 2, B.Width / 2, B.Height / 2 + B.Height % 2, B.Width / 2 + B.Width % 2));
                 Console.WriteLine("Sending finished: time = {0}", Math.Round((DateTime.Now - time).TotalSeconds, 3));
-            
-                Matrix[,] Parts = new Matrix[2, 2];
 
-                Parts[0, 0] = (Matrix)channels[0].ReadObject();
-                Parts[0, 0].Add((Matrix)channels[1].ReadObject());
-                resMatrix.FillSubMatrix(Parts[0, 0], 0, 0);
-                Parts[0, 1] = (Matrix)channels[2].ReadObject();
-                Parts[0, 1].Add((Matrix)channels[3].ReadObject());
-                resMatrix.FillSubMatrix(Parts[0, 1], 0, resMatrix.Width / 2);
-                Parts[1, 0] = (Matrix)channels[4].ReadObject();
-                Parts[1, 0].Add((Matrix)channels[5].ReadObject());
-                resMatrix.FillSubMatrix(Parts[1, 0], resMatrix.Height / 2, 0);
-                Parts[1, 1] = (Matrix)channels[6].ReadObject();
-                Parts[1, 1].Add((Matrix)channels[7].ReadObject());
+                var resMatrix8 =
+                    Enumerable.Range(0, 8)
+                        .Select(i => new Matrix(matrixPairs8[i].Item1.Height, matrixPairs8[i].Item2.Width))
+                        .ToArray();
+                for (int i = 0; i < 8; i++)
+                {
+                    Join2(resMatrix8[i],
+                        new[] {channels[2*i], channels[2*i + 1]}.Select(c => new Lazy<Matrix>(c.ReadObject<Matrix>))
+                            .ToArray());
+                }
 
-                resMatrix.FillSubMatrix(Parts[1, 1], resMatrix.Height / 2, resMatrix.Width / 2);
-
+                Join8(resMatrix, resMatrix8.Select(m => new Lazy<Matrix>(() => m)).ToArray()); //not nice, probably create overload
             }
 
+            else if (pointsNum == 32) //8 * 4
+            {
+                var matrixPairs8 = Divide8(a, b).ToArray();
+                for (int i = 0; i < 8; i++)
+                {
+                    var m4 = Divide4(matrixPairs8[i].Item1, matrixPairs8[i].Item2).ToArray();
 
-            Console.WriteLine("Result found: time = {0}, saving the result to the file {1}", Math.Round((DateTime.Now - time).TotalSeconds, 3), fileName);
+                    for (int j = 0; j < 4; j++)
+                    {
+                        channels[i * 4 + j].WriteObject(m4[j].Item1);
+                        channels[i * 4 + j].WriteObject(m4[j].Item2);
+                    }
+                }
+
+                Console.WriteLine("Sending finished: time = {0}", Math.Round((DateTime.Now - time).TotalSeconds, 3));
+
+                var resMatrix8 =
+                    Enumerable.Range(0, 8)
+                        .Select(i => new Matrix(matrixPairs8[i].Item1.Height, matrixPairs8[i].Item2.Width))
+                        .ToArray();
+                for (int i = 0; i < 8; i++)
+                {
+                    Join4(resMatrix8[i], Enumerable.Range(0, 4).Select(j => channels[4*i+j])
+                        .Select(c => new Lazy<Matrix>(c.ReadObject<Matrix>))
+                            .ToArray());
+                }
+
+                Join8(resMatrix, resMatrix8.Select(m => new Lazy<Matrix>(() => m)).ToArray()); //not nice, probably create overload
+            }
+
+            Console.WriteLine("Result found: time = {0}, saving the result to the file {1}",
+                Math.Round((DateTime.Now - time).TotalSeconds, 3), fileName);
+            SaveMatrix(resMatrix);
+        }
+
+        private static IEnumerable<Tuple<Matrix, Matrix>> Divide2(Matrix a, Matrix b)
+        {
+            yield return Tuple.Create(a.SubMatrix(0, 0, b.Height / 2, b.Width), b);
+            yield return Tuple.Create(a.SubMatrix(0, 0, a.Height / 2 + a.Height % 2, a.Width), b);
+        }
+
+        private static IEnumerable<Tuple<Matrix, Matrix>> Divide4(Matrix a, Matrix b)
+        {
+            yield return Tuple.Create(a.SubMatrix(0, 0, a.Height / 2, a.Width), b.SubMatrix(0, 0, b.Height, b.Width / 2));
+            yield return Tuple.Create(a.SubMatrix(0, 0, a.Height / 2, a.Width), b.SubMatrix(0, b.Width / 2, b.Height, b.Width / 2 + b.Width % 2));
+            yield return Tuple.Create(a.SubMatrix(a.Height / 2, 0, a.Height / 2 + a.Height % 2, b.Width), b.SubMatrix(0, 0, b.Height, b.Width / 2));
+            yield return Tuple.Create(a.SubMatrix(a.Height / 2, 0, a.Height / 2 + a.Height % 2, b.Width), b.SubMatrix(0, b.Width / 2, b.Height, b.Width / 2 + b.Width % 2));
+        }
+
+        private static IEnumerable<Tuple<Matrix, Matrix>> Divide8(Matrix a, Matrix b)
+        {
+            yield return
+                Tuple.Create(a.SubMatrix(0, 0, a.Height/2, a.Width/2), b.SubMatrix(0, 0, b.Height/2, b.Width/2));
+            yield return
+                Tuple.Create(a.SubMatrix(0, a.Width/2, a.Height/2, a.Width/2 + a.Width%2),
+                    b.SubMatrix(b.Height/2, 0, b.Height/2 + b.Height%2, b.Width/2));
+            yield return
+                Tuple.Create(a.SubMatrix(0, 0, a.Height/2, a.Width/2),
+                    b.SubMatrix(0, b.Width/2, b.Height/2, b.Width/2 + b.Width%2));
+            yield return Tuple.Create(a.SubMatrix(0, a.Width/2, a.Height/2, a.Width/2 + a.Width%2),
+                b.SubMatrix(b.Height/2, b.Width/2, b.Height/2 + b.Height%2, b.Width/2 + b.Width%2));
+            yield return
+                Tuple.Create(a.SubMatrix(a.Height/2, 0, a.Height/2 + a.Height%2, a.Width/2),
+                    b.SubMatrix(0, 0, b.Height/2, b.Width/2));
+            yield return Tuple.Create(a.SubMatrix(a.Height/2, a.Width/2, a.Height/2 + a.Height%2,
+                a.Width/2 + a.Width%2), b.SubMatrix(b.Height/2, 0, b.Height/2 + b.Height%2, b.Width/2));
+            yield return
+                Tuple.Create(a.SubMatrix(a.Height/2, 0, a.Height/2 + a.Height%2, a.Width/2),
+                    b.SubMatrix(0, b.Width/2, b.Height/2, b.Width/2 + b.Width%2));
+            yield return Tuple.Create(a.SubMatrix(a.Height/2, a.Width/2, a.Height/2 + a.Height%2,
+                a.Width/2 + a.Width%2), b.SubMatrix(b.Height/2, b.Width/2, b.Height/2 + b.Height%2,
+                    b.Width/2 + b.Width%2));
+        }
+
+        private static Matrix Join2(Matrix resMatrix, IList<Lazy<Matrix>> matrixes)
+        {
+            resMatrix.FillSubMatrix(matrixes[0].Value, 0, 0);
+            resMatrix.FillSubMatrix(matrixes[1].Value, (resMatrix.Height / 2), 0);
+            return resMatrix;
+        }
+
+        private static Matrix Join4(Matrix resMatrix, IList<Lazy<Matrix>> matrixes)
+        {
+            resMatrix.FillSubMatrix(matrixes[0].Value, 0, 0);
+            resMatrix.FillSubMatrix(matrixes[1].Value, 0, resMatrix.Width / 2);
+            resMatrix.FillSubMatrix(matrixes[2].Value, resMatrix.Height / 2, 0);
+            resMatrix.FillSubMatrix(matrixes[3].Value, resMatrix.Height / 2, resMatrix.Width / 2);
+            return resMatrix;
+        }
+
+        private static Matrix Join8(Matrix resMatrix, IList<Lazy<Matrix>> matrixes)
+        {
+            var parts = new Matrix[2, 2];
+
+            parts[0, 0] = matrixes[0].Value;
+            parts[0, 0].Add(matrixes[1].Value);
+            resMatrix.FillSubMatrix(parts[0, 0], 0, 0);
+            parts[0, 1] = matrixes[2].Value;
+            parts[0, 1].Add(matrixes[3].Value);
+            resMatrix.FillSubMatrix(parts[0, 1], 0, resMatrix.Width / 2);
+            parts[1, 0] = matrixes[4].Value;
+            parts[1, 0].Add(matrixes[5].Value);
+            resMatrix.FillSubMatrix(parts[1, 0], resMatrix.Height / 2, 0);
+            parts[1, 1] = matrixes[6].Value;
+            parts[1, 1].Add(matrixes[7].Value);
+            resMatrix.FillSubMatrix(parts[1, 1], resMatrix.Height / 2, resMatrix.Width / 2);
+            return resMatrix;
+        }
+
+        private void SaveMatrix(Matrix matrix)
+        {
         }
     }
 }

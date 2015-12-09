@@ -18,6 +18,7 @@ namespace Parcs
         string ReadFile();
         int From { get; set; }
         object ReadObject(Type type);
+        T ReadObject<T>();
         void Close();
     }
 }
