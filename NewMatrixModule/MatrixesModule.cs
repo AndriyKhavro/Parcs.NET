@@ -14,19 +14,27 @@ namespace NewMatrixModule
 
         private static readonly ILog _log = LogManager.GetLogger(typeof(MatrixesModule));
 
+        private static CommandLineOptions options;
+
         public static void Main(string[] args)
         {
             log4net.Config.XmlConfigurator.Configure();
+            options = new CommandLineOptions();
+            if (!CommandLine.Parser.Default.ParseArguments(args, options))
+            {
+                _log.Warn("Cannot parse the arguments. Possible usages:");                
+                _log.Warn(options.GetUsage());                
+                return;
+            }
+
             (new MatrixesModule()).RunModule();
             Console.ReadKey();
         }
 
         public override void Run(ModuleInfo info)
         {
-            Console.WriteLine("Enter the fileName of the first matrix:");
-            string file1 = Console.ReadLine();
-            Console.WriteLine("Enter the fileName of the second matrix:");
-            string file2 = Console.ReadLine();
+            string file1 = options.File1;
+            string file2 = options.File2;
             Matrix a, b;
 
             try
@@ -43,12 +51,13 @@ namespace NewMatrixModule
 
             int[] possibleValues = { 1, 2, 4, 8, 16, 32 };
             
-            int pointsNum;
-            do
+            int pointsNum = options.PointsNum;
+
+            if (!possibleValues.Contains(pointsNum))
             {
-                Console.WriteLine("Enter the number of points (possible options: {0}): ", string.Join(" ", possibleValues));
+                _log.ErrorFormat("Cannot start module with given number of points. Possible usages: {0}", string.Join(" ", possibleValues));
+                return;
             }
-            while (!int.TryParse(Console.ReadLine(), out pointsNum) || !possibleValues.Contains(pointsNum));
 
             _log.InfoFormat("Starting Matrixes Module on {0} points", pointsNum);
 
@@ -65,110 +74,121 @@ namespace NewMatrixModule
             DateTime time = DateTime.Now;
             _log.Info("Waiting for a result...");
 
-            if (pointsNum == 1)
+            switch (pointsNum)
             {
-                channels[0].WriteObject(a);
-                channels[0].WriteObject(b);
-                resMatrix = (Matrix)channels[0].ReadObject(typeof(Matrix));
-            }
-
-            else if (pointsNum == 2)
-            {
-                var matrixPairs = Divide2(a, b).ToArray();
-                channels[0].WriteObject(matrixPairs[0].Item1);
-                channels[0].WriteObject(matrixPairs[0].Item2);
-                channels[1].WriteObject(matrixPairs[1].Item1);
-                channels[1].WriteObject(matrixPairs[1].Item2);
-
-                LogSendingTime(time);
-
-                Join2(resMatrix, channels.Select(c => new Lazy<Matrix>(c.ReadObject<Matrix>)).ToArray());
-            }
-
-            else if (pointsNum == 4)
-            {
-                var matrixPairs = Divide4(a, b).ToArray();
-                for (int i = 0; i < matrixPairs.Length; i++)
-                {
-                    channels[i].WriteObject(matrixPairs[i].Item1);
-                    channels[i].WriteObject(matrixPairs[i].Item2);
-                }
-
-                LogSendingTime(time);
-
-                Join4(resMatrix, channels.Select(c => new Lazy<Matrix>(c.ReadObject<Matrix>)).ToArray());
-            }
-
-            else if (pointsNum == 8)
-            {
-                var matrixPairs = Divide8(a, b).ToArray();
-                for (int i = 0; i < matrixPairs.Length; i++)
-                {
-                    channels[i].WriteObject(matrixPairs[i].Item1);
-                    channels[i].WriteObject(matrixPairs[i].Item2);
-                }
-
-                LogSendingTime(time);
-
-                Join8(resMatrix, channels.Select(c => new Lazy<Matrix>(c.ReadObject<Matrix>)).ToArray());
-            }
-
-            else if (pointsNum == 16) //8 * 2
-            {
-                var matrixPairs8 = Divide8(a, b).ToArray();
-                for (int i = 0; i < 8; i++)
-                {
-                    var m2 = Divide2(matrixPairs8[i].Item1, matrixPairs8[i].Item2).ToArray();
-                    channels[i*2].WriteObject(m2[0].Item1);
-                    channels[i*2].WriteObject(m2[0].Item2);
-                    channels[i*2 + 1].WriteObject(m2[1].Item1);
-                    channels[i*2 + 1].WriteObject(m2[1].Item2);
-                }
-
-                LogSendingTime(time);
-
-                var resMatrix8 =
-                    Enumerable.Range(0, 8)
-                        .Select(i => new Matrix(matrixPairs8[i].Item1.Height, matrixPairs8[i].Item2.Width))
-                        .ToArray();
-                for (int i = 0; i < 8; i++)
-                {
-                    Join2(resMatrix8[i],
-                        new[] {channels[2*i], channels[2*i + 1]}.Select(c => new Lazy<Matrix>(c.ReadObject<Matrix>))
-                            .ToArray());
-                }
-
-                Join8(resMatrix, resMatrix8.Select(m => new Lazy<Matrix>(() => m)).ToArray()); //not nice, probably create overload
-            }
-
-            else if (pointsNum == 32) //8 * 4
-            {
-                var matrixPairs8 = Divide8(a, b).ToArray();
-                for (int i = 0; i < 8; i++)
-                {
-                    var m4 = Divide4(matrixPairs8[i].Item1, matrixPairs8[i].Item2).ToArray();
-
-                    for (int j = 0; j < 4; j++)
+                case 1:
+                    channels[0].WriteObject(a);
+                    channels[0].WriteObject(b);
+                    resMatrix = (Matrix)channels[0].ReadObject(typeof(Matrix));
+                    break;
+                case 2:
                     {
-                        channels[i * 4 + j].WriteObject(m4[j].Item1);
-                        channels[i * 4 + j].WriteObject(m4[j].Item2);
+                        var matrixPairs = Divide2(a, b).ToArray();
+                        channels[0].WriteObject(matrixPairs[0].Item1);
+                        channels[0].WriteObject(matrixPairs[0].Item2);
+                        channels[1].WriteObject(matrixPairs[1].Item1);
+                        channels[1].WriteObject(matrixPairs[1].Item2);
+
+                        LogSendingTime(time);
+
+                        Join2(resMatrix, channels.Select(c => new Lazy<Matrix>(c.ReadObject<Matrix>)).ToArray());
                     }
-                }
+                    break;
+                case 4:
+                    {
+                        var matrixPairs = Divide4(a, b).ToArray();
+                        for (int i = 0; i < matrixPairs.Length; i++)
+                        {
+                            channels[i].WriteObject(matrixPairs[i].Item1);
+                            channels[i].WriteObject(matrixPairs[i].Item2);
+                        }
 
-                LogSendingTime(time);
+                        LogSendingTime(time);
 
-                var resMatrix8 =
-                    Enumerable.Range(0, 8)
-                        .Select(i => new Matrix(matrixPairs8[i].Item1.Height, matrixPairs8[i].Item2.Width))
-                        .ToArray();
-                for (int i = 0; i < 8; i++)
-                {
-                    Join4(resMatrix8[i], Enumerable.Range(0, 4).Select(j => channels[4*i+j])
-                        .Select(c => new Lazy<Matrix>(c.ReadObject<Matrix>))
-                            .ToArray());
-                }
+                        Join4(resMatrix, channels.Select(c => new Lazy<Matrix>(c.ReadObject<Matrix>)).ToArray());
+                    }
+                    break;
+                case 8:
+                    {
+                        var matrixPairs = Divide8(a, b).ToArray();
+                        for (int i = 0; i < matrixPairs.Length; i++)
+                        {
+                            channels[i].WriteObject(matrixPairs[i].Item1);
+                            channels[i].WriteObject(matrixPairs[i].Item2);
+                        }
 
-                Join8(resMatrix, resMatrix8.Select(m => new Lazy<Matrix>(() => m)).ToArray()); //not nice, probably create overload
+                        LogSendingTime(time);
+
+                        Join8(resMatrix, channels.Select(c => new Lazy<Matrix>(c.ReadObject<Matrix>)).ToArray());
+                    }
+                    break;
+                case 16:
+                    {
+                        var matrixPairs8 = Divide8(a, b).ToArray();
+                        for (int i = 0; i < 8; i++)
+                        {
+                            var m2 = Divide2(matrixPairs8[i].Item1, matrixPairs8[i].Item2).ToArray();
+                            channels[i * 2].WriteObject(m2[0].Item1);
+                            channels[i * 2].WriteObject(m2[0].Item2);
+                            channels[i * 2 + 1].WriteObject(m2[1].Item1);
+                            channels[i * 2 + 1].WriteObject(m2[1].Item2);
+                        }
+
+                        LogSendingTime(time);
+
+                        var resMatrix8 =
+                            Enumerable.Range(0, 8)
+                                .Select(i => new Matrix(matrixPairs8[i].Item1.Height, matrixPairs8[i].Item2.Width))
+                                .ToArray();
+                        for (int i = 0; i < 8; i++)
+                        {
+                            Join2(
+                                resMatrix8[i],
+                                new[] { channels[2 * i], channels[2 * i + 1] }.Select(
+                                    c => new Lazy<Matrix>(c.ReadObject<Matrix>)).ToArray());
+                        }
+
+                        Join8(resMatrix, resMatrix8.Select(m => new Lazy<Matrix>(() => m)).ToArray());
+                            //not nice, probably create overload
+                    }
+                    break;
+                case 32:
+                    {
+                        var matrixPairs8 = Divide8(a, b).ToArray();
+                        for (int i = 0; i < 8; i++)
+                        {
+                            var m4 = Divide4(matrixPairs8[i].Item1, matrixPairs8[i].Item2).ToArray();
+
+                            for (int j = 0; j < 4; j++)
+                            {
+                                channels[i * 4 + j].WriteObject(m4[j].Item1);
+                                channels[i * 4 + j].WriteObject(m4[j].Item2);
+                            }
+                        }
+
+                        LogSendingTime(time);
+
+                        var resMatrix8 =
+                            Enumerable.Range(0, 8)
+                                .Select(i => new Matrix(matrixPairs8[i].Item1.Height, matrixPairs8[i].Item2.Width))
+                                .ToArray();
+                        for (int i = 0; i < 8; i++)
+                        {
+                            Join4(
+                                resMatrix8[i],
+                                Enumerable.Range(0, 4)
+                                    .Select(j => channels[4 * i + j])
+                                    .Select(c => new Lazy<Matrix>(c.ReadObject<Matrix>))
+                                    .ToArray());
+                        }
+
+                        Join8(resMatrix, resMatrix8.Select(m => new Lazy<Matrix>(() => m)).ToArray());
+                            //not nice, probably create overload
+                    }
+                    break;
+                default:
+                    _log.Error("Unexpected error.");
+                    return;
             }
 
             LogResultFoundTime(time);
