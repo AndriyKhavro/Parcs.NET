@@ -3,25 +3,26 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NewMatrixModule
 {
+    using log4net;
+
     public class MatrixesModule : MainModule
     {
         private const string fileName = "resMatrix.mtr";
 
+        private static readonly ILog _log = LogManager.GetLogger(typeof(MatrixesModule));
+
         public static void Main(string[] args)
         {
+            log4net.Config.XmlConfigurator.Configure();
             (new MatrixesModule()).RunModule();
             Console.ReadKey();
         }
 
         public override void Run(ModuleInfo info)
         {
-
             Console.WriteLine("Enter the fileName of the first matrix:");
             string file1 = Console.ReadLine();
             Console.WriteLine("Enter the fileName of the second matrix:");
@@ -34,9 +35,9 @@ namespace NewMatrixModule
                 b = Matrix.LoadFromFile(file2);
             }
 
-            catch (FileNotFoundException)
+            catch (FileNotFoundException ex)
             {
-                Console.WriteLine("File with a given fileName not found, stopping the application...");
+                _log.Error("File with a given fileName not found, stopping the application...", ex);
                 return;
             }
 
@@ -49,6 +50,8 @@ namespace NewMatrixModule
             }
             while (!int.TryParse(Console.ReadLine(), out pointsNum) || !possibleValues.Contains(pointsNum));
 
+            _log.InfoFormat("Starting Matrixes Module on {0} points", pointsNum);
+
             var points = new IPoint[pointsNum];
             var channels = new IChannel[pointsNum];
             for (int i = 0; i < pointsNum; ++i)
@@ -60,7 +63,7 @@ namespace NewMatrixModule
 
             var resMatrix = new Matrix(a.Height, b.Width);
             DateTime time = DateTime.Now;
-            Console.WriteLine("Waiting for a result...");
+            _log.Info("Waiting for a result...");
 
             if (pointsNum == 1)
             {
@@ -174,7 +177,7 @@ namespace NewMatrixModule
 
         private static void LogResultFoundTime(DateTime time)
         {
-            Console.WriteLine(
+            _log.InfoFormat(
                 "Result found: time = {0}, saving the result to the file {1}",
                 Math.Round((DateTime.Now - time).TotalSeconds, 3),
                 fileName);
@@ -182,7 +185,7 @@ namespace NewMatrixModule
 
         private static void LogSendingTime(DateTime time)
         {
-            Console.WriteLine("Sending finished: time = {0}", Math.Round((DateTime.Now - time).TotalSeconds, 3));
+            _log.InfoFormat("Sending finished: time = {0}", Math.Round((DateTime.Now - time).TotalSeconds, 3));
         }
 
         private static IEnumerable<Tuple<Matrix, Matrix>> Divide2(Matrix a, Matrix b)
