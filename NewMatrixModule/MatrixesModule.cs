@@ -40,9 +40,15 @@ namespace NewMatrixModule
                 return;
             }
 
-            Console.WriteLine("Enter the number of points (possible options: 1 2 3 4 5 8 16 32): ");
+            int[] possibleValues = { 1, 2, 4, 8, 16, 32 };
+            
+            int pointsNum;
+            do
+            {
+                Console.WriteLine("Enter the number of points (possible options: {0}): ", string.Join(" ", possibleValues));
+            }
+            while (!int.TryParse(Console.ReadLine(), out pointsNum) || !possibleValues.Contains(pointsNum));
 
-            int pointsNum = int.Parse(Console.ReadLine());
             var points = new IPoint[pointsNum];
             var channels = new IChannel[pointsNum];
             for (int i = 0; i < pointsNum; ++i)
@@ -71,7 +77,7 @@ namespace NewMatrixModule
                 channels[1].WriteObject(matrixPairs[1].Item1);
                 channels[1].WriteObject(matrixPairs[1].Item2);
 
-                Console.WriteLine("Sending finished: time = {0}", Math.Round((DateTime.Now - time).TotalSeconds, 3));
+                LogSendingTime(time);
 
                 Join2(resMatrix, channels.Select(c => new Lazy<Matrix>(c.ReadObject<Matrix>)).ToArray());
             }
@@ -85,9 +91,8 @@ namespace NewMatrixModule
                     channels[i].WriteObject(matrixPairs[i].Item2);
                 }
 
-                Console.WriteLine("Sending finished: time = {0}", Math.Round((DateTime.Now - time).TotalSeconds, 3));
+                LogSendingTime(time);
 
-                //join
                 Join4(resMatrix, channels.Select(c => new Lazy<Matrix>(c.ReadObject<Matrix>)).ToArray());
             }
 
@@ -100,7 +105,7 @@ namespace NewMatrixModule
                     channels[i].WriteObject(matrixPairs[i].Item2);
                 }
 
-                Console.WriteLine("Sending finished: time = {0}", Math.Round((DateTime.Now - time).TotalSeconds, 3));
+                LogSendingTime(time);
 
                 Join8(resMatrix, channels.Select(c => new Lazy<Matrix>(c.ReadObject<Matrix>)).ToArray());
             }
@@ -117,7 +122,7 @@ namespace NewMatrixModule
                     channels[i*2 + 1].WriteObject(m2[1].Item2);
                 }
 
-                Console.WriteLine("Sending finished: time = {0}", Math.Round((DateTime.Now - time).TotalSeconds, 3));
+                LogSendingTime(time);
 
                 var resMatrix8 =
                     Enumerable.Range(0, 8)
@@ -147,7 +152,7 @@ namespace NewMatrixModule
                     }
                 }
 
-                Console.WriteLine("Sending finished: time = {0}", Math.Round((DateTime.Now - time).TotalSeconds, 3));
+                LogSendingTime(time);
 
                 var resMatrix8 =
                     Enumerable.Range(0, 8)
@@ -163,9 +168,21 @@ namespace NewMatrixModule
                 Join8(resMatrix, resMatrix8.Select(m => new Lazy<Matrix>(() => m)).ToArray()); //not nice, probably create overload
             }
 
-            Console.WriteLine("Result found: time = {0}, saving the result to the file {1}",
-                Math.Round((DateTime.Now - time).TotalSeconds, 3), fileName);
+            LogResultFoundTime(time);
             SaveMatrix(resMatrix);
+        }
+
+        private static void LogResultFoundTime(DateTime time)
+        {
+            Console.WriteLine(
+                "Result found: time = {0}, saving the result to the file {1}",
+                Math.Round((DateTime.Now - time).TotalSeconds, 3),
+                fileName);
+        }
+
+        private static void LogSendingTime(DateTime time)
+        {
+            Console.WriteLine("Sending finished: time = {0}", Math.Round((DateTime.Now - time).TotalSeconds, 3));
         }
 
         private static IEnumerable<Tuple<Matrix, Matrix>> Divide2(Matrix a, Matrix b)
