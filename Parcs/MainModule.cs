@@ -15,14 +15,8 @@ namespace Parcs
             {
                 throw new ParcsException();
             }
-
-           // AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
+            
             return job;
-        }
-
-        private void FinishJob(IJob job)
-        {
-            job.FinishJob();
         }
 
         public void RunModule()
@@ -45,16 +39,5 @@ namespace Parcs
         }
 
         public abstract void Run(ModuleInfo info);
-
-        //private static IJob job;
-
-        //private static void OnProcessExit(object sender, EventArgs e)
-        //{
-        //    if (job != null && !job.IsFinished)
-        //    {
-        //        job.FinishJob();
-        //    }
-        //}
-
     }
 }

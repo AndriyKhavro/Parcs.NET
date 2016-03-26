@@ -8,18 +8,18 @@ namespace Parcs
 {
     public enum Constants: byte
     {
-        PointCreated,
-        PointDeleted,
-        RecieveTask,
-        LoadFile,
-        LoadClasses,
-        ExecuteClass,
-        ConnectPoint, 
-        BeginJob,
-        ProcessorsCountRequest,
-        FinishJob,
-        LinpackRequest,
-        ServerIP
+        PointCreated = 0,
+        PointDeleted = 1,
+        RecieveTask = 2,
+        LoadFile = 3,
+        LoadClasses = 4,
+        ExecuteClass = 5,
+        ConnectPoint = 6, 
+        BeginJob = 7,
+        ProcessorsCountRequest = 8,
+        FinishJob = 9,
+        LinpackRequest = 10,
+        ServerIP = 11
     }
     public enum Ports
     {

@@ -22,7 +22,7 @@ namespace HostServer
         }
 
         //IDictionary<int, TaskInfo> _taskDictionary;
-        ConcurrentDictionary<int, TaskInfo> _taskDictionary = new ConcurrentDictionary<int, TaskInfo>();
+        readonly ConcurrentDictionary<int, TaskInfo> _taskDictionary = new ConcurrentDictionary<int, TaskInfo>();
 
         int taskNumber;
         const string fileName = "hosts.txt";
@@ -31,12 +31,6 @@ namespace HostServer
         public Server()
         {
             ReadHostsFromFile();
-        }
-
-        public Server(IList<HostInfo> hostList)
-        {
-            _hostList = hostList;
-            //CheckHostNames();
         }
 
         public void ReadHostsFromFile()
@@ -69,21 +63,6 @@ namespace HostServer
             }
         }
 
-        public void CheckHostNames()//when to invoke?
-        {
-            var listToRemove = _hostList.Where(host => !host.IsConnected && !host.Connect()).ToList();
-            foreach (var host in listToRemove)
-            {
-                Console.WriteLine("Host {0} is not responding...", host.IpAddress.ToString());
-            }
-
-            _hostList = _hostList.Except(listToRemove).ToList();
-
-            foreach (var host in _hostList)
-            {
-                host.WriteIp();
-            }
-        }
 
         public void UpdateHostList()
         {
@@ -91,9 +70,9 @@ namespace HostServer
             CheckHostNames();
         }
 
-        public IPointInfo CreatePoint(int jobsNum, int parentNum)
+        public IPointInfo CreatePoint(int jobNumber, int parentNumber)
         {
-            var taskInfo = _taskDictionary[jobsNum];
+            var taskInfo = _taskDictionary[jobNumber];
             HostInfo target = null;
             bool targetChosen = false;
             while (!targetChosen)
@@ -118,7 +97,7 @@ namespace HostServer
                 }
             }
 
-            PointInfo p = new PointInfo(target, parentNum);
+            PointInfo p = new PointInfo(target, parentNumber);
             lock (_syncRoot)
             {
                 taskInfo.AddPoint(p);
@@ -135,13 +114,29 @@ namespace HostServer
         {
             foreach (var host in _hostList.OrderByDescending(host => host.LinpackResult))
             {
-                if (host.PointsNumber < host.ProcessorCount)
+                if (host.PointCount < host.ProcessorCount)
                 {
                     return host;
                 }
             }
 
             return null;
+        }
+        
+        private void CheckHostNames()
+        {
+            var listToRemove = _hostList.Where(host => !host.IsConnected && !host.Connect()).ToList();
+            foreach (var host in listToRemove)
+            {
+                Console.WriteLine("Host {0} is not responding...", host.IpAddress.ToString());
+            }
+
+            _hostList = _hostList.Except(listToRemove).ToList();
+
+            foreach (var host in _hostList)
+            {
+                host.SendLocalIp();
+            }
         }
 
         private TaskInfo GetTheMostUrgentTask()
@@ -151,9 +146,9 @@ namespace HostServer
 
         public void DeletePoint(int jobsNum, int pointNum)
         {
-            TaskInfo ti;
             lock (_syncRoot)
             {
+                TaskInfo ti;
                 if (_taskDictionary.TryGetValue(jobsNum, out ti))
                 {
                     DeletePoint(ti, pointNum);
@@ -172,7 +167,7 @@ namespace HostServer
         /// <returns>task number</returns>
         public int BeginJob()
         {
-            var t = new TaskInfo(HostList, ++taskNumber);
+            var t = new TaskInfo(++taskNumber);
             _taskDictionary.AddOrUpdate(t.Number, t, (key, value) => value);
             CheckHostNames();
             return taskNumber;
@@ -185,7 +180,7 @@ namespace HostServer
             {
                 if (!_taskDictionary.TryRemove(number, out ti))
                 {
-                    //Console.WriteLine("End job: task with such number doesn't exist");
+                    Console.WriteLine("End job: task with such number doesn't exist");
                     return;
                 }
 

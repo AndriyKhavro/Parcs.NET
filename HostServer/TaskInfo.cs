@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Parcs;
 
 namespace HostServer
 {
     public class TaskInfo 
     {
         public int Number { get; private set; }
-        private int lastPointNumber;
+        private int _lastPointNumber;
         public IDictionary<int, IPointInfo> PointDictionary { get; private set; }
         public bool NeedsPoint { get; set; }
         public int Priority { get; set; }
         
-        public TaskInfo(IList<HostInfo> currentHostList, int number)
+        public TaskInfo(int number)
         {
             PointDictionary = new Dictionary<int, IPointInfo>();
             Number = number;
@@ -23,11 +22,11 @@ namespace HostServer
 
         public int AddPoint(IPointInfo pointInfo)
         {
-            pointInfo.Number = ++lastPointNumber;
+            pointInfo.Number = ++_lastPointNumber;
             PointDictionary.Add(pointInfo.Number, pointInfo);
-            ++pointInfo.Host.PointsNumber;
+            ++pointInfo.Host.PointCount;
             NeedsPoint = false;
-            return lastPointNumber;
+            return _lastPointNumber;
         }
 
         public void RemovePoint(int pointNum)
@@ -35,7 +34,7 @@ namespace HostServer
             IPointInfo pi;
             if (PointDictionary.TryGetValue(pointNum, out pi))
             {
-                pi.Host.PointsNumber--;
+                pi.Host.PointCount--;
                 PointDictionary.Remove(pointNum);
             }
         }

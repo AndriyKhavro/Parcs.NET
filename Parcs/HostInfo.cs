@@ -32,7 +32,7 @@ namespace Parcs
         public BinaryWriter Writer { get; private set; }
 
         public bool IsConnected { get; private set; }
-        public int PointsNumber { get; set; }
+        public int PointCount { get; set; }
         public int ProcessorCount
         {
             get
@@ -113,7 +113,7 @@ namespace Parcs
             IsConnected = false;
         }
 
-        public void WriteIp()
+        public void SendLocalIp()
         {
             Writer.Write((byte)Constants.ServerIP);
             Writer.Write(LocalIP.ToString());

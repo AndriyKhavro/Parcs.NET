@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Net;
 using System.Net.Sockets;
 using Parcs;
@@ -11,17 +8,13 @@ using System.Threading.Tasks;
 
 namespace HostServer
 {
-    class TCPHostServer
+    public class TCPHostServer
     {
-        static Server hostServer;
-        TcpListener _listener;
-        IList<NetworkStream> _clientStreamList;
-        IList<TcpClient> _clientList;
+        private static Server _hostServer;
+        private readonly TcpListener _listener;
 
         public TCPHostServer()
         {
-            _clientList = new List<TcpClient>();
-            _clientStreamList = new List<NetworkStream>();
             IPAddress ip;
             try
             {
@@ -37,7 +30,7 @@ namespace HostServer
 
             int port = (int)Ports.ServerPort;
             _listener = new TcpListener(ip, port);
-            hostServer = new Server();
+            _hostServer = new Server(); //make it a singleton and use in self-hosted WebAPI
             Console.WriteLine("Accepting connections from clients, IP: {0}, port: {1}", ip.ToString(), port);
             RunListener();
 
@@ -49,19 +42,21 @@ namespace HostServer
             while (true)
             {
                 var client = _listener.AcceptTcpClient();
-                _clientList.Add(client);
                 var clientStream = client.GetStream();
-                _clientStreamList.Add(clientStream);
 
                 var clientTask = new Task(() => RunClient(clientStream));
                 clientTask.Start();
+                clientTask.ContinueWith(_ =>
+                {
+                    client.Close();
+                    clientStream.Dispose();
+                });
             }
         }
 
         private void RunClient(NetworkStream clientStream)
         {
             int jobNumber = 0;
-            int pointNumber;
 
             using (var writer = new BinaryWriter(clientStream))
             {
@@ -78,30 +73,26 @@ namespace HostServer
                                 case ((byte)Constants.PointCreated):
                                     jobNumber = reader.ReadInt32();
                                     int parentNumber = reader.ReadInt32();
-                                    IPointInfo point = hostServer.CreatePoint(jobNumber, parentNumber);
-                                    if (point != null)
-                                    {
-                                        writer.Write(point.Number);
-                                        writer.Write(point.Host.IpAddress.ToString());
-                                    }
-
+                                    IPointInfo point = _hostServer.CreatePoint(jobNumber, parentNumber);
+                                    writer.Write(point.Number);
+                                    writer.Write(point.Host.IpAddress.ToString()); //provide client with point and daemon IP adress
                                     break;
                                 case ((byte)Constants.PointDeleted):
                                     {
                                         jobNumber = reader.ReadInt32();
-                                        pointNumber = reader.ReadInt32();
-                                        hostServer.DeletePoint(jobNumber, pointNumber);
+                                        var pointNumber = reader.ReadInt32();
+                                        _hostServer.DeletePoint(jobNumber, pointNumber);
                                     }
                                     break;
                                 case ((byte)Constants.BeginJob):
                                     {
-                                        jobNumber = hostServer.BeginJob();
+                                        jobNumber = _hostServer.BeginJob();
                                         writer.Write(jobNumber);
                                     }
                                     break;
                                 case ((byte)Constants.FinishJob):
                                     jobNumber = reader.ReadInt32();
-                                    hostServer.EndJob(jobNumber);
+                                    _hostServer.EndJob(jobNumber);
                                     return;
                             }
                         }
@@ -109,35 +100,17 @@ namespace HostServer
                         {
                             if (jobNumber != 0)
                             {
-                                hostServer.EndJob(jobNumber);
+                                _hostServer.EndJob(jobNumber);
                             }
 
                             Console.WriteLine(ex.Message);
-                            hostServer.UpdateHostList();
+                            _hostServer.UpdateHostList();
                             return;
                         }
                     }
                 }
             }
         }
-
-        ~TCPHostServer()
-        {
-            Disconnect();
-        }
-
-        private void Disconnect()
-        {
-            _listener.Stop();
-            foreach (var clientStream in _clientStreamList)
-            {
-                clientStream.Close();
-            }
-            foreach (var client in _clientList)
-            { client.Close(); }
-            //clientStream.Close();
-        }
-
 
         static void Main(string[] args)
         {
@@ -163,7 +136,7 @@ namespace HostServer
         private static void UpdateHostList()
         {
             Console.WriteLine("Updating host list...");
-            hostServer.UpdateHostList();
+            _hostServer.UpdateHostList();
         }
     }
 }
