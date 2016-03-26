@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using Parcs;
 using System.Reflection;
@@ -37,9 +35,12 @@ namespace HostServer
         {
             _hostList = new List<HostInfo>();
             StreamReader reader = null;
+            var hostsFileName = File.Exists(fileName)
+                ? fileName
+                : Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), fileName);
             try
             {
-                using (reader = new StreamReader(fileName))
+                using (reader = new StreamReader(hostsFileName))
                 {
 
                     while (!reader.EndOfStream)
@@ -180,7 +181,7 @@ namespace HostServer
             {
                 if (!_taskDictionary.TryRemove(number, out ti))
                 {
-                    Console.WriteLine("End job: task with such number doesn't exist");
+                    //Console.WriteLine("End job: task with such number doesn't exist");
                     return;
                 }
 

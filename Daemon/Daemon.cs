@@ -1,25 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Net;
 using System.Net.Sockets;
 using Parcs;
 using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using System.ServiceProcess;
 
 namespace DaemonPr
 {
-    class Daemon
+    public class Daemon: ServiceBase
     {
         TcpListener _listener;
-        Object _locker = new Object();
-        ConcurrentDictionary<int, int> _jobDictionary = new ConcurrentDictionary<int, int>();
+        private readonly object _locker = new object();
+        private readonly ConcurrentDictionary<int, int> _jobDictionary = new ConcurrentDictionary<int, int>();
         static HostInfo _server;
 
-        public Daemon()
+        protected override void OnStart(string[] args)
+        {
+            Task.Factory.StartNew(Run);
+        }
+
+        protected override void OnStop()
+        {
+            _listener.Stop();
+        }
+
+        public void Run()
         {
             IPAddress ip;
             try
@@ -190,7 +197,21 @@ namespace DaemonPr
         
         public static void Main(string[] args)
         {
-            Daemon daemon = new Daemon();
+            using (var daemon = new Daemon())
+            {
+                if (!Environment.UserInteractive)
+                {
+                    // running as service
+                    ServiceBase.Run(daemon);
+                }
+                    
+                else
+                {
+                    // running as console app
+                    daemon.Run();
+                }
+            }
+
         }
     }
 

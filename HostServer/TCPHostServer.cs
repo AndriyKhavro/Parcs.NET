@@ -1,20 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using Parcs;
 using System.IO;
+using System.ServiceProcess;
 using System.Threading.Tasks;
 
 namespace HostServer
 {
-    public class TCPHostServer
+    public class TCPHostServer : ServiceBase
     {
         private static Server _hostServer;
-        private readonly TcpListener _listener;
+        private TcpListener _listener;
 
-        public TCPHostServer()
+        protected override void OnStart(string[] args)
         {
+            Task.Factory.StartNew(Run);
+        }
+
+        protected override void OnStop()
+        {
+            _listener.Stop();
+        }
+
+        public void Run()
+        {
+            Debugger.Launch();
+
             IPAddress ip;
             try
             {
@@ -33,8 +47,8 @@ namespace HostServer
             _hostServer = new Server(); //make it a singleton and use in self-hosted WebAPI
             Console.WriteLine("Accepting connections from clients, IP: {0}, port: {1}", ip.ToString(), port);
             RunListener();
-
         }
+
         private void RunListener()
         {
             _listener.Start();
@@ -111,13 +125,7 @@ namespace HostServer
                 }
             }
         }
-
-        static void Main(string[] args)
-        {
-            ListenToKeyboard();
-            var tcpHostServer = new TCPHostServer();
-        }
-
+        
         private static void ListenToKeyboard()
         {
             Task.Factory.StartNew(() =>
@@ -137,6 +145,25 @@ namespace HostServer
         {
             Console.WriteLine("Updating host list...");
             _hostServer.UpdateHostList();
+        }
+        
+        static void Main(string[] args)
+        {
+            using (var service = new TCPHostServer())
+            {
+                if (!Environment.UserInteractive)
+                {
+                    // running as service
+                    ServiceBase.Run(service);
+                }
+
+                else
+                {
+                    // running as console app
+                    ListenToKeyboard();
+                    service.Run();
+                }
+            }
         }
     }
 }
