@@ -19,10 +19,12 @@ namespace HostServer.WebApi
                 Number = j.Number,
                 Priority = j.Priority,
                 NeedsPoint = j.NeedsPoint,
+                IsFinished = j.IsFinished,
                 Points = j.PointDictionary.Values.Select(p => new PointInfoDto
                 {
                     Number = p.Number,
                     ParentNumber = p.ParentNumber,
+                    IsFinished = p.IsFinished,
                     HostInfo = new HostInfoDto
                     {
                         IpAddress = p.Host.IpAddress.ToString(),

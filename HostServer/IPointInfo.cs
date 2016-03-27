@@ -12,5 +12,6 @@ namespace HostServer
         int Number { get; set; }
         int ParentNumber { get; }
         HostInfo Host { get; }
+        bool IsFinished { get; set; }
     }
 }

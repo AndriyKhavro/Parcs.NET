@@ -12,6 +12,7 @@ namespace HostServer
         public int Number { get; set; }
         public int ParentNumber { get; private set; }
         public HostInfo Host { get; private set; }
+        public bool IsFinished { get; set; }
 
         public PointInfo(HostInfo host, int parentNumber)
         {

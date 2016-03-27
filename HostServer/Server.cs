@@ -33,9 +33,9 @@ namespace HostServer
 
         readonly ConcurrentDictionary<int, JobInfo> _taskDictionary = new ConcurrentDictionary<int, JobInfo>();
 
-        int taskNumber;
-        const string fileName = "hosts.txt";
-        object _syncRoot = new object();
+        private int _taskNumber;
+        private const string fileName = "hosts.txt";
+        private readonly object _syncRoot = new object();
         
         public void ReadHostsFromFile()
         {
@@ -58,7 +58,7 @@ namespace HostServer
                 }
             }
 
-            catch (FileNotFoundException)
+            catch (FileNotFoundException)            
             {
                 Console.WriteLine("File " + fileName + " was not found!");
             }
@@ -179,22 +179,24 @@ namespace HostServer
         /// <returns>task number</returns>
         public int BeginJob()
         {
-            var t = new JobInfo(++taskNumber);
+            var t = new JobInfo(++_taskNumber);
             _taskDictionary.AddOrUpdate(t.Number, t, (key, value) => value);
             CheckHostNames();
-            return taskNumber;
+            return _taskNumber;
         }
 
         public void EndJob(int number)
         {
-            JobInfo ti;
             lock (_syncRoot)
             {
-                if (!_taskDictionary.TryRemove(number, out ti))
+                JobInfo ti;
+                if (!_taskDictionary.TryGetValue(number, out ti))
                 {
                     //Console.WriteLine("End job: task with such number doesn't exist");
                     return;
                 }
+
+                ti.IsFinished = true;
 
                 foreach (var p in ti.PointDictionary.ToList())
                 {

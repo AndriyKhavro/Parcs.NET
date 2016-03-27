@@ -13,6 +13,7 @@ namespace HostServer
         public IDictionary<int, IPointInfo> PointDictionary { get; }
         public bool NeedsPoint { get; set; }
         public int Priority { get; set; }
+        public bool IsFinished { get; set; }
         
         public JobInfo(int number)
         {
@@ -32,10 +33,10 @@ namespace HostServer
         public void RemovePoint(int pointNum)
         {
             IPointInfo pi;
-            if (PointDictionary.TryGetValue(pointNum, out pi))
+            if (PointDictionary.TryGetValue(pointNum, out pi) && !pi.IsFinished)
             {
                 pi.Host.PointCount--;
-                PointDictionary.Remove(pointNum);
+                pi.IsFinished = true;
             }
         }        
     }
