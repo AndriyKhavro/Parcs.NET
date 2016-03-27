@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace HostServer
 {
-    public class TaskInfo 
+    public class JobInfo 
     {
         public int Number { get; private set; }
         private int _lastPointNumber;
-        public IDictionary<int, IPointInfo> PointDictionary { get; private set; }
+        public IDictionary<int, IPointInfo> PointDictionary { get; }
         public bool NeedsPoint { get; set; }
         public int Priority { get; set; }
         
-        public TaskInfo(int number)
+        public JobInfo(int number)
         {
             PointDictionary = new Dictionary<int, IPointInfo>();
             Number = number;
@@ -37,9 +37,6 @@ namespace HostServer
                 pi.Host.PointCount--;
                 PointDictionary.Remove(pointNum);
             }
-        }
-
-       
-        
+        }        
     }
 }

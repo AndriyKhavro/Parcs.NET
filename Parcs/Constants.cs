@@ -24,6 +24,7 @@ namespace Parcs
     public enum Ports
     {
         ServerPort = 1234,
+        ServerWebApiPort = 1236,
         DaemonPort = 2222
     }
 

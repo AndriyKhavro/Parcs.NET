@@ -11,6 +11,18 @@ namespace HostServer
 {
     class Server
     {
+        private static readonly Lazy<Server> _instance = new Lazy<Server>(() => new Server());
+
+        public static Server Instance
+        {
+            get { return _instance.Value; }
+        }
+
+        private Server()
+        {
+            ReadHostsFromFile();
+        }
+
         IList<HostInfo> _hostList;
 
         public IList<HostInfo> HostList
@@ -19,18 +31,12 @@ namespace HostServer
             set { _hostList = value; }
         }
 
-        //IDictionary<int, TaskInfo> _taskDictionary;
-        readonly ConcurrentDictionary<int, TaskInfo> _taskDictionary = new ConcurrentDictionary<int, TaskInfo>();
+        readonly ConcurrentDictionary<int, JobInfo> _taskDictionary = new ConcurrentDictionary<int, JobInfo>();
 
         int taskNumber;
         const string fileName = "hosts.txt";
         object _syncRoot = new object();
-
-        public Server()
-        {
-            ReadHostsFromFile();
-        }
-
+        
         public void ReadHostsFromFile()
         {
             _hostList = new List<HostInfo>();
@@ -123,7 +129,12 @@ namespace HostServer
 
             return null;
         }
-        
+
+        public IEnumerable<JobInfo> GetCurrentJobs()
+        {
+            return _taskDictionary.Values;
+        }
+
         private void CheckHostNames()
         {
             var listToRemove = _hostList.Where(host => !host.IsConnected && !host.Connect()).ToList();
@@ -140,7 +151,7 @@ namespace HostServer
             }
         }
 
-        private TaskInfo GetTheMostUrgentTask()
+        private JobInfo GetTheMostUrgentTask()
         {
             return _taskDictionary.Values.Where(x => x.NeedsPoint).OrderByDescending(x => x.Priority).ThenBy(x => x.Number).FirstOrDefault();
         }
@@ -149,7 +160,7 @@ namespace HostServer
         {
             lock (_syncRoot)
             {
-                TaskInfo ti;
+                JobInfo ti;
                 if (_taskDictionary.TryGetValue(jobsNum, out ti))
                 {
                     DeletePoint(ti, pointNum);
@@ -157,7 +168,7 @@ namespace HostServer
             }
         }
 
-        private void DeletePoint(TaskInfo ti, int pointNum)
+        private void DeletePoint(JobInfo ti, int pointNum)
         {
             ti.RemovePoint(pointNum);
         }
@@ -168,7 +179,7 @@ namespace HostServer
         /// <returns>task number</returns>
         public int BeginJob()
         {
-            var t = new TaskInfo(++taskNumber);
+            var t = new JobInfo(++taskNumber);
             _taskDictionary.AddOrUpdate(t.Number, t, (key, value) => value);
             CheckHostNames();
             return taskNumber;
@@ -176,7 +187,7 @@ namespace HostServer
 
         public void EndJob(int number)
         {
-            TaskInfo ti;
+            JobInfo ti;
             lock (_syncRoot)
             {
                 if (!_taskDictionary.TryRemove(number, out ti))

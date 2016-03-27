@@ -7,6 +7,8 @@ using Parcs;
 using System.IO;
 using System.ServiceProcess;
 using System.Threading.Tasks;
+using HostServer.WebApi;
+using Microsoft.Owin.Hosting;
 
 namespace HostServer
 {
@@ -14,6 +16,8 @@ namespace HostServer
     {
         private static Server _hostServer;
         private TcpListener _listener;
+        private const int WEB_API_PORT = 1236;
+        private IDisposable _webApi;
 
         protected override void OnStart(string[] args)
         {
@@ -22,12 +26,13 @@ namespace HostServer
 
         protected override void OnStop()
         {
-            _listener.Stop();
+            _listener?.Stop();
+            _webApi?.Dispose();
         }
 
         public void Run()
         {
-            Debugger.Launch();
+            _webApi = WebApp.Start<Startup>($"http://localhost:{WEB_API_PORT}");
 
             IPAddress ip;
             try
@@ -44,7 +49,7 @@ namespace HostServer
 
             int port = (int)Ports.ServerPort;
             _listener = new TcpListener(ip, port);
-            _hostServer = new Server(); //make it a singleton and use in self-hosted WebAPI
+            _hostServer = Server.Instance; //make it a singleton and use in self-hosted WebAPI
             Console.WriteLine("Accepting connections from clients, IP: {0}, port: {1}", ip.ToString(), port);
             RunListener();
         }
