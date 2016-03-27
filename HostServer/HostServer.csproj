@@ -91,6 +91,7 @@
     </Compile>
     <Compile Include="WebApi\Dto\HostInfoDto.cs" />
     <Compile Include="WebApi\Dto\PointInfoDto.cs" />
+    <Compile Include="WebApi\HostController.cs" />
     <Compile Include="WebApi\JobController.cs" />
     <Compile Include="WebApi\Dto\JobInfoDto.cs" />
     <Compile Include="WebApi\Startup.cs" />

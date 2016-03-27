@@ -23,13 +23,7 @@ namespace HostServer
             ReadHostsFromFile();
         }
 
-        IList<HostInfo> _hostList;
-
-        public IList<HostInfo> HostList
-        {
-            get { return _hostList; }
-            set { _hostList = value; }
-        }
+        public IList<HostInfo> HostList { get; private set; }
 
         readonly ConcurrentDictionary<int, JobInfo> _taskDictionary = new ConcurrentDictionary<int, JobInfo>();
 
@@ -39,7 +33,7 @@ namespace HostServer
         
         public void ReadHostsFromFile()
         {
-            _hostList = new List<HostInfo>();
+            HostList = new List<HostInfo>();
             StreamReader reader = null;
             var hostsFileName = File.Exists(fileName)
                 ? fileName
@@ -53,7 +47,7 @@ namespace HostServer
                     {
                         string ip = reader.ReadLine();
                         if (string.IsNullOrEmpty(ip)) break;
-                        _hostList.Add(new HostInfo(ip, (int)Ports.DaemonPort));
+                        HostList.Add(new HostInfo(ip, (int)Ports.DaemonPort));
                     }
                 }
             }
@@ -64,7 +58,7 @@ namespace HostServer
             }
 
 
-            if (_hostList.Count == 0)
+            if (HostList.Count == 0)
             {
                 throw new ParcsException("Host list is empty!");
             }
@@ -119,7 +113,7 @@ namespace HostServer
         /// <returns>Target host. Returns null in case there is no free host.</returns>
         public HostInfo GetTargetHost()
         {
-            foreach (var host in _hostList.OrderByDescending(host => host.LinpackResult))
+            foreach (var host in HostList.OrderByDescending(host => host.LinpackResult))
             {
                 if (host.PointCount < host.ProcessorCount)
                 {
@@ -137,15 +131,15 @@ namespace HostServer
 
         private void CheckHostNames()
         {
-            var listToRemove = _hostList.Where(host => !host.IsConnected && !host.Connect()).ToList();
+            var listToRemove = HostList.Where(host => !host.IsConnected && !host.Connect()).ToList();
             foreach (var host in listToRemove)
             {
                 Console.WriteLine("Host {0} is not responding...", host.IpAddress.ToString());
             }
 
-            _hostList = _hostList.Except(listToRemove).ToList();
+            HostList = HostList.Except(listToRemove).ToList();
 
-            foreach (var host in _hostList)
+            foreach (var host in HostList)
             {
                 host.SendLocalIp();
             }
