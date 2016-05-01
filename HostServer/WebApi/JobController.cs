@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using HostServer.WebApi.Dto;
 using Parcs;
 
 namespace HostServer.WebApi
 {
+    [EnableCors(headers:"*", origins:"*", methods:"*")]
     public class JobController : ApiController
     {
         // GET api/job
