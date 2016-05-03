@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using HostServer.WebApi.Dto;
+using log4net;
 using Parcs;
 
 namespace HostServer.WebApi
@@ -13,6 +14,8 @@ namespace HostServer.WebApi
     [EnableCors(headers:"*", origins:"*", methods:"*")]
     public class JobController : ApiController
     {
+        //private readonly ILog _log = LogManager.GetLogger(typeof (JobController));
+
         // GET api/job
         public IEnumerable<JobInfoDto> Get()
         {
@@ -34,6 +37,14 @@ namespace HostServer.WebApi
                     }
                 }).ToArray()
             });
+        }
+
+        [HttpPost]
+        //[Route("cancel")]
+        public IHttpActionResult CancelJob(int number)
+        {
+            //_log.Debug($"Cancelling job N {number}");
+            return Ok();
         }
     }
 }

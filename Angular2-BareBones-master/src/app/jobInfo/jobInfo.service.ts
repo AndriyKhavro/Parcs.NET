@@ -15,6 +15,11 @@ export class JobInfoService {
                 .map(this.extractData);
     }
     
+    public cancelJob(jobNumber: number) {
+        return this.http.post(this._jobInfoUrl + '/cancel', jobNumber.toString())
+            .map(this.extractData);
+    }
+    
     private extractData(res: Response) {
         if (res.status < 200 || res.status >= 300) {
             throw new Error('Bad response status: ' + res.status);

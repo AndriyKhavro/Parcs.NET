@@ -16,11 +16,16 @@ export class JobInfoComponent implements OnInit {
 
     public jobs:JobInfo[];
 
-    ngOnInit() { 
+    public ngOnInit() { 
         this.getJobInfos();
     }
     
-    getJobInfos() {
+    public cancelJob(jobNumber: number) {
+        this._jobInfoService.cancelJob(jobNumber)
+            .subscribe(_ => console.log('The job number ${jobNumber} was cancelled'));
+    }
+    
+    private getJobInfos() {
         this._jobInfoService.get()
             .subscribe(jobs => this.jobs = jobs);
     }

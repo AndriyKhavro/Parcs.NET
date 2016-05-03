@@ -3,6 +3,7 @@
   <li *ngFor="#job of jobs">
     <span>Job N {{ job.number }} with priority {{ job.priority }} needs point: {{job.needsPoint}} {{job.isFinished ? 'is finished' : 'is running'}}.</span>
     <span>Point count: {{job.points.length}}</span>
+    <button (click)="cancelJob(job.number)">Cancel</button>
   </li>
 <ul>  
 <br />
