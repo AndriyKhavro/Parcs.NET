@@ -1,5 +1,5 @@
 import {Injectable} from 'angular2/core';
-import {Http, Response} from 'angular2/http';
+import {Http, Response, Headers} from 'angular2/http';
 import {JobInfo}           from './jobInfo';
 import {Observable}     from 'rxjs/Observable';
 
@@ -16,8 +16,9 @@ export class JobInfoService {
     }
     
     public cancelJob(jobNumber: number) {
-        return this.http.post(this._jobInfoUrl + '/cancel', jobNumber.toString())
-            .map(this.extractData);
+        var headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        return this.http.post(this._jobInfoUrl + '/cancel', JSON.stringify({number: jobNumber}), {headers: headers});
     }
     
     private extractData(res: Response) {
