@@ -6,7 +6,6 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.ServiceProcess;
-using log4net;
 
 namespace DaemonPr
 {
@@ -16,7 +15,6 @@ namespace DaemonPr
         private readonly object _locker = new object();
         private readonly ConcurrentDictionary<int, int> _jobDictionary = new ConcurrentDictionary<int, int>();
         static HostInfo _server;
-        private readonly ILog _log = LogManager.GetLogger(typeof(Daemon));
 
         protected override void OnStart(string[] args)
         {
@@ -45,7 +43,7 @@ namespace DaemonPr
 
             int port = (int)Ports.DaemonPort;
             _listener = new TcpListener(ip, port);
-            _log.InfoFormat("Accepting connections from clients, IP: {0}, port: {1}", ip, port);
+            Console.WriteLine("Accepting connections from clients, IP: {0}, port: {1}", ip.ToString(), port);
             RunListener();
         }
 
@@ -66,7 +64,7 @@ namespace DaemonPr
                 }
                 catch (SocketException)
                 {
-                    _log.Error("Unknown error, stopping the listener...");
+                    Console.WriteLine("Unknown error, stopping the listener...");
                     _listener.Stop();
                     return;
                 }
@@ -157,14 +155,14 @@ namespace DaemonPr
                                     }
 
                                 default:
-                                    _log.Error("Unknown signal received, stopping the application...");
+                                    Console.WriteLine("Unknown signal received, stopping the application...");
                                     return;
                             }
                         }
 
                         catch (Exception ex)
                         {
-                            _log.Error(ex.Message);
+                            Console.WriteLine(ex.Message);
                             return;
                         }
                     }
@@ -213,6 +211,7 @@ namespace DaemonPr
                     daemon.Run();
                 }
             }
+
         }
     }
 

@@ -8,7 +8,6 @@ using System.IO;
 using System.ServiceProcess;
 using System.Threading.Tasks;
 using HostServer.WebApi;
-using log4net;
 using Microsoft.Owin.Hosting;
 
 namespace HostServer
@@ -19,8 +18,6 @@ namespace HostServer
         private TcpListener _listener;
         private const int WEB_API_PORT = 1236;
         private IDisposable _webApi;
-
-        private static readonly ILog Log = LogManager.GetLogger(typeof(TCPHostServer));
 
         protected override void OnStart(string[] args)
         {
@@ -53,7 +50,7 @@ namespace HostServer
             int port = (int)Ports.ServerPort;
             _listener = new TcpListener(ip, port);
             _hostServer = Server.Instance; //make it a singleton and use in self-hosted WebAPI
-            Log.Info($"Accepting connections from clients, IP: {ip}, port: {port}");
+            Console.WriteLine("Accepting connections from clients, IP: {0}, port: {1}", ip.ToString(), port);
             RunListener();
         }
 
@@ -151,7 +148,7 @@ namespace HostServer
 
         private static void UpdateHostList()
         {
-            Log.Debug("Updating host list...");
+            Console.WriteLine("Updating host list...");
             _hostServer.UpdateHostList();
         }
         

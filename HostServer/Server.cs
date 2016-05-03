@@ -6,14 +6,12 @@ using Parcs;
 using System.Reflection;
 using System.Collections.Concurrent;
 using System.Threading;
-using log4net;
 
 namespace HostServer
 {
     class Server
     {
         private static readonly Lazy<Server> _instance = new Lazy<Server>(() => new Server());
-        private static readonly ILog Log = LogManager.GetLogger(typeof(Server));
 
         public static Server Instance
         {
@@ -56,7 +54,7 @@ namespace HostServer
 
             catch (FileNotFoundException)            
             {
-                Log.Warn("File " + fileName + " was not found!");
+                Console.WriteLine("File " + fileName + " was not found!");
             }
 
 
@@ -136,7 +134,7 @@ namespace HostServer
             var listToRemove = HostList.Where(host => !host.IsConnected && !host.Connect()).ToList();
             foreach (var host in listToRemove)
             {
-                Log.Warn($"Host {host.IpAddress} is not responding...");
+                Console.WriteLine("Host {0} is not responding...", host.IpAddress.ToString());
             }
 
             HostList = HostList.Except(listToRemove).ToList();
@@ -200,7 +198,7 @@ namespace HostServer
                 }
             }
 
-            Log.Info($"Job N {number} has finished");
+            Console.WriteLine("Job N {0} has finished", number);
         }
 
     }

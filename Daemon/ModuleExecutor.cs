@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Net;
+using System.Net.Sockets;
 using Parcs;
 using System.Reflection;
 using System.IO;
-using log4net;
 
 namespace DaemonPr
 {
@@ -13,7 +18,6 @@ namespace DaemonPr
         private IJob _currentJob;
         private int _pointNum;
         private string _assemblyFullPath;
-        private readonly ILog _log = LogManager.GetLogger(typeof(ModuleExecutor));
         
         public ModuleExecutor(IChannel chan, IJob curJob, int pointNum)
         {
@@ -38,24 +42,24 @@ namespace DaemonPr
 
             catch (ArgumentException)
             {
-                _log.Error("Class "
+                Console.WriteLine("Class "
                     + classname + " for point " + _pointNum +
                     " not found");
                 return;
             }
             catch (Exception ex)
             {
-                _log.Error(ex.Message);
+                Console.WriteLine(ex.Message);
                 return;
             }
 
-            _log.Info("Starting class " + module.GetType() +
+            Console.WriteLine("Starting class " + module.GetType().ToString() +
                     " on point "
                     + _currentJob.Number + ":" + _pointNum + " ...");
 
             module.Run(new ModuleInfo(_currentJob, _channel));
-
-            _log.Info("Calcutations finished on point "
+            
+            Console.WriteLine("Calcutations finished on point "
                     + _currentJob.Number + ":" + _pointNum + " ...");	                           
         }
     }
