@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace NewMatrixModule
 {
@@ -31,7 +32,7 @@ namespace NewMatrixModule
             Console.ReadKey();
         }
 
-        public override void Run(ModuleInfo info)
+        public override void Run(ModuleInfo info, CancellationToken token = default(CancellationToken))
         {
             string file1 = options.File1;
             string file2 = options.File2;

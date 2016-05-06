@@ -188,7 +188,7 @@ namespace HostServer
                 JobInfo ti;
                 if (!_taskDictionary.TryGetValue(number, out ti))
                 {
-                    //Console.WriteLine("End job: task with such number doesn't exist");
+                    Log.Warn("End job: task with such number doesn't exist");
                     return;
                 }
 
@@ -203,5 +203,19 @@ namespace HostServer
             Log.Info($"Job N {number} has finished");
         }
 
+        public void CancelJob(int number)
+        {
+            lock (_syncRoot)
+            {
+                JobInfo job;
+                if (!_taskDictionary.TryGetValue(number, out job))
+                {
+                    Log.Warn("End job: task with such number doesn't exist");
+                    return;
+                }
+
+
+            }
+        }
     }
 }

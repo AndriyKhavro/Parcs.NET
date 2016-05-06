@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
+using System.Threading;
 using Parcs;
 
 namespace FirstModule
@@ -21,16 +18,14 @@ namespace FirstModule
             }
 
             (new MainIntegralModule()).Run(new ModuleInfo(job, null));
-            //fucker.FinishFucker();
             Console.ReadKey();
         }
 
-        public void Run(ModuleInfo info)
+        public void Run(ModuleInfo info, CancellationToken token = default(CancellationToken))
         {
             double a = 0;
             double b = Math.PI/2;
             double h = 0.00000001;
-            //var func = new Func<double, double>(x => Math.Cos(x * x * x));
             const int pointsNum = 2;
             var points = new IPoint[pointsNum];
             var channels = new IChannel[pointsNum];
@@ -47,7 +42,6 @@ namespace FirstModule
                 channels[i].WriteData(y);
                 channels[i].WriteData(y + (b - a) / pointsNum);
                 channels[i].WriteData(h);
-                //channels[i].WriteObject(func);
                 y += (b - a) / pointsNum;
             }
             DateTime time = DateTime.Now;            

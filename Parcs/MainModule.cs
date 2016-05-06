@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
+﻿using System.Reflection;
+using System.Threading;
 
 namespace Parcs
 {
@@ -38,6 +35,6 @@ namespace Parcs
             }
         }
 
-        public abstract void Run(ModuleInfo info);
+        public abstract void Run(ModuleInfo info, CancellationToken token = default(CancellationToken));
     }
 }

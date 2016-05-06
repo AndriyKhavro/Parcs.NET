@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using Parcs;
 
 namespace FirstModule
 {
-   // private static Func<double, double> func = x => Math.c
     public class IntegralModule: IModule
     {
         private static double Integral(double a, double b, double h, Func<double, double> func)
@@ -23,7 +19,7 @@ namespace FirstModule
             return res * h;
         }
 
-        public void Run(ModuleInfo info)
+        public void Run(ModuleInfo info, CancellationToken token = default(CancellationToken))
         {
             double a = info.Parent.ReadData(typeof(double));
             double b = info.Parent.ReadData(typeof(double));

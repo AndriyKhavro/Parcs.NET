@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 
 namespace NewMatrixModule
 {
@@ -74,7 +75,7 @@ namespace NewMatrixModule
             return this;
         }
 
-        public Matrix MultiplyBy(Matrix matrix)
+        public Matrix MultiplyBy(Matrix matrix, CancellationToken token = default(CancellationToken))
         {
             Matrix resultMatrix = null;
             if (Width != matrix.Height)
@@ -87,6 +88,7 @@ namespace NewMatrixModule
                 resultMatrix = new Matrix(Height, matrix.Width);
                 for (int i = 0; i < Height; i++)
                 {
+                    token.ThrowIfCancellationRequested();
                     for (int j = 0; j < matrix.Width; j++)
                     {
                         resultMatrix[i, j] = 0;
@@ -96,7 +98,6 @@ namespace NewMatrixModule
                         }
                     }
                 }
-
             }
 
             return resultMatrix;

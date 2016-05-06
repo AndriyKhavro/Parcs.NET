@@ -2,6 +2,7 @@
 using Parcs;
 using System.Reflection;
 using System.IO;
+using System.Threading;
 using log4net;
 
 namespace DaemonPr
@@ -23,7 +24,7 @@ namespace DaemonPr
             _pointNum = pointNum;
         }
 
-        public void Run()
+        public void Run(CancellationToken token)
         {
             IModule module = null;
             string classname = (string)_channel.ReadData(typeof(string));
@@ -53,7 +54,7 @@ namespace DaemonPr
                     " on point "
                     + _currentJob.Number + ":" + _pointNum + " ...");
 
-            module.Run(new ModuleInfo(_currentJob, _channel));
+            module.Run(new ModuleInfo(_currentJob, _channel), token);
 
             _log.Info("Calcutations finished on point "
                     + _currentJob.Number + ":" + _pointNum + " ...");	                           

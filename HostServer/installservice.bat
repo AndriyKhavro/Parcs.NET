@@ -1,1 +1,1 @@
-sc create ParcsHostServer binpath="C:\Projects\parcscsharp\Parcs.NET\HostServer\bin\Release\HostServer.exe" start=auto
+sc create ParcsHostServerRelease binpath="C:\Projects\parcscsharp\Parcs.NET\HostServer\bin\Release\HostServer.exe"

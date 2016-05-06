@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.ServiceProcess;
+using System.Threading;
 using log4net;
 
 namespace DaemonPr
@@ -96,7 +97,6 @@ namespace DaemonPr
                                 case ((byte)Constants.RecieveTask):
 
                                     currentJob = (Job)channel.ReadObject();
-                                    //Job.AddUniqueJob(currentJob);
                                     _jobDictionary.AddOrUpdate(currentJob.Number, 1, (key, oldvalue) => oldvalue + 1);
                                     pointNumber = channel.ReadData(typeof(int));
                                     continue;
@@ -107,7 +107,7 @@ namespace DaemonPr
                                     {
 
                                         var executor = new ModuleExecutor(channel, currentJob, pointNumber);
-                                        executor.Run();
+                                        executor.Run(CancellationToken.None); //TODO: pass real cancellation token here
                                         
                                         DeletePoint(currentJob.Number, pointNumber);
  
