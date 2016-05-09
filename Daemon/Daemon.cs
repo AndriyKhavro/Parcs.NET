@@ -5,17 +5,19 @@ using Parcs;
 using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ServiceProcess;
 using System.Threading;
 using log4net;
 
 namespace DaemonPr
 {
-    public class Daemon: ServiceBase
+    public class Daemon : ServiceBase
     {
         TcpListener _listener;
         private readonly object _locker = new object();
-        private readonly ConcurrentDictionary<int, int> _jobDictionary = new ConcurrentDictionary<int, int>();
+        private readonly ConcurrentDictionary<int, List<int>> _jobPointNumberDictionary = new ConcurrentDictionary<int, List<int>>(); //stores numbers of points
+        private readonly ConcurrentDictionary<int, CancellationTokenSource> _cancellationDictionary = new ConcurrentDictionary<int, CancellationTokenSource>();
         static HostInfo _server;
         private readonly ILog _log = LogManager.GetLogger(typeof(Daemon));
 
@@ -97,27 +99,38 @@ namespace DaemonPr
                                 case ((byte)Constants.RecieveTask):
 
                                     currentJob = (Job)channel.ReadObject();
-                                    _jobDictionary.AddOrUpdate(currentJob.Number, 1, (key, oldvalue) => oldvalue + 1);
                                     pointNumber = channel.ReadData(typeof(int));
+                                    _jobPointNumberDictionary.AddOrUpdate(currentJob.Number, new List<int> {pointNumber},
+                                        (key, oldvalue) =>
+                                        {
+                                            oldvalue.Add(pointNumber);
+                                            return oldvalue;
+                                        });
+                                    _cancellationDictionary.AddOrUpdate(currentJob.Number, new CancellationTokenSource(),
+                                        (key, oldValue) => oldValue);
                                     continue;
 
                                 case ((byte)Constants.ExecuteClass):
 
                                     if (currentJob != null)
                                     {
-
-                                        var executor = new ModuleExecutor(channel, currentJob, pointNumber);
-                                        executor.Run(CancellationToken.None); //TODO: pass real cancellation token here
-                                        
-                                        DeletePoint(currentJob.Number, pointNumber);
- 
-                                        if (_jobDictionary[currentJob.Number] == 0)
+                                        var cancellationTokenSource = _cancellationDictionary[currentJob.Number];
+                                        if (!_cancellationDictionary[currentJob.Number].IsCancellationRequested)
                                         {
-                                            lock (_locker)
+                                            var executor = new ModuleExecutor(channel, currentJob, pointNumber);
+
+                                            executor.Run(cancellationTokenSource.Token);
+
+                                            DeletePoint(currentJob.Number, pointNumber);
+
+                                            if (_jobPointNumberDictionary[currentJob.Number].Count == 0)
                                             {
-                                                if (File.Exists(currentJob.FileName))
+                                                lock (_locker)
                                                 {
-                                                    File.Delete(currentJob.FileName);
+                                                    if (File.Exists(currentJob.FileName))
+                                                    {
+                                                        File.Delete(currentJob.FileName);
+                                                    }
                                                 }
                                             }
                                         }
@@ -184,7 +197,11 @@ namespace DaemonPr
 
         private void DeletePoint(int jobNum, int pointNum)
         {
-            _jobDictionary.AddOrUpdate(jobNum, 0, (key, oldvalue) => oldvalue - 1);
+            _jobPointNumberDictionary.AddOrUpdate(jobNum, new List<int>(), (key, oldvalue) =>
+            {
+                oldvalue.Remove(pointNum);
+                return oldvalue;
+            });
 
             if (_server != null)
             {
@@ -196,7 +213,7 @@ namespace DaemonPr
                 }
             }
         }
-        
+
         public static void Main(string[] args)
         {
             using (var daemon = new Daemon())
@@ -206,7 +223,7 @@ namespace DaemonPr
                     // running as service
                     ServiceBase.Run(daemon);
                 }
-                    
+
                 else
                 {
                     // running as console app
