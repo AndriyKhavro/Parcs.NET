@@ -75,13 +75,17 @@ namespace HostServer
 
         public IPointInfo CreatePoint(int jobNumber, int parentNumber)
         {
-            var taskInfo = _taskDictionary[jobNumber];
+            var jobInfo = _taskDictionary[jobNumber];            
             HostInfo target = null;
             bool targetChosen = false;
             while (!targetChosen)
             {
-                taskInfo.NeedsPoint = true;
-                if (taskInfo == GetTheMostUrgentTask())
+                if (jobInfo.IsCancelled)
+                {
+                    return null;
+                }
+                jobInfo.NeedsPoint = true;
+                if (jobInfo == GetTheMostUrgentTask())
                 {
                     lock (_syncRoot)
                     {
@@ -103,7 +107,7 @@ namespace HostServer
             PointInfo p = new PointInfo(target, parentNumber);
             lock (_syncRoot)
             {
-                taskInfo.AddPoint(p);
+                jobInfo.AddPoint(p);
             }
 
             return p;
@@ -205,16 +209,17 @@ namespace HostServer
 
         public void CancelJob(int number)
         {
+            var jobToCancel = _taskDictionary[number];
+            foreach (var host in jobToCancel.PointDictionary.Values.Select(p => p.Host).Distinct())
+            {
+                Log.Debug($"Cancelling job N {number} on host {host.IpAddress}...");
+                host.Writer.Write((byte)Constants.CancelJob);
+                host.Writer.Write(number);
+            }
             lock (_syncRoot)
             {
-                JobInfo job;
-                if (!_taskDictionary.TryGetValue(number, out job))
-                {
-                    Log.Warn("End job: task with such number doesn't exist");
-                    return;
-                }
-
-
+                jobToCancel.NeedsPoint = false;
+                jobToCancel.IsCancelled = true;
             }
         }
     }

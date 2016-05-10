@@ -43,7 +43,8 @@ namespace HostServer.WebApi
         [Route("cancel")]
         public IHttpActionResult CancelJob(CancelJobDto dto)
         {
-            _log.Debug($"Job N {dto.Number} was cancelled.");
+            _log.Debug($"Cancelling Job N {dto.Number}...");
+            Server.Instance.CancelJob(dto.Number);
             return Ok();
         }
     }

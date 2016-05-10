@@ -100,7 +100,7 @@ namespace DaemonPr
 
                                     currentJob = (Job)channel.ReadObject();
                                     pointNumber = channel.ReadData(typeof(int));
-                                    _jobPointNumberDictionary.AddOrUpdate(currentJob.Number, new List<int> {pointNumber},
+                                    _jobPointNumberDictionary.AddOrUpdate(currentJob.Number, new List<int> { pointNumber },
                                         (key, oldvalue) =>
                                         {
                                             oldvalue.Add(pointNumber);
@@ -119,7 +119,14 @@ namespace DaemonPr
                                         {
                                             var executor = new ModuleExecutor(channel, currentJob, pointNumber);
 
-                                            executor.Run(cancellationTokenSource.Token);
+                                            try
+                                            {
+                                                executor.Run(cancellationTokenSource.Token);
+                                            }
+                                            catch (OperationCanceledException)
+                                            {
+                                                _log.Info($"Point N {currentJob.Number}:{pointNumber} was cancelled");
+                                            }
 
                                             DeletePoint(currentJob.Number, pointNumber);
 
@@ -168,6 +175,21 @@ namespace DaemonPr
 
                                         continue;
                                     }
+                                case ((byte)Constants.CancelJob):
+                                {
+                                    int jobNumber = channel.ReadData(typeof (int));
+                                    CancellationTokenSource tokenSource;
+                                    if (_cancellationDictionary.TryGetValue(jobNumber, out tokenSource))
+                                    {
+                                        tokenSource.Cancel();
+                                        _log.Info($"Cancelling job N {jobNumber}");
+                                    }
+                                    else
+                                    {
+                                        _log.Info($"Job N {jobNumber} does not exist or does not have cancellation token");
+                                    }
+                                    continue;
+                                }
 
                                 default:
                                     _log.Error("Unknown signal received, stopping the application...");

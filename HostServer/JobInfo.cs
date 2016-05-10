@@ -14,7 +14,8 @@ namespace HostServer
         public bool NeedsPoint { get; set; }
         public int Priority { get; set; }
         public bool IsFinished { get; set; }
-        
+        public bool IsCancelled { get; set; }
+
         public JobInfo(int number)
         {
             PointDictionary = new Dictionary<int, IPointInfo>();

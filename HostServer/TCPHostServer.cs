@@ -96,6 +96,10 @@ namespace HostServer
                                     jobNumber = reader.ReadInt32();
                                     int parentNumber = reader.ReadInt32();
                                     IPointInfo point = _hostServer.CreatePoint(jobNumber, parentNumber);
+                                    if (point == null)
+                                    {
+                                        return;
+                                    }
                                     writer.Write(point.Number);
                                     writer.Write(point.Host.IpAddress.ToString()); //provide client with point and daemon IP adress
                                     break;

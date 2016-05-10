@@ -19,7 +19,8 @@ namespace Parcs
         ProcessorsCountRequest = 8,
         FinishJob = 9,
         LinpackRequest = 10,
-        ServerIP = 11
+        ServerIP = 11,
+        CancelJob = 12
     }
     public enum Ports
     {
