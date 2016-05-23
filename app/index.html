@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="Parcs UI">
+    <meta name="author" content="Mykola & Khavro">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Fixed Top Navbar Example for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="css/index.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <span class="navbar-brand">PARCS cloud</span>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li role="separator" class="divider"></li>
+                <li class="dropdown-header">Nav header</li>
+                <li><a href="#">Separated link</a></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+	<div class="container">
+		<div class="row">
+			<div class="table-responsive col-md-4">
+				<div class="table-title">
+					<h5 class="table-title">Jobs</h5>
+				</div>
+				<table class="table table-hover table-bordered">
+					<thead>
+						<th>№</th>
+						<th>Priority</th>
+						<th>Status</th>
+					</thead>
+					<tr>
+						<td>1</td>
+						<td>High</td>
+						<td>Active</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>Medium</td>
+						<td>Pending</td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>Low</td>
+						<td>Finished</td>
+					</tr>
+				</table>
+			</div>
+			<div class="table-responsive col-md-4">
+				<table class="table table-hover">
+					<thead>
+						<th>Hosts</th>
+						<th class="text-right"><button class="btn btn-success table-headerButton">+</button></th>
+					</thead>
+					<tr>
+						<td>Name</td>
+						<td class="text-right">
+							<button class="btn btn-danger btn-sm">Remove</button>
+						</td>
+					</tr>
+					<tr>
+						<td>Name2</td>
+						<td class="text-right">
+							<button class="btn btn-danger btn-sm">Remove</button>
+						</td>
+					</tr>
+					<tr>
+						<td>Name3</td>
+						<td class="text-right">
+							<button class="btn btn-danger btn-sm">Remove</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="col-md-4 logger">
+				<div class="logger-title">
+					<span>Log</span>
+					<button class="btn btn-default table-headerButton">Export</button>
+				</div>
+				<ul class="logger-list list-unstyled">
+					<li>
+						<span class="text-success">Success log</span>
+						<span class="logger-time">12:45</span>
+					</li>
+					<li>
+						<span class="text-warning">Warning log</span>
+						<span class="logger-time">12:46</span>
+					</li>
+					<li>
+						<span class="text-danger">Error log</span>
+						<span class="logger-time">12:47</span>
+					</li>
+					<li>
+						<span class="text-success">Success log</span>
+						<span class="logger-time">12:45</span>
+					</li>
+					<li>
+						<span class="text-warning">Warning log</span>
+						<span class="logger-time">12:46</span>
+					</li>
+					<li>
+						<span class="text-danger">Error log</span>
+						<span class="logger-time">12:47</span>
+					</li><li>
+					<span class="text-success">Success log</span>
+					<span class="logger-time">12:45</span>
+				</li>
+					<li>
+						<span class="text-warning">Warning log</span>
+						<span class="logger-time">12:46</span>
+					</li>
+					<li>
+						<span class="text-danger">Error log</span>
+						<span class="logger-time">12:47</span>
+					</li><li>
+					<span class="text-success">Success log</span>
+					<span class="logger-time">12:45</span>
+				</li>
+					<li>
+						<span class="text-warning">Warning log</span>
+						<span class="logger-time">12:46</span>
+					</li>
+					<li>
+						<span class="text-danger">Error log</span>
+						<span class="logger-time">12:47</span>
+					</li><li>
+					<span class="text-success">Success log</span>
+					<span class="logger-time">12:45</span>
+				</li>
+					<li>
+						<span class="text-warning">Warning log</span>
+						<span class="logger-time">12:46</span>
+					</li>
+					<li>
+						<span class="text-danger">Error log</span>
+						<span class="logger-time">12:47</span>
+					</li><li>
+					<span class="text-success">Success log</span>
+					<span class="logger-time">12:45</span>
+				</li>
+					<li>
+						<span class="text-warning">Warning log</span>
+						<span class="logger-time">12:46</span>
+					</li>
+					<li>
+						<span class="text-danger">Error log</span>
+						<span class="logger-time">12:47</span>
+					</li><li>
+					<span class="text-success">Success log</span>
+					<span class="logger-time">12:45</span>
+				</li>
+					<li>
+						<span class="text-warning">Warning log</span>
+						<span class="logger-time">12:46</span>
+					</li>
+					<li>
+						<span class="text-danger">Error log</span>
+						<span class="logger-time">12:47</span>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="row analytics">
+			<div class="col-md-4 analytics-item">
+				<div class="analytics-container">
+					<h4>Chart1</h4>
+					<div class="analytics-chart"></div>
+				</div>
+			</div>
+			<div class="col-md-4 analytics-item">
+				<div class="analytics-container">
+					<h4>Chart2</h4>
+					<div class="analytics-chart"></div>
+				</div>
+			</div>
+			<div class="col-md-4 analytics-item">
+				<div class="analytics-container">
+					<h4>Chart3</h4>
+					<div class="analytics-chart"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+  </body>
+</html>
