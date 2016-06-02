@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
-using HostServer.WebApi.Dto;
+using Parcs.Api.Dto;
 
 namespace HostServer.WebApi
 {

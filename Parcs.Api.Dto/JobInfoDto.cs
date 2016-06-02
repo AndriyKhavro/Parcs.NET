@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace HostServer.WebApi.Dto
+namespace Parcs.Api.Dto
 {
     public class JobInfoDto
     {

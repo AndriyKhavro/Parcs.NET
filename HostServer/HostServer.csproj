@@ -104,11 +104,8 @@
     <Compile Include="TCPHostServer.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="WebApi\Dto\HostInfoDto.cs" />
-    <Compile Include="WebApi\Dto\PointInfoDto.cs" />
     <Compile Include="WebApi\HostController.cs" />
     <Compile Include="WebApi\JobController.cs" />
-    <Compile Include="WebApi\Dto\JobInfoDto.cs" />
     <Compile Include="WebApi\Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +115,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Parcs.Api.Dto\Parcs.Api.Dto.csproj">
+      <Project>{43A0271C-C5F6-4DBD-8650-1E1AF5657E8C}</Project>
+      <Name>Parcs.Api.Dto</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Parcs\Parcs.csproj">
       <Project>{73e7db23-be33-4c7f-89b5-e27523e71496}</Project>
       <Name>Parcs</Name>
