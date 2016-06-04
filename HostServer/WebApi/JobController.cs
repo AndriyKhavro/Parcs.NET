@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using HostServer.WebApi.Dto;
 using log4net;
 using Parcs;
+using Parcs.Api.Dto;
 
 namespace HostServer.WebApi
 {

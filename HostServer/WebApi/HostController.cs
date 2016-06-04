@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
-using HostServer.WebApi.Dto;
+using Parcs.Api.Dto;
 
 namespace HostServer.WebApi
 {
@@ -12,7 +12,9 @@ namespace HostServer.WebApi
             return Server.Instance.HostList.Select(h => new HostInfoDto
             {
                 IpAddress = h.IpAddress.ToString(),
-                PointCount = h.PointCount
+                PointCount = h.PointCount,
+                ProcessorCount = h.ProcessorCount,
+                LinpackResult = h.LinpackResult
             });
         } 
     }

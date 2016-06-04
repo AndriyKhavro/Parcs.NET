@@ -62,7 +62,9 @@ namespace HostServer
 
             if (HostList.Count == 0)
             {
-                throw new ParcsException("Host list is empty!");
+                var errorMessage = "Host list is empty!";
+                Log.Error(errorMessage);
+                throw new ParcsException(errorMessage);
             }
         }
 
