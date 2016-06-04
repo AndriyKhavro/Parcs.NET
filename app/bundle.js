@@ -19,11 +19,7 @@ app.controller('MainController', require('./main.controller'));
 },{"./main.controller":3,"angular":11}],3:[function(require,module,exports){
 function MainController($scope, $interval, constants) {
 
-    $scope.charts = [{
-        title: constants.chartTitles.processors
-    }, {
-        title: constants.chartTitles.benchmark
-    }];
+    $scope.charts = [constants.charts.processors, constants.charts.benchmark];
     $scope.title = "chart1";
     $scope.chartsData = {
         response: []
@@ -44,7 +40,7 @@ function ChartDirective (chartService) {
         template: '<div class="analytics-chart"></div>',
         replace: true,
         scope: {
-            title: '@',
+            options: '=',
             data: '='
         },
         link: function($scope) {
@@ -54,11 +50,11 @@ function ChartDirective (chartService) {
             var vm = this;
 
             $scope.$watch('vm.data.response', function() {
-               var pointValue = chartService.getChartData(vm.title);
+               var pointValue = chartService.getChartData(vm.options.title);
                vm.chart.addPoint(pointValue);
             });
 
-            vm.chart = new Chart(vm.title);
+            vm.chart = new Chart(vm.options);
             vm.chart.draw($element[0]);
 
         },
@@ -126,17 +122,19 @@ var chartOptions = {
     }]
 };
 
-function Chart(title) {
-    this.setOptions(title);
+function Chart(options) {
+    this.setOptions(options);
 }
 
 Chart.prototype.draw = function(element) {
     this.chart = Highcharts.chart(element, this.options);
 };
 
-Chart.prototype.setOptions = function(title) {
-    chartOptions.title.text = title;
-    chartOptions.series[0].name = title;
+Chart.prototype.setOptions = function(options) {
+    chartOptions.title.text = options.title;
+    chartOptions.series[0].name = options.title;
+    chartOptions.series[0].color = options.color;
+    
     this.options = chartOptions;
 };
 
@@ -151,8 +149,8 @@ module.exports = Chart;
 module.exports = function(constants) {
 
     var chartDataMap = {};
-    chartDataMap[constants.chartTitles.processors] = getProcessorsPerformanceChartValue;
-    chartDataMap[constants.chartTitles.benchmark] = getBenchmarkPerformanceChartValue;
+    chartDataMap[constants.charts.processors.title] = getProcessorsPerformanceChartValue;
+    chartDataMap[constants.charts.benchmark.title] = getBenchmarkPerformanceChartValue;
 
     return {
         getChartData: getChartData
@@ -177,9 +175,15 @@ module.exports = function(constants) {
 },{}],8:[function(require,module,exports){
 module.exports = function() {
     return {
-        chartTitles: {
-            processors: 'Performance by Processors',
-            benchmark: 'Performance by Benchmark'
+        charts: {
+            processors: {
+                title: 'Performance by Processors',
+                color: '#28ABE3'
+            },
+            benchmark: {
+                title: 'Performance by Benchmark',
+                color: '#1FDA9A'
+            }
         }
     }
 };

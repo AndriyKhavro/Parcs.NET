@@ -1,10 +1,6 @@
 function MainController($scope, $interval, constants) {
 
-    $scope.charts = [{
-        title: constants.chartTitles.processors
-    }, {
-        title: constants.chartTitles.benchmark
-    }];
+    $scope.charts = [constants.charts.processors, constants.charts.benchmark];
     $scope.title = "chart1";
     $scope.chartsData = {
         response: []

@@ -1,8 +1,8 @@
 module.exports = function(constants) {
 
     var chartDataMap = {};
-    chartDataMap[constants.chartTitles.processors] = getProcessorsPerformanceChartValue;
-    chartDataMap[constants.chartTitles.benchmark] = getBenchmarkPerformanceChartValue;
+    chartDataMap[constants.charts.processors.title] = getProcessorsPerformanceChartValue;
+    chartDataMap[constants.charts.benchmark.title] = getBenchmarkPerformanceChartValue;
 
     return {
         getChartData: getChartData

@@ -49,17 +49,19 @@ var chartOptions = {
     }]
 };
 
-function Chart(title) {
-    this.setOptions(title);
+function Chart(options) {
+    this.setOptions(options);
 }
 
 Chart.prototype.draw = function(element) {
     this.chart = Highcharts.chart(element, this.options);
 };
 
-Chart.prototype.setOptions = function(title) {
-    chartOptions.title.text = title;
-    chartOptions.series[0].name = title;
+Chart.prototype.setOptions = function(options) {
+    chartOptions.title.text = options.title;
+    chartOptions.series[0].name = options.title;
+    chartOptions.series[0].color = options.color;
+
     this.options = chartOptions;
 };
 

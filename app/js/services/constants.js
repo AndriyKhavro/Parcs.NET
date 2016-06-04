@@ -1,8 +1,14 @@
 module.exports = function() {
     return {
-        chartTitles: {
-            processors: 'Performance by Processors',
-            benchmark: 'Performance by Benchmark'
+        charts: {
+            processors: {
+                title: 'Performance by Processors',
+                color: '#28ABE3'
+            },
+            benchmark: {
+                title: 'Performance by Benchmark',
+                color: '#1FDA9A'
+            }
         }
     }
 };

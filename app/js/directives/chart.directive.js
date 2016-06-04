@@ -5,7 +5,7 @@ function ChartDirective (chartService) {
         template: '<div class="analytics-chart"></div>',
         replace: true,
         scope: {
-            title: '@',
+            options: '=',
             data: '='
         },
         link: function($scope) {
@@ -15,11 +15,11 @@ function ChartDirective (chartService) {
             var vm = this;
 
             $scope.$watch('vm.data.response', function() {
-               var pointValue = chartService.getChartData(vm.title);
+               var pointValue = chartService.getChartData(vm.options.title);
                vm.chart.addPoint(pointValue);
             });
 
-            vm.chart = new Chart(vm.title);
+            vm.chart = new Chart(vm.options);
             vm.chart.draw($element[0]);
 
         },
