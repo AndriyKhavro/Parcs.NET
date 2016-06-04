@@ -8,27 +8,25 @@ namespace RestApi.Controllers
 {
     public class ParcsController : ApiController
     {
-        private readonly IRestApiClient _restApiClient;
+        private readonly IParcsService _parcsService;
 
-        private readonly string _hostServerUrl = ConfigurationManager.AppSettings["hostServerUrl"];
-
-        public ParcsController(IRestApiClient restApiClient)
+        public ParcsController(IParcsService parcsService)
         {
-            _restApiClient = restApiClient;
+            _parcsService = parcsService;
         }
 
         [HttpGet]
         [ActionName("job")]
         public Task<JobInfoDto[]> GetJobs()
         {
-            return _restApiClient.GetAsync<JobInfoDto[]>($"{_hostServerUrl}/api/job");
+            return _parcsService.GetJobs();
         }
 
         [HttpGet]
         [ActionName("host")]
-        public Task<JobInfoDto[]> GetHosts()
+        public Task<HostInfoDto[]> GetHosts()
         {
-            return _restApiClient.GetAsync<JobInfoDto[]>($"{_hostServerUrl}/api/host");
+            return _parcsService.GetHosts();
         }
     }
 }

@@ -21,7 +21,9 @@ namespace RestApi.Bootstrap
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{action}/{id}", new { id = RouteParameter.Optional, action = RouteParameter.Optional });
-            
+
+            ODataConfig.RegisterLogEntryEndpoint(config);
+
             //Deny all unAuthorized access to WebApi except explicit AllowAnonymous attribute
             //TODO: uncomment when auth is implemented properly
             //config.Filters.Add(new AuthorizeAttribute());

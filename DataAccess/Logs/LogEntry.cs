@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HostServer.Persistance.Logs
+namespace DataAccess.Logs
 {
     public class LogEntry
     {

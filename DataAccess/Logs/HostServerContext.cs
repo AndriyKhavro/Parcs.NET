@@ -1,7 +1,7 @@
 ﻿using System.Data.Entity;
 using System.Data.Entity.Migrations;
 
-namespace HostServer.Persistance.Logs
+namespace DataAccess.Logs
 {
     public class HostServerContext : DbContext
     {

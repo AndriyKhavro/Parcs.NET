@@ -1,4 +1,5 @@
-﻿using Microsoft.Practices.Unity;
+﻿using DataAccess.Logs;
+using Microsoft.Practices.Unity;
 using RestApi.Services;
 
 namespace RestApi.Bootstrap
@@ -8,6 +9,8 @@ namespace RestApi.Bootstrap
         public void Register(IUnityContainer container)
         {
             container.RegisterType<IRestApiClient, RestApiClient>();
+            container.RegisterType<ILogEntryRepository, LogEntryRepository>();
+            container.RegisterType<IParcsService, ParcsService>();
         }
     }
 }

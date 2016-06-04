@@ -4,5 +4,7 @@
     {
         public string IpAddress { get; set; }
         public int PointCount { get; set; }
+        public int ProcessorCount { get; set; }
+        public double LinpackResult { get; set; }
     }
 }
