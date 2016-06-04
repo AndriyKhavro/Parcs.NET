@@ -1,0 +1,23 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "parcs ui",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "style": "css/bootstrap.css",
+  "author": "Mykola & Khavro",
+  "license": "ISC",
+  "devDependencies": {
+    "angular": "^1.5.5",
+    "bootstrap": "^3.3.6",
+    "browserify": "^13.0.1",
+    "gulp": "^3.9.1",
+    "gulp-jshint": "^2.0.1",
+    "gulp-sass": "^2.3.1",
+    "highcharts": "^4.2.5",
+    "jshint": "^2.9.2",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}
