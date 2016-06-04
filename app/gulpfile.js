@@ -44,6 +44,6 @@ gulp.task('default', function(){
     gulp.run('lint', 'bundle', 'sass');
 
     // Отслеживаем изменения в файлах
-    gulp.watch("./js/*.js", ['lint']);
+    gulp.watch("./js", ['lint', 'bundle']);
     gulp.watch('./css/scss/main.scss', ['sass']);
 });

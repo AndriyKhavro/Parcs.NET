@@ -15,9 +15,10 @@
     <link href="css/bootstrap.css" rel="stylesheet">
     <!-- Custom styles for this template -->
     <link href="css/index.css" rel="stylesheet">
+  	<script src="bundle.js"></script>
   </head>
 
-  <body>
+  <body ng-app="parcs">
 
     <!-- Fixed navbar -->
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -55,7 +56,7 @@
       </div>
     </nav>
 
-	<div class="container">
+	<div class="container" ng-controller="MainController as main">
 		<div class="row">
 			<div class="table-responsive col-md-4">
 				<div class="table-title">
@@ -201,8 +202,7 @@
 		<div class="row analytics">
 			<div class="col-md-4 analytics-item">
 				<div class="analytics-container">
-					<h4>Chart1</h4>
-					<div class="analytics-chart"></div>
+					<chart title="{{title}}" point="point"></chart>
 				</div>
 			</div>
 			<div class="col-md-4 analytics-item">
