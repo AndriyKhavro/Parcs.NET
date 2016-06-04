@@ -1,12 +1,12 @@
 var Chart = require('./../models/chart.model');
-function ChartDirective () {
+function ChartDirective (chartService) {
     return {
         restrict: 'E',
         template: '<div class="analytics-chart"></div>',
         replace: true,
         scope: {
             title: '@',
-            point: '='
+            data: '='
         },
         link: function($scope) {
             console.log($scope);
@@ -14,9 +14,9 @@ function ChartDirective () {
         controller: function($scope, $element) {
             var vm = this;
 
-            $scope.$watch('vm.point.value', function() {
-               console.log(this);
-               vm.chart.addPoint(vm.point.value);
+            $scope.$watch('vm.data.response', function() {
+               var pointValue = chartService.getChartData(vm.title);
+               vm.chart.addPoint(pointValue);
             });
 
             vm.chart = new Chart(vm.title);

@@ -200,23 +200,22 @@
 			</div>
 		</div>
 		<div class="row analytics">
-			<div class="col-md-4 analytics-item">
+			<div class="col-md-6 analytics-item">
 				<div class="analytics-container">
-					<chart title="{{title}}" point="point"></chart>
+					<chart title="{{charts[0].title}}" data="chartsData"></chart>
 				</div>
 			</div>
-			<div class="col-md-4 analytics-item">
+			<div class="col-md-6 analytics-item">
 				<div class="analytics-container">
-					<h4>Chart2</h4>
-					<div class="analytics-chart"></div>
+					<chart title="{{charts[1].title}}" data="chartsData"></chart>
 				</div>
 			</div>
-			<div class="col-md-4 analytics-item">
+			<!--<div class="col-md-4 analytics-item">
 				<div class="analytics-container">
 					<h4>Chart3</h4>
 					<div class="analytics-chart"></div>
 				</div>
-			</div>
+			</div>-->
 		</div>
 	</div>
   </body>

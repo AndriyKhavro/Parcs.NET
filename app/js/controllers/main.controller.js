@@ -1,12 +1,18 @@
-function MainController($scope, $interval) {
+function MainController($scope, $interval, constants) {
 
+    $scope.charts = [{
+        title: constants.chartTitles.processors
+    }, {
+        title: constants.chartTitles.benchmark
+    }];
     $scope.title = "chart1";
-    $scope.point = {
-        value: 2
+    $scope.chartsData = {
+        response: []
     };
 
     $interval(function() {
-        $scope.point.value = Math.random() * 10;
+        //get data from server
+        $scope.chartsData.response = [];
     }, 1000);
 }
 

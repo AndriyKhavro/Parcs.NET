@@ -32,11 +32,8 @@ var chartOptions = {
     },
     tooltip: {
         useHtml: true,
-        formatter: function () {
-            return '<b>' + this.series.name + '</b><br/>' +
-                Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
-                Highcharts.numberFormat(this.y, 2);
-        }
+        xDateFormat: '%H:%M:%S',
+        pointFormat: '<span style="color:{point.color}">\u25CF</span><b>{point.y}</b><br/>'
     },
     legend: {
         enabled: false
@@ -62,6 +59,7 @@ Chart.prototype.draw = function(element) {
 
 Chart.prototype.setOptions = function(title) {
     chartOptions.title.text = title;
+    chartOptions.series[0].name = title;
     this.options = chartOptions;
 };
 

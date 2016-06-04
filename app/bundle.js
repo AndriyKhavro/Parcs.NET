@@ -10,36 +10,42 @@ angular.module('parcs', []);
 require('./js/controllers');
 require('./js/services');
 require('./js/directives');
-},{"./js/controllers":2,"./js/directives":5,"./js/services":8,"angular":10}],2:[function(require,module,exports){
+},{"./js/controllers":2,"./js/directives":5,"./js/services":9,"angular":11}],2:[function(require,module,exports){
 'use strict';
 var app = require('angular').module('parcs');
 
 app.controller('MainController', require('./main.controller'));
 
-},{"./main.controller":3,"angular":10}],3:[function(require,module,exports){
-function MainController($scope, $interval) {
+},{"./main.controller":3,"angular":11}],3:[function(require,module,exports){
+function MainController($scope, $interval, constants) {
 
+    $scope.charts = [{
+        title: constants.chartTitles.processors
+    }, {
+        title: constants.chartTitles.benchmark
+    }];
     $scope.title = "chart1";
-    $scope.point = {
-        value: 2
+    $scope.chartsData = {
+        response: []
     };
 
     $interval(function() {
-        $scope.point.value = Math.random() * 10;
+        //get data from server
+        $scope.chartsData.response = [];
     }, 1000);
 }
 
 module.exports = MainController;
 },{}],4:[function(require,module,exports){
 var Chart = require('./../models/chart.model');
-function ChartDirective () {
+function ChartDirective (chartService) {
     return {
         restrict: 'E',
         template: '<div class="analytics-chart"></div>',
         replace: true,
         scope: {
             title: '@',
-            point: '='
+            data: '='
         },
         link: function($scope) {
             console.log($scope);
@@ -47,9 +53,9 @@ function ChartDirective () {
         controller: function($scope, $element) {
             var vm = this;
 
-            $scope.$watch('vm.point.value', function() {
-               console.log(this);
-               vm.chart.addPoint(vm.point.value);
+            $scope.$watch('vm.data.response', function() {
+               var pointValue = chartService.getChartData(vm.title);
+               vm.chart.addPoint(pointValue);
             });
 
             vm.chart = new Chart(vm.title);
@@ -68,7 +74,7 @@ var app = require('angular').module('parcs');
 
 app.directive('chart', require('./chart.directive'));
 
-},{"./chart.directive":4,"angular":10}],6:[function(require,module,exports){
+},{"./chart.directive":4,"angular":11}],6:[function(require,module,exports){
 var Highcharts = require('highcharts');
 var noData = require('highcharts/modules/no-data-to-display');
 noData(Highcharts);
@@ -103,11 +109,8 @@ var chartOptions = {
     },
     tooltip: {
         useHtml: true,
-        formatter: function () {
-            return '<b>' + this.series.name + '</b><br/>' +
-                Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
-                Highcharts.numberFormat(this.y, 2);
-        }
+        xDateFormat: '%H:%M:%S',
+        pointFormat: '<span style="color:{point.color}">\u25CF</span><b>{point.y}</b><br/>'
     },
     legend: {
         enabled: false
@@ -133,6 +136,7 @@ Chart.prototype.draw = function(element) {
 
 Chart.prototype.setOptions = function(title) {
     chartOptions.title.text = title;
+    chartOptions.series[0].name = title;
     this.options = chartOptions;
 };
 
@@ -143,22 +147,50 @@ Chart.prototype.addPoint = function(value) {
 };
 
 module.exports = Chart;
-},{"highcharts":11,"highcharts/modules/no-data-to-display":12}],7:[function(require,module,exports){
-module.exports = function() {
+},{"highcharts":12,"highcharts/modules/no-data-to-display":13}],7:[function(require,module,exports){
+module.exports = function(constants) {
+
+    var chartDataMap = {};
+    chartDataMap[constants.chartTitles.processors] = getProcessorsPerformanceChartValue;
+    chartDataMap[constants.chartTitles.benchmark] = getBenchmarkPerformanceChartValue;
+
     return {
         getChartData: getChartData
+    };
+
+    function getChartData(chartTitle, response) {
+        return chartDataMap[chartTitle](response);
+    }
+
+    function getProcessorsPerformanceChartValue(response) {
+       return Math.random() * 10;
+    }
+
+    function getBenchmarkPerformanceChartValue(response) {
+        return Math.random() * 100;
     }
 };
 
-function getChartData(response) {
-    return {test: 'test'};
-}
+
+
+
 },{}],8:[function(require,module,exports){
+module.exports = function() {
+    return {
+        chartTitles: {
+            processors: 'Performance by Processors',
+            benchmark: 'Performance by Benchmark'
+        }
+    }
+};
+},{}],9:[function(require,module,exports){
 'use strict';
 var app = require('angular').module('parcs');
 
 app.factory('chartService', require('./chart.service'));
-},{"./chart.service":7,"angular":10}],9:[function(require,module,exports){
+app.factory('constants', require('./constants'));
+
+},{"./chart.service":7,"./constants":8,"angular":11}],10:[function(require,module,exports){
 /**
  * @license AngularJS v1.5.6
  * (c) 2010-2016 Google, Inc. http://angularjs.org
@@ -31182,11 +31214,11 @@ $provide.value("$locale", {
 })(window);
 
 !window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 require('./angular');
 module.exports = angular;
 
-},{"./angular":9}],11:[function(require,module,exports){
+},{"./angular":10}],12:[function(require,module,exports){
 /*
  Highcharts JS v4.2.5 (2016-05-06)
 
@@ -31531,7 +31563,7 @@ for(c.attr(a);this["zoneGraph"+b];)this["zoneGraph"+b].attr(a),b+=1}},setVisible
 a.visible)a.isDirty=!0});p(c.linkedSeries,function(b){b.setVisible(a,!1)});if(g)d.isDirtyBox=!0;b!==!1&&d.redraw();I(c,f)},show:function(){this.setVisible(!0)},hide:function(){this.setVisible(!1)},select:function(a){this.selected=a=a===y?!this.selected:a;if(this.checkbox)this.checkbox.checked=a;I(this,a?"select":"unselect")},drawTracker:ga.drawTrackerGraph});u(x,{Color:ma,Point:Ja,Tick:Va,Renderer:cb,SVGElement:O,SVGRenderer:Da,arrayMin:La,arrayMax:Ga,charts:T,correctFloat:ca,dateFormat:Qa,error:aa,
 format:Ka,pathAnim:void 0,getOptions:function(){return U},hasBidiBug:Pb,isTouchDevice:Lb,setOptions:function(a){U=E(!0,U,a);Eb();return U},addEvent:N,removeEvent:X,createElement:ba,discardElement:Sa,css:M,each:p,map:Ca,merge:E,splat:ta,stableSort:hb,extendClass:qa,pInt:C,svg:fa,canvas:ka,vml:!fa&&!ka,product:"Highcharts",version:"4.2.5"});return x});
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /*
  Highcharts JS v4.2.5 (2016-05-06)
  Plugin for displaying a message when there is no data visible in chart.
