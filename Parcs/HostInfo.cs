@@ -135,14 +135,25 @@ namespace Parcs
         {
             get
             {
+                if (_localIp != null)
+                {
+                    return _localIp;
+                }
                 string hostName = Dns.GetHostName();
                 var ipHostEntry = Dns.GetHostEntry(hostName);
 
                 // ProtocolFamily.InterNetwork.ToString
-                return ipHostEntry.AddressList.Where(x => x.AddressFamily == AddressFamily.InterNetwork).Single(x => !IPAddress.IsLoopback(x) && !x.ToString().StartsWith("192.168.56"));
+                return _localIp = ipHostEntry.AddressList.Where(x => x.AddressFamily == AddressFamily.InterNetwork).Single(x => !IPAddress.IsLoopback(x) && !x.ToString().StartsWith("192.168.56"));
                 //return ipHostEntry.AddressList;
             }
+
+            set
+            {
+                _localIp = value;
+            }
         }
+
+        private static IPAddress _localIp;
 
         public static string LocalName
         {

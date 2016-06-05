@@ -48,6 +48,7 @@ namespace HostServer
                 Console.WriteLine("Cannot get local IP. Please, enter your IP:");
                 string ipStr = Console.ReadLine();
                 ip = IPAddress.Parse(ipStr);
+                HostInfo.LocalIP = ip;
             }
 
             int port = (int)Ports.ServerPort;

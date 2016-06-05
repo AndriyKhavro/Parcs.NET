@@ -4,14 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Cors;
 using log4net;
 using Parcs;
 using Parcs.Api.Dto;
 
 namespace HostServer.WebApi
 {
-    [EnableCors(headers:"*", origins:"*", methods:"*")]
     public class JobController : ApiController
     {
         private readonly ILog _log = LogManager.GetLogger(typeof(JobController));

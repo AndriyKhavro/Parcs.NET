@@ -13,8 +13,9 @@ namespace HostServer.WebApi
             {
                 IpAddress = h.IpAddress.ToString(),
                 PointCount = h.PointCount,
-                ProcessorCount = h.ProcessorCount,
-                LinpackResult = h.LinpackResult
+                ProcessorCount = h.IsConnected ? h.ProcessorCount : 0,
+                LinpackResult = h.IsConnected ? h.LinpackResult : 0,
+                IsConnected = h.IsConnected
             });
         } 
     }

@@ -196,3 +196,4 @@ FakesAssemblies/
 *.opt
 /HostServer/hosts.txt
 /Parcs_.sln
+/RestApi/app/.idea/
