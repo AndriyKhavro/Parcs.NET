@@ -4,7 +4,7 @@ function AuthService($http, $q, $rootScope, localStorageService) {
 
     var authServiceFactory = {};
 
-    $rootScope.authentication = {
+    var authentication = {
         isAuth: false,
         userName : ""
     };
@@ -29,8 +29,8 @@ function AuthService($http, $q, $rootScope, localStorageService) {
 
             localStorageService.set('authorizationData', { token: response.access_token, userName: loginData.userName });
 
-            $rootScope.authentication.isAuth = true;
-            $rootScope.authentication.userName = loginData.userName;
+            authentication.isAuth = true;
+            authentication.userName = loginData.userName;
 
             deferred.resolve(response);
 
@@ -46,8 +46,8 @@ function AuthService($http, $q, $rootScope, localStorageService) {
     var _logOut = function () {
 
         localStorageService.remove('authorizationData');
-        $rootScope.authentication.isAuth = false;
-        $rootScope.authentication.userName = "";
+        authentication.isAuth = false;
+        authentication.userName = "";
 
     };
 
@@ -56,8 +56,8 @@ function AuthService($http, $q, $rootScope, localStorageService) {
         var authData = localStorageService.get('authorizationData');
         if (authData)
         {
-            $rootScope.authentication.isAuth = true;
-            $rootScope.authentication.userName = authData.userName;
+            authentication.isAuth = true;
+            authentication.userName = authData.userName;
         }
 
     }
@@ -66,6 +66,7 @@ function AuthService($http, $q, $rootScope, localStorageService) {
     authServiceFactory.login = _login;
     authServiceFactory.logOut = _logOut;
     authServiceFactory.fillAuthData = _fillAuthData;
+    authServiceFactory.authentication = authentication;
 
     return authServiceFactory;
 };

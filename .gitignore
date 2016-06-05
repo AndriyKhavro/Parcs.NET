@@ -197,3 +197,4 @@ FakesAssemblies/
 /HostServer/hosts.txt
 /Parcs_.sln
 /RestApi/app/.idea/
+/RestApi/app/bundle.js
