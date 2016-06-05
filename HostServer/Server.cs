@@ -172,7 +172,7 @@ namespace HostServer
 
         private void DeletePoint(JobInfo ti, int pointNum)
         {
-            ti.RemovePoint(pointNum);
+            ti.RemovePoint(pointNum, ti.IsCancelled);
         }
 
         /// <summary>

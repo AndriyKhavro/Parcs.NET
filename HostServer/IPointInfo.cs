@@ -13,5 +13,7 @@ namespace HostServer
         int ParentNumber { get; }
         HostInfo Host { get; }
         bool IsFinished { get; set; }
+        DateTime StartTimeUtc { get; }
+        DateTime? FinishTimeUtc { get; }
     }
 }

@@ -10,16 +10,45 @@ namespace HostServer
     {
         public int Number { get; private set; }
         private int _lastPointNumber;
+        private bool _isFinished;
+        private bool _isCancelled;
         public IDictionary<int, IPointInfo> PointDictionary { get; }
         public bool NeedsPoint { get; set; }
         public int Priority { get; set; }
-        public bool IsFinished { get; set; }
-        public bool IsCancelled { get; set; }
+        public DateTime StartTimeUtc { get; }
+        public DateTime? FinishTimeUtc { get; private set; }
+
+        public bool IsFinished
+        {
+            get { return _isFinished; }
+            set
+            {
+                _isFinished = value;
+                if (value && !FinishTimeUtc.HasValue)
+                {
+                    FinishTimeUtc = DateTime.UtcNow;
+                }
+            }
+        }
+
+        public bool IsCancelled
+        {
+            get { return _isCancelled; }
+            set
+            {
+                _isCancelled = value;
+                if (value && !FinishTimeUtc.HasValue)
+                {
+                    FinishTimeUtc = DateTime.UtcNow;
+                }
+            }
+        }
 
         public JobInfo(int number)
         {
             PointDictionary = new Dictionary<int, IPointInfo>();
             Number = number;
+            StartTimeUtc = DateTime.UtcNow;
         }
 
         public int AddPoint(IPointInfo pointInfo)
@@ -31,13 +60,16 @@ namespace HostServer
             return _lastPointNumber;
         }
 
-        public void RemovePoint(int pointNum)
+        public void RemovePoint(int pointNum, bool isCancelling = false)
         {
             IPointInfo pi;
             if (PointDictionary.TryGetValue(pointNum, out pi) && !pi.IsFinished)
             {
                 pi.Host.PointCount--;
-                pi.IsFinished = true;
+                if (!isCancelling)
+                {
+                    pi.IsFinished = true;
+                }
             }
         }        
     }

@@ -22,11 +22,15 @@ namespace HostServer.WebApi
                 Number = j.Number,
                 Priority = j.Priority,
                 JobStatus = ResolveJobStatus(j).ToString(),
+                StartTimeUtc = j.StartTimeUtc,
+                FinishTimeUtc = j.FinishTimeUtc,
                 Points = j.PointDictionary.Values.Select(p => new PointInfoDto
                 {
                     Number = p.Number,
                     IsFinished = p.IsFinished,
-                    HostIpAddress = p.Host.IpAddress.ToString()                    
+                    HostIpAddress = p.Host.IpAddress.ToString(),
+                    StartTimeUtc = p.StartTimeUtc,
+                    FinishTimeUtc = p.FinishTimeUtc
                 }).ToArray()
             });
         }
