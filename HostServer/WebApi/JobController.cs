@@ -42,16 +42,16 @@ namespace HostServer.WebApi
 
         private JobStatus ResolveJobStatus(JobInfo jobInfo)
         {
-            if (jobInfo.IsFinished)
-            {
-                return JobStatus.Finished;
-            }
-
             if (jobInfo.IsCancelled)
             {
                 return JobStatus.Cancelled;
             }
 
+            if (jobInfo.IsFinished)
+            {
+                return JobStatus.Finished;
+            }
+            
             if (jobInfo.PointDictionary.Any())
             {
                 return jobInfo.NeedsPoint ? JobStatus.PartlyRunning : JobStatus.Running;
@@ -59,10 +59,5 @@ namespace HostServer.WebApi
 
             return JobStatus.Pending;
         }
-    }
-
-    public class CancelJobDto
-    {
-        public int Number { get; set; }
     }
 }

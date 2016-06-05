@@ -185,7 +185,6 @@
     <Compile Include="Bootstrap\UnityServiceLocatorAdapter.cs" />
     <Compile Include="Bootstrap\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\ChartController.cs" />
     <Compile Include="Controllers\LogController.cs" />
     <Compile Include="Controllers\ParcsController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

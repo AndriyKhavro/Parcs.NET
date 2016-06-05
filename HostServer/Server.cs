@@ -212,6 +212,10 @@ namespace HostServer
         public void CancelJob(int number)
         {
             var jobToCancel = _taskDictionary[number];
+            if (jobToCancel.IsFinished)
+            {
+                return;
+            }
             foreach (var host in jobToCancel.PointDictionary.Values.Select(p => p.Host).Distinct())
             {
                 Log.Debug($"Cancelling job N {number} on host {host.IpAddress}...");
