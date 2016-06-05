@@ -167,6 +167,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="index.html" />
     <Content Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -179,6 +180,8 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthProviders\SimpleAuthorizationServerProvider.cs" />
+    <Compile Include="Bootstrap\OAuthConfig.cs" />
     <Compile Include="Bootstrap\ODataConfig.cs" />
     <Compile Include="Bootstrap\UnityConfig.cs" />
     <Compile Include="Bootstrap\UnityRegistar.cs" />
@@ -189,9 +192,6 @@
     <Compile Include="Controllers\ParcsController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Bootstrap\Startup.cs" />
-    <Compile Include="Services\Auth\ApplicationUserManager.cs" />
-    <Compile Include="Services\Auth\AuthRepository.cs" />
-    <Compile Include="Entities\User.cs" />
     <Compile Include="Services\IParcsService.cs" />
     <Compile Include="Services\IRestApiClient.cs" />
     <Compile Include="Services\ParcsService.cs" />
@@ -207,6 +207,7 @@
       <Name>Parcs.Api.Dto</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

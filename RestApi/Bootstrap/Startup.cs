@@ -1,12 +1,9 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading;
 using System.Web.Http;
 using Microsoft.Owin;
 using Microsoft.Practices.Unity;
 using Owin;
 using RestApi.Bootstrap;
-using RestApi.Controllers;
 
 [assembly: OwinStartup(typeof(Startup))]
 
@@ -21,12 +18,14 @@ namespace RestApi.Bootstrap
             ConfigureShutdown(appBuilder);
             UnityContainer = UnityConfig.RegisterComponents();
 
+            OAuthConfig.ConfigureOAuth(appBuilder);
+
             var configuration = new HttpConfiguration();
             WebApiConfig.Register(configuration, UnityContainer);
 
             appBuilder.UseWebApi(configuration);
         }
-
+        
         protected virtual void Shutdown()
         {
             UnityContainer.Dispose();
