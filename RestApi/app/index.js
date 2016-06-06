@@ -6,10 +6,6 @@ require('angular-ui-bootstrap');
 require('angular-local-storage');
 require('angular-ui-router');
 
-angular.module('parcs', []);
-
-
-
 var app = angular.module('parcs', ['LocalStorageModule', 'ui.router', 'ui.bootstrap']);
 
 // one require statement per sub directory instead of one per file

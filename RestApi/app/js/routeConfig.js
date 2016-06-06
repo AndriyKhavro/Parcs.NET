@@ -1,3 +1,4 @@
+module.exports = configRoutes;
 
 configRoutes.$inject = ["$stateProvider", "$urlRouterProvider"];
 
@@ -14,18 +15,16 @@ function configRoutes($stateProvider, $urlRouterProvider) {
         templateUrl: "/app/views/login.html"   
     });
 
-    $stateProvider.state("signup", {
-        url: "/signup",
-        controller: "signupController",
-        templateUrl: "/app/views/signup.html"  
-    });
-    
     $stateProvider.state("main", {
         url: "/",
         controller: "MainController",
         controllerAs: "main",
         templateUrl: "/app/views/main.html"
     });
-}
 
-module.exports = configRoutes;
+    $stateProvider.state("signup", {
+        url: "/signup",
+        controller: "signupController",
+        templateUrl: "/app/views/signup.html"
+    });
+}

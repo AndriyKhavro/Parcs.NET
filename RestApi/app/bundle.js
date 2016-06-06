@@ -7,10 +7,6 @@ require('angular-ui-bootstrap');
 require('angular-local-storage');
 require('angular-ui-router');
 
-angular.module('parcs', []);
-
-
-
 var app = angular.module('parcs', ['LocalStorageModule', 'ui.router', 'ui.bootstrap']);
 
 // one require statement per sub directory instead of one per file
@@ -277,6 +273,7 @@ Chart.prototype.addPoint = function(value) {
 
 module.exports = Chart;
 },{"highcharts":26,"highcharts/modules/no-data-to-display":27}],12:[function(require,module,exports){
+module.exports = configRoutes;
 
 configRoutes.$inject = ["$stateProvider", "$urlRouterProvider"];
 
@@ -293,21 +290,19 @@ function configRoutes($stateProvider, $urlRouterProvider) {
         templateUrl: "/app/views/login.html"   
     });
 
-    $stateProvider.state("signup", {
-        url: "/signup",
-        controller: "signupController",
-        templateUrl: "/app/views/signup.html"  
-    });
-    
     $stateProvider.state("main", {
         url: "/",
         controller: "MainController",
         controllerAs: "main",
         templateUrl: "/app/views/main.html"
     });
-}
 
-module.exports = configRoutes;
+    $stateProvider.state("signup", {
+        url: "/signup",
+        controller: "signupController",
+        templateUrl: "/app/views/signup.html"
+    });
+}
 },{}],13:[function(require,module,exports){
 AuthService.$inject = ['$http', '$q', '$rootScope', 'localStorageService'];
 
