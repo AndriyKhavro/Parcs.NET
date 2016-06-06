@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CancelJobDto.cs" />
     <Compile Include="HostInfoDto.cs" />
     <Compile Include="JobInfoDto.cs" />
     <Compile Include="JobStatus.cs" />

@@ -22,11 +22,15 @@ namespace HostServer.WebApi
                 Number = j.Number,
                 Priority = j.Priority,
                 JobStatus = ResolveJobStatus(j).ToString(),
+                StartTimeUtc = j.StartTimeUtc,
+                FinishTimeUtc = j.FinishTimeUtc,
                 Points = j.PointDictionary.Values.Select(p => new PointInfoDto
                 {
                     Number = p.Number,
                     IsFinished = p.IsFinished,
-                    HostIpAddress = p.Host.IpAddress.ToString()                    
+                    HostIpAddress = p.Host.IpAddress.ToString(),
+                    StartTimeUtc = p.StartTimeUtc,
+                    FinishTimeUtc = p.FinishTimeUtc
                 }).ToArray()
             });
         }
@@ -42,16 +46,16 @@ namespace HostServer.WebApi
 
         private JobStatus ResolveJobStatus(JobInfo jobInfo)
         {
-            if (jobInfo.IsFinished)
-            {
-                return JobStatus.Finished;
-            }
-
             if (jobInfo.IsCancelled)
             {
                 return JobStatus.Cancelled;
             }
 
+            if (jobInfo.IsFinished)
+            {
+                return JobStatus.Finished;
+            }
+            
             if (jobInfo.PointDictionary.Any())
             {
                 return jobInfo.NeedsPoint ? JobStatus.PartlyRunning : JobStatus.Running;
@@ -59,10 +63,5 @@ namespace HostServer.WebApi
 
             return JobStatus.Pending;
         }
-    }
-
-    public class CancelJobDto
-    {
-        public int Number { get; set; }
     }
 }

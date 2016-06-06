@@ -1,9 +1,15 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 
-namespace RestApi.Entities
+namespace DataAccess.Auth
 {
     public class User : IdentityUser<int, UserLogin, UserRole, UserClaim>
     {
+    }
+
+    public class Role : IdentityRole<int, UserRole>
+    {
+        public Role() { }
+        public Role(string name) { Name = name; }
     }
 
     public class UserClaim : IdentityUserClaim<int>

@@ -1,9 +1,12 @@
 ﻿using System.Data.Entity;
 using System.Data.Entity.Migrations;
+using DataAccess.Auth;
+using DataAccess.Logs;
+using Microsoft.AspNet.Identity.EntityFramework;
 
-namespace DataAccess.Logs
+namespace DataAccess
 {
-    public class HostServerContext : DbContext
+    public class HostServerContext : IdentityDbContext<User, Role, int, UserLogin, UserRole, UserClaim>
     {
         public DbSet<LogEntry> Logs { get; set; }
 

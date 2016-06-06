@@ -28,5 +28,10 @@ namespace RestApi.Services
         {
             return _restApiClient.GetAsync<HostInfoDto[]>($"{_hostServerUrl}/api/host");
         }
+
+        public Task CancelJob(CancelJobDto dto)
+        {
+            return _restApiClient.PostAsync($"{_hostServerUrl}/api/job/cancel", dto);
+        }
     }
 }

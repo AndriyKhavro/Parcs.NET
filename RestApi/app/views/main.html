@@ -1,0 +1,179 @@
+<div class="row">
+	<div class="table-responsive col-md-6">
+		<div>
+			<h4>Jobs</h4>
+		</div>
+		<div class="table-title row">
+			<span class="col-md-2 col-sm-2">Number</span>
+			<span class="col-md-4 col-sm-4">Priority</span>
+			<span class="col-md-4 col-sm-4">Status</span>
+			<span class="col-md-2 col-sm-2"></span>
+		</div>
+		<uib-accordion close-others="oneAtATime">
+			<uib-accordion-group ng-repeat="job in data.jobs" is-open="job.isOpened">
+				<uib-accordion-heading>
+					<span class="col-md-2 col-sm-2 table-value">{{job.number}}</span>
+					<span class="col-md-4 col-sm-4 table-value">{{job.priority}}</span>
+							<span class="col-md-4 col-sm-4 table-value"
+								  ng-class="{'running': job.status === jobStatuses.running,
+								  'partlyRunning': job.status === jobStatuses.partlyRunning,
+								  'pending': job.status === jobStatuses.pending}">{{job.status}}
+							</span>
+					<i class="text-right glyphicon coll-md-2 col-sm-2"
+					   ng-class="{'glyphicon-chevron-down': job.isOpened, 'glyphicon-chevron-right': !job.isOpened}"
+					   ng-show="job.points && job.points.length">
+					</i>
+				</uib-accordion-heading>
+				<table class="table table-hover table-bordered">
+					<thead>
+					<th>№</th>
+					<th>IP</th>
+					<th>Is Finished</th>
+					</thead>
+					<tr ng-repeat="point in job.points">
+						<td>{{point.number}}</td>
+						<td>{{point.hostIpAddress}}</td>
+						<td>
+							<input type="checkbox" ng-model="point.isFinished" ng-disabled="true">
+						</td>
+					</tr>
+
+				</table>
+			</uib-accordion-group>
+		</uib-accordion>
+
+	</div>
+	<div class="table-responsive col-md-6 hosts">
+		<div class="row hosts-header">
+			<h4 class="col-md-6 col-sm-6">Hosts</h4>
+			<i class="glyphicon glyphicon-plus-sign col-md-6 col-sm-6 hosts-add"></i>
+		</div>
+		<div class="table-title row">
+			<table class="table table-hover">
+				<tr>
+					<td>Name</td>
+					<td class="text-right">
+						<button class="btn btn-danger btn-sm">Remove</button>
+					</td>
+				</tr>
+				<tr>
+					<td>Name2</td>
+					<td class="text-right">
+						<button class="btn btn-danger btn-sm">Remove</button>
+					</td>
+				</tr>
+				<tr>
+					<td>Name3</td>
+					<td class="text-right">
+						<button class="btn btn-danger btn-sm">Remove</button>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="row analytics">
+		<div class="col-md-6 analytics-item" style="clear: both">
+			<div class="analytics-container">
+				<chart options="charts[0]" data="data"></chart>
+			</div>
+		</div>
+		<div class="col-md-6 analytics-item">
+			<div class="analytics-container">
+				<chart options="charts[1]" data="data"></chart>
+			</div>
+		</div>
+		<!--<div class="col-md-4 analytics-item">
+			<div class="analytics-container">
+				<h4>Chart3</h4>
+				<div class="analytics-chart"></div>
+			</div>
+		</div>-->
+	</div>
+	<div class="col-md-12 logger">
+		<div class="logger-title">
+			<span>Log</span>
+			<button class="btn btn-default table-headerButton">Export</button>
+		</div>
+		<ul class="logger-list list-unstyled">
+			<li>
+				<span class="text-success">Success log</span>
+				<span class="logger-time">12:45</span>
+			</li>
+			<li>
+				<span class="text-warning">Warning log</span>
+				<span class="logger-time">12:46</span>
+			</li>
+			<li>
+				<span class="text-danger">Error log</span>
+				<span class="logger-time">12:47</span>
+			</li>
+			<li>
+				<span class="text-success">Success log</span>
+				<span class="logger-time">12:45</span>
+			</li>
+			<li>
+				<span class="text-warning">Warning log</span>
+				<span class="logger-time">12:46</span>
+			</li>
+			<li>
+				<span class="text-danger">Error log</span>
+				<span class="logger-time">12:47</span>
+			</li><li>
+			<span class="text-success">Success log</span>
+			<span class="logger-time">12:45</span>
+		</li>
+			<li>
+				<span class="text-warning">Warning log</span>
+				<span class="logger-time">12:46</span>
+			</li>
+			<li>
+				<span class="text-danger">Error log</span>
+				<span class="logger-time">12:47</span>
+			</li><li>
+			<span class="text-success">Success log</span>
+			<span class="logger-time">12:45</span>
+		</li>
+			<li>
+				<span class="text-warning">Warning log</span>
+				<span class="logger-time">12:46</span>
+			</li>
+			<li>
+				<span class="text-danger">Error log</span>
+				<span class="logger-time">12:47</span>
+			</li><li>
+			<span class="text-success">Success log</span>
+			<span class="logger-time">12:45</span>
+		</li>
+			<li>
+				<span class="text-warning">Warning log</span>
+				<span class="logger-time">12:46</span>
+			</li>
+			<li>
+				<span class="text-danger">Error log</span>
+				<span class="logger-time">12:47</span>
+			</li><li>
+			<span class="text-success">Success log</span>
+			<span class="logger-time">12:45</span>
+		</li>
+			<li>
+				<span class="text-warning">Warning log</span>
+				<span class="logger-time">12:46</span>
+			</li>
+			<li>
+				<span class="text-danger">Error log</span>
+				<span class="logger-time">12:47</span>
+			</li><li>
+			<span class="text-success">Success log</span>
+			<span class="logger-time">12:45</span>
+		</li>
+			<li>
+				<span class="text-warning">Warning log</span>
+				<span class="logger-time">12:46</span>
+			</li>
+			<li>
+				<span class="text-danger">Error log</span>
+				<span class="logger-time">12:47</span>
+			</li>
+		</ul>
+	</div>
+</div>
