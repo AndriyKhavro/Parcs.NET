@@ -14,7 +14,7 @@ function ChartDirective (chartService) {
         controller: function($scope, $element) {
             var vm = this;
 
-            $scope.$watch('vm.data.response', function() {
+            $scope.$watch('vm.data.chartsData', function() {
                var pointValue = chartService.getChartData(vm.options.title);
                vm.chart.addPoint(pointValue);
             });

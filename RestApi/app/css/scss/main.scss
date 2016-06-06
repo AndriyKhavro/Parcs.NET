@@ -1,5 +1,5 @@
 body {
-  min-height: 2000px;
+  min-height: 1000px;
   padding-top: 70px;
 }
 .analytics {
@@ -23,9 +23,26 @@ body {
   height: 300px;
   width: 100%;
 }
-.table-headerButton {
-  padding: 0 5px;
-  font-size: 12px;
+.hosts-add {
+  position: relative;
+  top: -10px;
+  font-size: 20px;
+  color: #5cb85c;
+  text-align: right;
+
+  &:hover {
+    color: lighten(#5cb85c, 10%);
+    cursor: pointer;
+  }
+}
+
+.hosts-header {
+  margin-top: 20px;
+  h4 {
+    position: relative;
+    bottom: 20px;
+    padding-left: 0;
+  }
 }
 
 .table-title {
@@ -33,9 +50,14 @@ body {
   font-weight: 600;
 }
 
+.table-value {
+  font-size: 14px;
+}
+
 .logger {
   border-left: #eee;
   border-right: #eee;
+  margin-top: 20px;
 }
 
 .logger-title {
@@ -48,13 +70,30 @@ body {
     float: right;
   }
 }
+
 .logger-time {
   float: right;
   font-weight: 600;
 }
+
 .logger-list {
   height:240px;
   padding-right: 10px;
   overflow:hidden;
   overflow-y:scroll;
+}
+
+.panel-heading {
+  padding: 16px 0px 26px 0;
+  span {
+    &.running {
+      color: green;
+    }
+    &.partlyRunning {
+      color: #5cb85c;
+    }
+    &.pending {
+      color: #f0ad4e;
+    }
+  }
 }

@@ -9,6 +9,17 @@ module.exports = function() {
                 title: 'Performance by Benchmark',
                 color: '#1FDA9A'
             }
+        },
+
+        urls: {
+            jobs: '/api/parcs/job',
+            hosts: '/api/parcs/hosts'
+        },
+
+        jobStatuses: {
+            running: 'Running',
+            partlyRunning: 'PartlyRunning',
+            pending: 'Pending'
         }
     }
 };

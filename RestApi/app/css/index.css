@@ -1,5 +1,5 @@
 body {
-  min-height: 2000px;
+  min-height: 1000px;
   padding-top: 70px; }
 
 .analytics {
@@ -20,17 +20,34 @@ body {
   height: 300px;
   width: 100%; }
 
-.table-headerButton {
-  padding: 0 5px;
-  font-size: 12px; }
+.hosts-add {
+  position: relative;
+  top: -10px;
+  font-size: 20px;
+  color: #5cb85c;
+  text-align: right; }
+  .hosts-add:hover {
+    color: #80c780;
+    cursor: pointer; }
+
+.hosts-header {
+  margin-top: 20px; }
+  .hosts-header h4 {
+    position: relative;
+    bottom: 20px;
+    padding-left: 0; }
 
 .table-title {
   font-size: 14px;
   font-weight: 600; }
 
+.table-value {
+  font-size: 14px; }
+
 .logger {
   border-left: #eee;
-  border-right: #eee; }
+  border-right: #eee;
+  margin-top: 20px; }
 
 .logger-title {
   padding: 8px 0; }
@@ -49,6 +66,15 @@ body {
   padding-right: 10px;
   overflow: hidden;
   overflow-y: scroll; }
+
+.panel-heading {
+  padding: 16px 0px 26px 0; }
+  .panel-heading span.running {
+    color: green; }
+  .panel-heading span.partlyRunning {
+    color: #5cb85c; }
+  .panel-heading span.pending {
+    color: #f0ad4e; }
 
 ::-webkit-scrollbar {
   width: 10px;
