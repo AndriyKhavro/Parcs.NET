@@ -5,6 +5,6 @@ namespace RestApi.Services
 {
     public interface IModuleRunner
     {
-        Task<bool> TryRunMatrixModule(MatrixSize matrixSize, int pointCount, string serverIp);
+        Task<bool> TryRunMatrixModule(MatrixSize matrixSize, int pointCount, string serverIp, int priority);
     }
 }

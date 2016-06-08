@@ -44,6 +44,8 @@ namespace HostServer
             }
         }
 
+        public string Username { get; set; }
+
         public JobInfo(int number)
         {
             PointDictionary = new Dictionary<int, IPointInfo>();

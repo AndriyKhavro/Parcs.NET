@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 using Parcs.Api.Dto;
 using RestApi.Services;
@@ -25,7 +22,7 @@ namespace RestApi.Controllers
         public async Task<IHttpActionResult> RunMatrixModule(MatrixModuleDto moduleDto)
         {
             var serverIp = await _parcsService.GetServerIp();
-            bool isRunSuccessfully = await _moduleRunner.TryRunMatrixModule(moduleDto.MatrixSize, moduleDto.PointCount, serverIp);
+            bool isRunSuccessfully = await _moduleRunner.TryRunMatrixModule(moduleDto.MatrixSize, moduleDto.PointCount, serverIp, moduleDto.Priority);
             if (!isRunSuccessfully)
             {
                 throw new InvalidOperationException("Module didn't start successfully");

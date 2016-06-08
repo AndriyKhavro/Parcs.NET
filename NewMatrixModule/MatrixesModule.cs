@@ -23,8 +23,8 @@ namespace NewMatrixModule
             options = new CommandLineOptions();
             if (!CommandLine.Parser.Default.ParseArguments(args, options))
             {
-                _log.Warn("Cannot parse the arguments. Possible usages:");                
-                _log.Warn(options.GetUsage());                
+                _log.Error($@"Cannot parse the arguments. Possible usages:
+{options.GetUsage()}");                
                 return;
             }
 
@@ -33,7 +33,7 @@ namespace NewMatrixModule
                 Job.SetServerIp(options.ServerIp);
             }
 
-            (new MatrixesModule()).RunModule();
+            (new MatrixesModule()).RunModule(options.Priority, options.Username ?? "");
         }
 
         public override void Run(ModuleInfo info, CancellationToken token = default(CancellationToken))

@@ -5,9 +5,9 @@ namespace Parcs
 {
     public abstract class MainModule: IModule
     {
-        private IJob CreateJob()
+        private IJob CreateJob(int priority, string username)
         {
-            var job = new Job();
+            var job = new Job(priority, username);
             if (!job.AddFile(Assembly.GetEntryAssembly().Location))
             {
                 throw new ParcsException();
@@ -16,13 +16,13 @@ namespace Parcs
             return job;
         }
 
-        public void RunModule()
+        public void RunModule(int priority = 0, string username = "")
         {
             IJob job = null;
 
             try
             {
-                job = CreateJob();
+                job = CreateJob(priority, username);
                 Run(new ModuleInfo(job, null));
             }
 

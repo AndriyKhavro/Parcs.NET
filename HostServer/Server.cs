@@ -179,9 +179,10 @@ namespace HostServer
         /// 
         /// </summary>
         /// <returns>task number</returns>
-        public int BeginJob()
+        public int BeginJob(int priority, string username)
         {
-            var t = new JobInfo(++_taskNumber);
+            Log.Info($"Starting a new job with priority {priority}. Username: {username}");
+            var t = new JobInfo(++_taskNumber) {Priority = priority, Username = username};
             _taskDictionary.AddOrUpdate(t.Number, t, (key, value) => value);
             CheckHostNames();
             return _taskNumber;

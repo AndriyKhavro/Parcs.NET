@@ -33,12 +33,18 @@ namespace Parcs
 
         public bool IsFinished { get; private set; }
 
-        public Job()
+        public Job() : this(0, string.Empty)
+        {
+        }
+
+        public Job(int priority, string username)
         {
             if (!Server.IsConnected && !Server.Connect()) throw new Exception("Cannot connect to server...");
             var writer = Server.Writer;
 
             writer.Write((byte)Constants.BeginJob);
+            writer.Write(priority);
+            writer.Write(username);
             Number = Server.Reader.ReadInt32();
         }
 

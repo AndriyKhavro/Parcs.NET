@@ -112,10 +112,10 @@ namespace HostServer
                                     }
                                     break;
                                 case ((byte)Constants.BeginJob):
-                                    {
-                                        jobNumber = _hostServer.BeginJob();
-                                        writer.Write(jobNumber);
-                                    }
+                                    int priority = reader.ReadInt32();
+                                    string username = reader.ReadString();
+                                    jobNumber = _hostServer.BeginJob(priority, username);
+                                    writer.Write(jobNumber);
                                     break;
                                 case ((byte)Constants.FinishJob):
                                     jobNumber = reader.ReadInt32();

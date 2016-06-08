@@ -16,13 +16,15 @@ namespace RestApi.Services
         private readonly string _matrixModuleFilePath = ConfigurationManager.AppSettings["matrixModuleFilePath"];
         private readonly string _matrixStorageFolder = ConfigurationManager.AppSettings["matrixStorageFolder"];
 
-        public async Task<bool> TryRunMatrixModule(MatrixSize matrixSize, int pointCount, string serverIp)
+        public async Task<bool> TryRunMatrixModule(MatrixSize matrixSize, int pointCount, string serverIp, int priority)
         {
             int matrixFilePrefix = (int) matrixSize/1000;
+            var username = Thread.CurrentPrincipal.Identity.Name;
+            var userArg = string.IsNullOrEmpty(username) ? "" : $" --user {username}";
             var processStartInfo =
                 new ProcessStartInfo(
                     $@"{_matrixModuleFilePath}",
-                    $@"--m1 {_matrixStorageFolder}\{matrixFilePrefix}1.mtr --m2 {_matrixStorageFolder}\{matrixFilePrefix}2.mtr --p {pointCount} --serverip {serverIp}")
+                    $@"--m1 {_matrixStorageFolder}\{matrixFilePrefix}1.mtr --m2 {_matrixStorageFolder}\{matrixFilePrefix}2.mtr --p {pointCount} --serverip {serverIp} --priority {priority}{userArg}")
                 {
                     UseShellExecute = false,
                     RedirectStandardError = true,

@@ -24,6 +24,7 @@ namespace HostServer.WebApi
                 JobStatus = ResolveJobStatus(j).ToString(),
                 StartTimeUtc = j.StartTimeUtc,
                 FinishTimeUtc = j.FinishTimeUtc,
+                Username = j.Username,
                 Points = j.PointDictionary.Values.Select(p => new PointInfoDto
                 {
                     Number = p.Number,
