@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using Parcs;
 using Parcs.Api.Dto;
 
 namespace HostServer.WebApi
 {
     public class HostController : ApiController
     {
+        [HttpGet]
+        [ActionName("list")]
         public IEnumerable<HostInfoDto> Get()
         {
             return Server.Instance.HostList.Select(h => new HostInfoDto
@@ -17,6 +20,13 @@ namespace HostServer.WebApi
                 LinpackResult = h.IsConnected ? h.LinpackResult : 0,
                 IsConnected = h.IsConnected
             });
-        } 
+        }
+
+        [HttpGet]
+        [ActionName("serverip")]
+        public string GetServerIp()
+        {
+            return HostInfo.LocalIP.ToString();
+        }
     }
 }

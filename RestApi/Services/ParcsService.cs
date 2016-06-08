@@ -26,12 +26,17 @@ namespace RestApi.Services
 
         public Task<HostInfoDto[]> GetHosts()
         {
-            return _restApiClient.GetAsync<HostInfoDto[]>($"{_hostServerUrl}/api/host");
+            return _restApiClient.GetAsync<HostInfoDto[]>($"{_hostServerUrl}/api/host/list");
         }
 
         public Task CancelJob(CancelJobDto dto)
         {
             return _restApiClient.PostAsync($"{_hostServerUrl}/api/job/cancel", dto);
+        }
+
+        public Task<string> GetServerIp()
+        {
+            return _restApiClient.GetAsync<string>($"{_hostServerUrl}/api/host/serverip");
         }
     }
 }

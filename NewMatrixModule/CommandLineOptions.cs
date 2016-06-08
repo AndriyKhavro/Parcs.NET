@@ -16,6 +16,8 @@ namespace NewMatrixModule
         public string File2 { get; set; }
         [Option("p", Required = true, HelpText = "Number of points.")]
         public int PointsNum { get; set; }
+        [Option("serverip", Required = false, HelpText = "Path to the file with the sever IP")]
+        public string ServerIp { get; set; }
 
         public string GetUsage()
         {

@@ -28,8 +28,12 @@ namespace NewMatrixModule
                 return;
             }
 
+            if (!string.IsNullOrEmpty(options.ServerIp))
+            {
+                Job.SetServerIp(options.ServerIp);
+            }
+
             (new MatrixesModule()).RunModule();
-            Console.ReadKey();
         }
 
         public override void Run(ModuleInfo info, CancellationToken token = default(CancellationToken))

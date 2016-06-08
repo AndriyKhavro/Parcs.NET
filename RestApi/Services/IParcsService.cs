@@ -8,5 +8,6 @@ namespace RestApi.Services
         Task<JobInfoDto[]> GetJobs();
         Task<HostInfoDto[]> GetHosts();
         Task CancelJob(CancelJobDto cancelJobDto);
+        Task<string> GetServerIp();
     }
 }

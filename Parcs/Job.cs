@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Parcs
 {
@@ -22,6 +18,7 @@ namespace Parcs
 
                 return _server;
             }
+            private set { _server = value; }
         }
 
         private const string serverName = "server.txt";
@@ -32,36 +29,32 @@ namespace Parcs
             private set;
         }
 
-        public int Number { get; private set; }
+        public int Number { get; }
 
         public bool IsFinished { get; private set; }
-        //private static IDictionary<int, IJob> _uniqueJobs = new Dictionary<int, IJob>();
 
         public Job()
         {
             if (!Server.IsConnected && !Server.Connect()) throw new Exception("Cannot connect to server...");
             var writer = Server.Writer;
-            var reader = Server.Reader;
 
             writer.Write((byte)Constants.BeginJob);
             Number = Server.Reader.ReadInt32();
         }
 
-        //public static void AddUniqueJob(IJob job) 
-        //{
-        //    if (!_uniqueJobs.Keys.Contains(job.Number))
-        //        _uniqueJobs.Add(job.Number, job);
-        //}
+        public static void SetServerIp(string serverIp)
+        {
+            Server = new HostInfo(serverIp, (int)Ports.ServerPort);
+        }
 
         private static HostInfo ReadServerName()
         {
-            string serverIp;
             try
             {
 
                 using (StreamReader reader = new StreamReader(serverName))
                 {
-                    serverIp = reader.ReadLine();
+                    var serverIp = reader.ReadLine();
                     return new HostInfo(serverIp, (int)Ports.ServerPort);
                 }
             }

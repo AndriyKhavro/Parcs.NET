@@ -45,6 +45,8 @@
     <Compile Include="HostInfoDto.cs" />
     <Compile Include="JobInfoDto.cs" />
     <Compile Include="JobStatus.cs" />
+    <Compile Include="MatrixModuleDto.cs" />
+    <Compile Include="MatrixSize.cs" />
     <Compile Include="PointInfoDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
