@@ -27,4 +27,10 @@ function configRoutes($stateProvider, $urlRouterProvider) {
         controller: "signupController",
         templateUrl: "/app/views/signup.html"
     });
+
+    $stateProvider.state("about", {
+        url: "/about",
+        templateUrl: "/app/views/about.html",
+        controller: "aboutController"
+    });
 }

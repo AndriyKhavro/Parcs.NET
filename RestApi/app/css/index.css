@@ -1,5 +1,4 @@
 body {
-  min-height: 1000px;
   padding-top: 70px; }
 
 .hosts {
@@ -97,6 +96,38 @@ body {
 
 .noDataWrapper {
   padding: 0 0 0 15px; }
+
+.footer {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  margin-top: 40px;
+  border-top: 1px solid #eee; }
+  .footer p {
+    padding: 0 10px; }
+
+.about pre {
+  padding: 20px;
+  font-size: 14px; }
+
+.about-photo {
+  width: 334px;
+  height: 260px;
+  background-image: url("../resources/authors.png"); }
+
+.about-surprise {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: 30%;
+  right: 10.5%; }
+  .about-surprise:hover {
+    cursor: pointer; }
+
+.about-surprisePhoto {
+  position: absolute;
+  top: 10%;
+  right: 33%;
+  z-index: 10; }
 
 ::-webkit-scrollbar {
   width: 10px;

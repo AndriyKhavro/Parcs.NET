@@ -20,7 +20,7 @@ app.config(require('./js/authConfig'));
 app.config(require('./js/routeConfig'));
 app.run(require('./js/appRun'));
 
-},{"./js/appRun":2,"./js/authConfig":3,"./js/controllers":4,"./js/directives":9,"./js/routeConfig":12,"./js/services":18,"angular":25,"angular-local-storage":19,"angular-ui-bootstrap":22,"angular-ui-router":23}],2:[function(require,module,exports){
+},{"./js/appRun":2,"./js/authConfig":3,"./js/controllers":5,"./js/directives":10,"./js/routeConfig":13,"./js/services":19,"angular":26,"angular-local-storage":20,"angular-ui-bootstrap":23,"angular-ui-router":24}],2:[function(require,module,exports){
 appRun.$inject = ['$rootScope', 'authService'];
 
 function appRun($rootScope, authService) {
@@ -40,13 +40,33 @@ function authConfig ($httpProvider) {
 module.exports = authConfig;
 },{}],4:[function(require,module,exports){
 'use strict';
+aboutController.$inject = ['$scope'];
+
+function aboutController ($scope) {
+
+    $scope.surprise = "";
+
+    $scope.onSurpriseMouseOver = function() {
+        $scope.surprise = "app/resources/surprise.png"
+    };
+
+    $scope.onSurpriseMouseLeave = function() {
+        $scope.surprise = "";
+    };
+}
+
+module.exports = aboutController;
+
+},{}],5:[function(require,module,exports){
+'use strict';
 var app = require('angular').module('parcs');
 
 app.controller('MainController', require('./main.controller'));
 app.controller('loginController', require('./login.controller'));
 app.controller('signupController', require('./signup.controller'));
+app.controller('aboutController', require('./about.controller'));
 
-},{"./login.controller":5,"./main.controller":6,"./signup.controller":7,"angular":25}],5:[function(require,module,exports){
+},{"./about.controller":4,"./login.controller":6,"./main.controller":7,"./signup.controller":8,"angular":26}],6:[function(require,module,exports){
 'use strict';
 loginController.$inject = ['$scope', '$location', 'authService']; 
 
@@ -74,7 +94,7 @@ function loginController ($scope, $location, authService) {
 
 module.exports = loginController;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 function MainController($scope, $timeout, constants, dataService) {
 
     $scope.charts = [constants.charts.processors, constants.charts.benchmark];
@@ -94,13 +114,13 @@ function MainController($scope, $timeout, constants, dataService) {
             $scope.data.logs = response[2].data;
             $scope.data.chartsData = angular.copy($scope.data.hosts);
         });
-        
+
         $timeout(getDataFromServer, constants.serverQueryTimeout);
     })();
 }
 
 module.exports = MainController;
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 'use strict';
 signupController.$inject = ['$scope', '$location', '$timeout', 'authService']; 
 
@@ -144,7 +164,7 @@ function signupController ($scope, $location, $timeout, authService) {
 }
 
 module.exports = signupController;
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var Chart = require('./../models/chart.model');
 function ChartDirective (chartService) {
     return {
@@ -179,14 +199,14 @@ function ChartDirective (chartService) {
 }
 
  module.exports = ChartDirective;
-},{"./../models/chart.model":11}],9:[function(require,module,exports){
+},{"./../models/chart.model":12}],10:[function(require,module,exports){
 'use strict';
 var app = require('angular').module('parcs');
 
 app.directive('chart', require('./chart.directive'));
 app.component('navbar', require('./navbar.component'));
 
-},{"./chart.directive":8,"./navbar.component":10,"angular":25}],10:[function(require,module,exports){
+},{"./chart.directive":9,"./navbar.component":11,"angular":26}],11:[function(require,module,exports){
 var navbarComponent = {
     templateUrl: 'app/views/navbar.html',
     controller: navbarController
@@ -204,7 +224,7 @@ function navbarController(authService, $location) {
 }
 
 module.exports = navbarComponent;
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var Highcharts = require('highcharts');
 var noData = require('highcharts/modules/no-data-to-display');
 noData(Highcharts);
@@ -279,7 +299,7 @@ Chart.prototype.addPoint = function(value) {
 };
 
 module.exports = Chart;
-},{"highcharts":26,"highcharts/modules/no-data-to-display":27}],12:[function(require,module,exports){
+},{"highcharts":27,"highcharts/modules/no-data-to-display":28}],13:[function(require,module,exports){
 module.exports = configRoutes;
 
 configRoutes.$inject = ["$stateProvider", "$urlRouterProvider"];
@@ -309,8 +329,14 @@ function configRoutes($stateProvider, $urlRouterProvider) {
         controller: "signupController",
         templateUrl: "/app/views/signup.html"
     });
+
+    $stateProvider.state("about", {
+        url: "/about",
+        templateUrl: "/app/views/about.html",
+        controller: "aboutController"
+    });
 }
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 AuthService.$inject = ['$http', '$q', '$rootScope', 'localStorageService'];
 
 function AuthService($http, $q, $rootScope, localStorageService) {
@@ -385,7 +411,7 @@ function AuthService($http, $q, $rootScope, localStorageService) {
 };
 
 module.exports = AuthService;
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 authInterceptorService.$inject = ['$q', '$location', 'localStorageService'];
@@ -419,7 +445,7 @@ function authInterceptorService ($q, $location, localStorageService) {
 }
 
 module.exports = authInterceptorService;
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports = function(constants) {
 
     var chartDataMap = {};
@@ -466,7 +492,7 @@ module.exports = function(constants) {
 
 
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = function() {
     return {
         charts: {
@@ -495,58 +521,8 @@ module.exports = function() {
         serverQueryTimeout: 3000
     }
 };
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 module.exports = function($http, $q, constants) {
-
-    var mockedJobs = [
-        {
-            "number": 1,
-            "priority": 0,
-            "needsPoint": false,
-            "isFinished": false,
-            "jobStatus": "Running",
-            "points": [
-                {
-                    "number": 1,
-                    "hostIpAddress": "192.168.0.104",
-                    "isFinished": false
-                },
-                {
-                    "number": 2,
-                    "hostIpAddress": "192.168.0.104",
-                    "isFinished": false
-                }
-            ]
-        },
-        {
-            "number": 2,
-            "priority": 0,
-            "needsPoint": false,
-            "isFinished": false,
-            "jobStatus": "PartlyRunning",
-            "points": [
-                {
-                    "number": 1,
-                    "hostIpAddress": "192.168.0.104",
-                    "isFinished": false
-                },
-                {
-                    "number": 2,
-                    "hostIpAddress": "192.168.0.104",
-                    "isFinished": false
-                }
-            ]
-        },
-        {
-            "number": 3,
-            "priority": 0,
-            "needsPoint": false,
-            "isFinished": false,
-            "jobStatus": "Pending",
-            "points": []
-        }
-    ];
-
 
     return {
         getData: getData
@@ -574,7 +550,7 @@ module.exports = function($http, $q, constants) {
 
 
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 var app = require('angular').module('parcs');
 
@@ -584,11 +560,11 @@ app.factory('constants', require('./constants'));
 app.factory('authService', require('./auth.service'));
 app.factory('authInterceptorService', require('./authInterceptor.service'));
 
-},{"./auth.service":13,"./authInterceptor.service":14,"./chart.service":15,"./constants":16,"./data.service":17,"angular":25}],19:[function(require,module,exports){
+},{"./auth.service":14,"./authInterceptor.service":15,"./chart.service":16,"./constants":17,"./data.service":18,"angular":26}],20:[function(require,module,exports){
 require('./src/angular-local-storage.js');
 module.exports = 'LocalStorageModule';
 
-},{"./src/angular-local-storage.js":20}],20:[function(require,module,exports){
+},{"./src/angular-local-storage.js":21}],21:[function(require,module,exports){
 var isDefined = angular.isDefined,
   isUndefined = angular.isUndefined,
   isNumber = angular.isNumber,
@@ -1027,7 +1003,7 @@ angular
       }];
   });
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /*
  * angular-ui-bootstrap
  * http://angular-ui.github.io/bootstrap/
@@ -8375,12 +8351,12 @@ angular.module('ui.bootstrap.datepickerPopup').run(function() {!angular.$$csp().
 angular.module('ui.bootstrap.tooltip').run(function() {!angular.$$csp().noInlineStyle && !angular.$$uibTooltipCss && angular.element(document).find('head').prepend('<style type="text/css">[uib-tooltip-popup].tooltip.top-left > .tooltip-arrow,[uib-tooltip-popup].tooltip.top-right > .tooltip-arrow,[uib-tooltip-popup].tooltip.bottom-left > .tooltip-arrow,[uib-tooltip-popup].tooltip.bottom-right > .tooltip-arrow,[uib-tooltip-popup].tooltip.left-top > .tooltip-arrow,[uib-tooltip-popup].tooltip.left-bottom > .tooltip-arrow,[uib-tooltip-popup].tooltip.right-top > .tooltip-arrow,[uib-tooltip-popup].tooltip.right-bottom > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.top-left > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.top-right > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.bottom-left > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.bottom-right > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.left-top > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.left-bottom > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.right-top > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.right-bottom > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.top-left > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.top-right > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.bottom-left > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.bottom-right > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.left-top > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.left-bottom > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.right-top > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.right-bottom > .tooltip-arrow,[uib-popover-popup].popover.top-left > .arrow,[uib-popover-popup].popover.top-right > .arrow,[uib-popover-popup].popover.bottom-left > .arrow,[uib-popover-popup].popover.bottom-right > .arrow,[uib-popover-popup].popover.left-top > .arrow,[uib-popover-popup].popover.left-bottom > .arrow,[uib-popover-popup].popover.right-top > .arrow,[uib-popover-popup].popover.right-bottom > .arrow,[uib-popover-html-popup].popover.top-left > .arrow,[uib-popover-html-popup].popover.top-right > .arrow,[uib-popover-html-popup].popover.bottom-left > .arrow,[uib-popover-html-popup].popover.bottom-right > .arrow,[uib-popover-html-popup].popover.left-top > .arrow,[uib-popover-html-popup].popover.left-bottom > .arrow,[uib-popover-html-popup].popover.right-top > .arrow,[uib-popover-html-popup].popover.right-bottom > .arrow,[uib-popover-template-popup].popover.top-left > .arrow,[uib-popover-template-popup].popover.top-right > .arrow,[uib-popover-template-popup].popover.bottom-left > .arrow,[uib-popover-template-popup].popover.bottom-right > .arrow,[uib-popover-template-popup].popover.left-top > .arrow,[uib-popover-template-popup].popover.left-bottom > .arrow,[uib-popover-template-popup].popover.right-top > .arrow,[uib-popover-template-popup].popover.right-bottom > .arrow{top:auto;bottom:auto;left:auto;right:auto;margin:0;}[uib-popover-popup].popover,[uib-popover-html-popup].popover,[uib-popover-template-popup].popover{display:block !important;}</style>'); angular.$$uibTooltipCss = true; });
 angular.module('ui.bootstrap.timepicker').run(function() {!angular.$$csp().noInlineStyle && !angular.$$uibTimepickerCss && angular.element(document).find('head').prepend('<style type="text/css">.uib-time input{width:50px;}</style>'); angular.$$uibTimepickerCss = true; });
 angular.module('ui.bootstrap.typeahead').run(function() {!angular.$$csp().noInlineStyle && !angular.$$uibTypeaheadCss && angular.element(document).find('head').prepend('<style type="text/css">[uib-typeahead-popup].dropdown-menu{display:block;}</style>'); angular.$$uibTypeaheadCss = true; });
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 require('./dist/ui-bootstrap-tpls');
 
 module.exports = 'ui.bootstrap';
 
-},{"./dist/ui-bootstrap-tpls":21}],23:[function(require,module,exports){
+},{"./dist/ui-bootstrap-tpls":22}],24:[function(require,module,exports){
 /**
  * State-based routing for AngularJS
  * @version v0.3.1
@@ -12957,7 +12933,7 @@ angular.module('ui.router.state')
   .filter('isState', $IsStateFilter)
   .filter('includedByState', $IncludedByStateFilter);
 })(window, window.angular);
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /**
  * @license AngularJS v1.5.6
  * (c) 2010-2016 Google, Inc. http://angularjs.org
@@ -43981,11 +43957,11 @@ $provide.value("$locale", {
 })(window);
 
 !window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 require('./angular');
 module.exports = angular;
 
-},{"./angular":24}],26:[function(require,module,exports){
+},{"./angular":25}],27:[function(require,module,exports){
 /*
  Highcharts JS v4.2.5 (2016-05-06)
 
@@ -44330,7 +44306,7 @@ for(c.attr(a);this["zoneGraph"+b];)this["zoneGraph"+b].attr(a),b+=1}},setVisible
 a.visible)a.isDirty=!0});p(c.linkedSeries,function(b){b.setVisible(a,!1)});if(g)d.isDirtyBox=!0;b!==!1&&d.redraw();I(c,f)},show:function(){this.setVisible(!0)},hide:function(){this.setVisible(!1)},select:function(a){this.selected=a=a===y?!this.selected:a;if(this.checkbox)this.checkbox.checked=a;I(this,a?"select":"unselect")},drawTracker:ga.drawTrackerGraph});u(x,{Color:ma,Point:Ja,Tick:Va,Renderer:cb,SVGElement:O,SVGRenderer:Da,arrayMin:La,arrayMax:Ga,charts:T,correctFloat:ca,dateFormat:Qa,error:aa,
 format:Ka,pathAnim:void 0,getOptions:function(){return U},hasBidiBug:Pb,isTouchDevice:Lb,setOptions:function(a){U=E(!0,U,a);Eb();return U},addEvent:N,removeEvent:X,createElement:ba,discardElement:Sa,css:M,each:p,map:Ca,merge:E,splat:ta,stableSort:hb,extendClass:qa,pInt:C,svg:fa,canvas:ka,vml:!fa&&!ka,product:"Highcharts",version:"4.2.5"});return x});
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /*
  Highcharts JS v4.2.5 (2016-05-06)
  Plugin for displaying a message when there is no data visible in chart.
