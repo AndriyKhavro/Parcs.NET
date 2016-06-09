@@ -11,20 +11,24 @@
 		</div>
 		<div class="table-title row">
 			<span class="col-md-2 col-sm-2">Number</span>
-			<span class="col-md-4 col-sm-4">Priority</span>
-			<span class="col-md-4 col-sm-4">Status</span>
+			<span class="col-md-2 col-sm-2">Priority</span>
+			<span class="col-md-2 col-sm-2">Status</span>
+			<span class="col-md-2 col-sm-2">Start</span>
+			<span class="col-md-2 col-sm-2">Finish</span>
 			<span class="col-md-2 col-sm-2"></span>
 		</div>
 		<uib-accordion close-others="oneAtATime">
 			<uib-accordion-group ng-repeat="job in data.jobs" is-open="job.isOpened" is-disabled="!job.points.length">
 				<uib-accordion-heading>
 					<b class="col-md-2 col-sm-2 table-value">{{job.number}}</b>
-					<span class="col-md-4 col-sm-4 table-value">{{job.priority}}</span>
-							<b class="col-md-4 col-sm-4 table-value"
-								  ng-class="{'running': job.jobStatus === jobStatuses.running,
-								  'partlyRunning': job.jobStatus === jobStatuses.partlyRunning,
-								  'finished': job.jobStatus === jobStatuses.finished}">{{job.jobStatus}}
-							</b>
+					<span class="col-md-2 col-sm-2 table-value">{{job.priority}}</span>
+					<b class="col-md-2 col-sm-2 table-value"
+						  ng-class="{'running': job.jobStatus === jobStatuses.running,
+						  'partlyRunning': job.jobStatus === jobStatuses.partlyRunning,
+						  'finished': job.jobStatus === jobStatuses.finished}">{{job.jobStatus}}
+					</b>
+					<span class="col-md-2 col-sm-2 table-value">{{job.startTimeUtc | date: "HH:mm"}}</span>
+					<span class="col-md-2 col-sm-2 table-value">{{job.finishTimeUtc | date: "HH:mm"}}</span>
 					<i class="text-right glyphicon coll-md-2 col-sm-2"
 					   ng-class="{'glyphicon-chevron-down': job.isOpened, 'glyphicon-chevron-right': !job.isOpened}"
 					   ng-show="job.points && job.points.length">
@@ -102,7 +106,7 @@
 		<ul class="logger-list list-unstyled">
 			<li ng-repeat="log in data.logs">
 				<span class="text-success">{{log.message}}</span>
-				<span class="logger-time">{{log.dateTimeUtc}}</span>
+				<span class="logger-time">{{log.dateTimeUtc | date: "HH:mm"}}</span>
 			</li>
 		</ul>
 	</div>

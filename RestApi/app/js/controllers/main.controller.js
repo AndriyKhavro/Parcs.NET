@@ -17,7 +17,7 @@ function MainController($scope, $timeout, constants, dataService) {
             $scope.data.logs = response[2].data;
             $scope.data.chartsData = angular.copy($scope.data.hosts);
         });
-        
+
         $timeout(getDataFromServer, constants.serverQueryTimeout);
     })();
 }
