@@ -40,17 +40,22 @@ function authConfig ($httpProvider) {
 module.exports = authConfig;
 },{}],4:[function(require,module,exports){
 'use strict';
-aboutController.$inject = ['$scope'];
+aboutController.$inject = ['$scope', '$timeout'];
 
-function aboutController ($scope) {
+function aboutController ($scope, $timeout) {
 
     $scope.surprise = "";
 
+    var promise;
+
     $scope.onSurpriseMouseOver = function() {
-        $scope.surprise = "app/resources/surprise.png"
+        promise = $timeout(function() {
+            $scope.surprise = "app/resources/surprise.png"
+        }, 1000);
     };
 
     $scope.onSurpriseMouseLeave = function() {
+        $timeout.cancel(promise);
         $scope.surprise = "";
     };
 }
