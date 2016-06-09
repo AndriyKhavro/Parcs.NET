@@ -15,7 +15,10 @@ function ChartDirective (chartService) {
             var vm = this;
 
             $scope.$watch('vm.data.chartsData', function() {
-               var pointValue = chartService.getChartData(vm.options.title);
+               if (!vm.data.chartsData.length) {
+                   return;
+               }
+               var pointValue = chartService.getChartData(vm.options.title, vm.data.chartsData);
                vm.chart.addPoint(pointValue);
             });
 

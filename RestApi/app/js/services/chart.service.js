@@ -13,11 +13,31 @@ module.exports = function(constants) {
     }
 
     function getProcessorsPerformanceChartValue(response) {
-       return Math.random() * 10;
+        var pointCountSum = 0, processorCountSum = 0;
+        response.forEach(function(host) {
+            pointCountSum += host.pointCount;
+            processorCountSum += host.processorCount;
+        });
+
+        if (!processorCountSum) {
+            return 0;
+        }
+
+        return parseFloat((pointCountSum / processorCountSum).toFixed(1));
     }
 
     function getBenchmarkPerformanceChartValue(response) {
-        return Math.random() * 100;
+        var pointCountSum = 0, processorCountSum = 0;
+        response.forEach(function(host) {
+            pointCountSum += host.pointCount * host.linpackResult;
+            processorCountSum += host.processorCount * host.linpackResult;
+        });
+
+        if (!processorCountSum) {
+            return 0;
+        }
+
+        return parseFloat((pointCountSum / processorCountSum).toFixed(1));
     }
 };
 

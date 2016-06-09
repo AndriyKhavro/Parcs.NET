@@ -75,24 +75,28 @@ function loginController ($scope, $location, authService) {
 module.exports = loginController;
 
 },{}],6:[function(require,module,exports){
-function MainController($scope, $interval, constants, dataService) {
+function MainController($scope, $timeout, constants, dataService) {
 
     $scope.charts = [constants.charts.processors, constants.charts.benchmark];
     $scope.data = {
         hosts: [],
         jobs: [],
+        logs: [],
         chartsData: []
     };
 
     $scope.jobStatuses = constants.jobStatuses;
 
-    $interval(function() {
+    (function getDataFromServer() {
         dataService.getData().then(function(response) {
-            $scope.data.hosts = response[0];
-            angular.merge($scope.data.jobs, response[1]);
-            $scope.data.chartsData = angular.copy($scope.data.jobs);
+            angular.merge($scope.data.hosts, response[0].data);
+            angular.merge($scope.data.jobs, response[1].data);
+            $scope.data.logs = response[2].data;
+            $scope.data.chartsData = angular.copy($scope.data.hosts);
         });
-    }, 1000);
+        
+        $timeout(getDataFromServer, constants.serverQueryTimeout);
+    })();
 }
 
 module.exports = MainController;
@@ -158,7 +162,10 @@ function ChartDirective (chartService) {
             var vm = this;
 
             $scope.$watch('vm.data.chartsData', function() {
-               var pointValue = chartService.getChartData(vm.options.title);
+               if (!vm.data.chartsData.length) {
+                   return;
+               }
+               var pointValue = chartService.getChartData(vm.options.title, vm.data.chartsData);
                vm.chart.addPoint(pointValue);
             });
 
@@ -428,11 +435,31 @@ module.exports = function(constants) {
     }
 
     function getProcessorsPerformanceChartValue(response) {
-       return Math.random() * 10;
+        var pointCountSum = 0, processorCountSum = 0;
+        response.forEach(function(host) {
+            pointCountSum += host.pointCount;
+            processorCountSum += host.processorCount;
+        });
+
+        if (!processorCountSum) {
+            return 0;
+        }
+
+        return parseFloat((pointCountSum / processorCountSum).toFixed(1));
     }
 
     function getBenchmarkPerformanceChartValue(response) {
-        return Math.random() * 100;
+        var pointCountSum = 0, processorCountSum = 0;
+        response.forEach(function(host) {
+            pointCountSum += host.pointCount * host.linpackResult;
+            processorCountSum += host.processorCount * host.linpackResult;
+        });
+
+        if (!processorCountSum) {
+            return 0;
+        }
+
+        return parseFloat((pointCountSum / processorCountSum).toFixed(1));
     }
 };
 
@@ -455,14 +482,17 @@ module.exports = function() {
 
         urls: {
             jobs: '/api/parcs/job',
-            hosts: '/api/parcs/hosts'
+            hosts: '/api/parcs/host/list',
+            logs: '/api/log'
         },
 
         jobStatuses: {
             running: 'Running',
             partlyRunning: 'PartlyRunning',
-            pending: 'Pending'
-        }
+            pending: 'Pending',
+            finished: 'Finished'
+        },
+        serverQueryTimeout: 3000
     }
 };
 },{}],17:[function(require,module,exports){
@@ -523,9 +553,9 @@ module.exports = function($http, $q, constants) {
     };
 
     function getData() {
-        //return $q.all($http.get(constants.url.hosts), $http.get(constants.url.jobs));
+        return $q.all([$http.get(constants.urls.hosts), $http.get(constants.urls.jobs), $http.get(constants.urls.logs)]);
 
-        return $q.resolve([null, getPreparedJobs(mockedJobs)]);
+        //return $q.resolve([null, getPreparedJobs(mockedJobs)]);
     }
 
     function getPreparedJobs(jobs) {

@@ -1,5 +1,11 @@
 <div class="row">
-	<div class="table-responsive col-md-6">
+<div class="row">
+	<div class="col-md-6 noDataWrapper">
+		<div class="noDataContainer" ng-if="!data.jobs.length">
+			<p class="noDataContainer-title">Start module to see Jobs</p>
+		</div>
+	</div>
+	<div class="table-responsive col-md-6" ng-if="data.jobs.length" style="clear: both">
 		<div>
 			<h4>Jobs</h4>
 		</div>
@@ -10,15 +16,15 @@
 			<span class="col-md-2 col-sm-2"></span>
 		</div>
 		<uib-accordion close-others="oneAtATime">
-			<uib-accordion-group ng-repeat="job in data.jobs" is-open="job.isOpened">
+			<uib-accordion-group ng-repeat="job in data.jobs" is-open="job.isOpened" is-disabled="!job.points.length">
 				<uib-accordion-heading>
-					<span class="col-md-2 col-sm-2 table-value">{{job.number}}</span>
+					<b class="col-md-2 col-sm-2 table-value">{{job.number}}</b>
 					<span class="col-md-4 col-sm-4 table-value">{{job.priority}}</span>
-							<span class="col-md-4 col-sm-4 table-value"
-								  ng-class="{'running': job.status === jobStatuses.running,
-								  'partlyRunning': job.status === jobStatuses.partlyRunning,
-								  'pending': job.status === jobStatuses.pending}">{{job.status}}
-							</span>
+							<b class="col-md-4 col-sm-4 table-value"
+								  ng-class="{'running': job.jobStatus === jobStatuses.running,
+								  'partlyRunning': job.jobStatus === jobStatuses.partlyRunning,
+								  'finished': job.jobStatus === jobStatuses.finished}">{{job.jobStatus}}
+							</b>
 					<i class="text-right glyphicon coll-md-2 col-sm-2"
 					   ng-class="{'glyphicon-chevron-down': job.isOpened, 'glyphicon-chevron-right': !job.isOpened}"
 					   ng-show="job.points && job.points.length">
@@ -43,34 +49,40 @@
 		</uib-accordion>
 
 	</div>
-	<div class="table-responsive col-md-6 hosts">
+	<div class="col-md-6 noDataWrapper">
+		<div class="noDataContainer" ng-if="!data.hosts.length">
+			<p class="noDataContainer-title">Start server to see Hosts</p>
+		</div>
+	</div>
+	<div class="table-responsive col-md-6 hosts" ng-if="data.hosts.length">
 		<div class="row hosts-header">
 			<h4 class="col-md-6 col-sm-6">Hosts</h4>
 			<i class="glyphicon glyphicon-plus-sign col-md-6 col-sm-6 hosts-add"></i>
 		</div>
 		<div class="table-title row">
 			<table class="table table-hover">
-				<tr>
-					<td>Name</td>
-					<td class="text-right">
-						<button class="btn btn-danger btn-sm">Remove</button>
+				<thead>
+				<th>IP</th>
+				<th>Points</th>
+				<th>Processors</th>
+				<th>Linpack</th>
+				<th>Connected</th>
+				</thead>
+				<tr ng-repeat="host in data.hosts">
+					<td>
+						<b>{{host.ipAddress}}</b>
 					</td>
-				</tr>
-				<tr>
-					<td>Name2</td>
-					<td class="text-right">
-						<button class="btn btn-danger btn-sm">Remove</button>
-					</td>
-				</tr>
-				<tr>
-					<td>Name3</td>
-					<td class="text-right">
-						<button class="btn btn-danger btn-sm">Remove</button>
+					<td>{{host.pointCount}}</td>
+					<td>{{host.processorCount}}</td>
+					<td>{{host.linpackResult}}</td>
+					<td>
+						<input type="checkbox" ng-model="host.isConnected" ng-disabled="true">
 					</td>
 				</tr>
 			</table>
 		</div>
 	</div>
+</div>
 	<div class="row analytics">
 		<div class="col-md-6 analytics-item" style="clear: both">
 			<div class="analytics-container">
@@ -82,96 +94,15 @@
 				<chart options="charts[1]" data="data"></chart>
 			</div>
 		</div>
-		<!--<div class="col-md-4 analytics-item">
-			<div class="analytics-container">
-				<h4>Chart3</h4>
-				<div class="analytics-chart"></div>
-			</div>
-		</div>-->
 	</div>
-	<div class="col-md-12 logger">
+	<div class="col-md-12 logger" ng-if="data.logs.length">
 		<div class="logger-title">
 			<h4>Log</h4>
 		</div>
 		<ul class="logger-list list-unstyled">
-			<li>
-				<span class="text-success">Success log</span>
-				<span class="logger-time">12:45</span>
-			</li>
-			<li>
-				<span class="text-warning">Warning log</span>
-				<span class="logger-time">12:46</span>
-			</li>
-			<li>
-				<span class="text-danger">Error log</span>
-				<span class="logger-time">12:47</span>
-			</li>
-			<li>
-				<span class="text-success">Success log</span>
-				<span class="logger-time">12:45</span>
-			</li>
-			<li>
-				<span class="text-warning">Warning log</span>
-				<span class="logger-time">12:46</span>
-			</li>
-			<li>
-				<span class="text-danger">Error log</span>
-				<span class="logger-time">12:47</span>
-			</li><li>
-			<span class="text-success">Success log</span>
-			<span class="logger-time">12:45</span>
-		</li>
-			<li>
-				<span class="text-warning">Warning log</span>
-				<span class="logger-time">12:46</span>
-			</li>
-			<li>
-				<span class="text-danger">Error log</span>
-				<span class="logger-time">12:47</span>
-			</li><li>
-			<span class="text-success">Success log</span>
-			<span class="logger-time">12:45</span>
-		</li>
-			<li>
-				<span class="text-warning">Warning log</span>
-				<span class="logger-time">12:46</span>
-			</li>
-			<li>
-				<span class="text-danger">Error log</span>
-				<span class="logger-time">12:47</span>
-			</li><li>
-			<span class="text-success">Success log</span>
-			<span class="logger-time">12:45</span>
-		</li>
-			<li>
-				<span class="text-warning">Warning log</span>
-				<span class="logger-time">12:46</span>
-			</li>
-			<li>
-				<span class="text-danger">Error log</span>
-				<span class="logger-time">12:47</span>
-			</li><li>
-			<span class="text-success">Success log</span>
-			<span class="logger-time">12:45</span>
-		</li>
-			<li>
-				<span class="text-warning">Warning log</span>
-				<span class="logger-time">12:46</span>
-			</li>
-			<li>
-				<span class="text-danger">Error log</span>
-				<span class="logger-time">12:47</span>
-			</li><li>
-			<span class="text-success">Success log</span>
-			<span class="logger-time">12:45</span>
-		</li>
-			<li>
-				<span class="text-warning">Warning log</span>
-				<span class="logger-time">12:46</span>
-			</li>
-			<li>
-				<span class="text-danger">Error log</span>
-				<span class="logger-time">12:47</span>
+			<li ng-repeat="log in data.logs">
+				<span class="text-success">{{log.message}}</span>
+				<span class="logger-time">{{log.dateTimeUtc}}</span>
 			</li>
 		</ul>
 	</div>

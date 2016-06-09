@@ -13,13 +13,16 @@ module.exports = function() {
 
         urls: {
             jobs: '/api/parcs/job',
-            hosts: '/api/parcs/hosts'
+            hosts: '/api/parcs/host/list',
+            logs: '/api/log'
         },
 
         jobStatuses: {
             running: 'Running',
             partlyRunning: 'PartlyRunning',
-            pending: 'Pending'
-        }
+            pending: 'Pending',
+            finished: 'Finished'
+        },
+        serverQueryTimeout: 3000
     }
 };

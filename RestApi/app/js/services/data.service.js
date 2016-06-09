@@ -55,9 +55,9 @@ module.exports = function($http, $q, constants) {
     };
 
     function getData() {
-        //return $q.all($http.get(constants.url.hosts), $http.get(constants.url.jobs));
+        return $q.all([$http.get(constants.urls.hosts), $http.get(constants.urls.jobs), $http.get(constants.urls.logs)]);
 
-        return $q.resolve([null, getPreparedJobs(mockedJobs)]);
+        //return $q.resolve([null, getPreparedJobs(mockedJobs)]);
     }
 
     function getPreparedJobs(jobs) {
