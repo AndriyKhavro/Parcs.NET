@@ -2,7 +2,9 @@
 <div class="row">
 	<div class="col-md-6 noDataWrapper">
 		<div class="noDataContainer" ng-if="!data.jobs.length">
-			<p class="noDataContainer-title">Start module to see Jobs</p>
+			<div class="noDataContainer-title"><span>Start module to see Jobs</span>
+				<i class="glyphicon glyphicon-plus-sign jobs-add" ng-click="addJob()"></i>
+			</div>
 		</div>
 	</div>
 	<div class="table-responsive col-md-6" ng-if="data.jobs.length" style="clear: both">
