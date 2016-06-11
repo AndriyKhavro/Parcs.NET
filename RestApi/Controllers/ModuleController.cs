@@ -6,7 +6,6 @@ using RestApi.Services;
 
 namespace RestApi.Controllers
 {
-    [Authorize]
     public class ModuleController: ApiController
     {
         private readonly IModuleRunner _moduleRunner;

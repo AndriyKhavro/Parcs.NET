@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using log4net;
 using Parcs.Api.Dto;
 
 namespace RestApi.Services
@@ -15,6 +16,8 @@ namespace RestApi.Services
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(0);
         private readonly string _matrixModuleFilePath = ConfigurationManager.AppSettings["matrixModuleFilePath"];
         private readonly string _matrixStorageFolder = ConfigurationManager.AppSettings["matrixStorageFolder"];
+
+        private readonly ILog _log = LogManager.GetLogger(typeof (ModuleRunner));
 
         public async Task<bool> TryRunMatrixModule(MatrixSize matrixSize, int pointCount, string serverIp, int priority)
         {
@@ -52,6 +55,7 @@ namespace RestApi.Services
 
         private void OutputReceived(string data, ref bool isError)
         {
+            _log.Info("MODULE OUTPUT: " + data);
             if (string.IsNullOrEmpty(data))
             {
                 return;                
@@ -71,6 +75,7 @@ namespace RestApi.Services
 
         private void Error(string data, out bool isError)
         {
+            _log.Info("MODULE ERROR RECEIVED: " + data);
             isError = true;
             _semaphore.Release();
         }

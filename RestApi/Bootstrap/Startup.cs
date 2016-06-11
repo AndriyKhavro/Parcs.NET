@@ -15,6 +15,7 @@ namespace RestApi.Bootstrap
 
         public void Configuration(IAppBuilder appBuilder)
         {
+            log4net.Config.XmlConfigurator.Configure();
             ConfigureShutdown(appBuilder);
             UnityContainer = UnityConfig.RegisterComponents();
 

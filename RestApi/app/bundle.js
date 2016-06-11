@@ -527,7 +527,7 @@ module.exports = function(constants) {
             return 0;
         }
 
-        return parseFloat((pointCountSum / processorCountSum).toFixed(1));
+        return parseFloat((pointCountSum / processorCountSum).toFixed(2));
     }
 
     function getBenchmarkPerformanceChartValue(response) {
@@ -541,7 +541,7 @@ module.exports = function(constants) {
             return 0;
         }
 
-        return parseFloat((pointCountSum / processorCountSum).toFixed(1));
+        return parseFloat((pointCountSum / processorCountSum).toFixed(2));
     }
 };
 
@@ -590,7 +590,7 @@ module.exports = function() {
 
         jobStatuses: {
             running: 'Running',
-            partlyRunning: 'PartlyRunning',
+            partlyRunning: 'Partly',
             pending: 'Pending',
             finished: 'Finished',
             cancelled: 'Cancelled'
@@ -609,7 +609,9 @@ module.exports = function() {
 module.exports = function($http, $q, constants) {
 
     return {
-        getData: getData
+        getData: getData,
+		cancelJob: cancelJob,
+		startJob: startJob
     };
 
     function getData() {
