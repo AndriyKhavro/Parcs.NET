@@ -22,12 +22,18 @@ body {
   height: 300px;
   width: 100%; }
 
-.hosts-add {
+.jobs-header {
+  padding-bottom: 10px; }
+  .jobs-header span {
+    padding-right: 0;
+    font-size: 18px; }
+
+.jobs-add {
   padding-right: 0;
-  font-size: 20px;
+  font-size: 18px;
   color: #5cb85c;
-  text-align: right; }
-  .hosts-add:hover {
+  text-align: left; }
+  .jobs-add:hover {
     color: #80c780;
     cursor: pointer; }
 
@@ -72,7 +78,7 @@ body {
     color: green; }
   .panel-heading b.partlyRunning {
     color: #5cb85c; }
-  .panel-heading b.pending {
+  .panel-heading b.cancelled {
     color: #f0ad4e; }
   .panel-heading b.finished {
     color: #337AB7; }
@@ -128,6 +134,12 @@ body {
   top: 10%;
   right: 33%;
   z-index: 10; }
+
+.removeButton {
+  font-size: 18px;
+  color: #C9302C; }
+  .removeButton:hover {
+    cursor: pointer; }
 
 ::-webkit-scrollbar {
   width: 10px;

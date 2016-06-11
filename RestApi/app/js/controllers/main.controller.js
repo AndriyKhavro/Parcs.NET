@@ -20,6 +20,12 @@ function MainController($scope, $timeout, constants, dataService) {
 
         $timeout(getDataFromServer, constants.serverQueryTimeout);
     })();
+
+    $scope.cancelJob = function(job) {
+        dataService.cancelJob(job).then(function() {
+
+        });
+    };
 }
 
 module.exports = MainController;

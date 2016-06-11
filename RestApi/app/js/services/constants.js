@@ -14,14 +14,16 @@ module.exports = function() {
         urls: {
             jobs: '/api/parcs/job',
             hosts: '/api/parcs/host/list',
-            logs: '/api/log'
+            logs: '/api/log',
+            cancelJob: '/api/parcs/job'
         },
 
         jobStatuses: {
             running: 'Running',
             partlyRunning: 'PartlyRunning',
             pending: 'Pending',
-            finished: 'Finished'
+            finished: 'Finished',
+            cancelled: 'Cancelled'
         },
         serverQueryTimeout: 3000
     }

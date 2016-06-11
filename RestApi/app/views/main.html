@@ -6,29 +6,36 @@
 		</div>
 	</div>
 	<div class="table-responsive col-md-6" ng-if="data.jobs.length" style="clear: both">
-		<div>
-			<h4>Jobs</h4>
+		<div class="row jobs-header">
+			<span class="col-md-2 col-sm-2">Jobs</span>
+
+				<i class="glyphicon glyphicon-plus-sign jobs-add"></i>
+
 		</div>
 		<div class="table-title row">
-			<span class="col-md-2 col-sm-2">Number</span>
+			<span class="col-md-1 col-sm-1">№</span>
 			<span class="col-md-2 col-sm-2">Priority</span>
 			<span class="col-md-2 col-sm-2">Status</span>
 			<span class="col-md-2 col-sm-2">Start</span>
 			<span class="col-md-2 col-sm-2">Finish</span>
+			<span class="col-md-1 col-sm-1"></span>
 			<span class="col-md-2 col-sm-2"></span>
 		</div>
 		<uib-accordion close-others="oneAtATime">
 			<uib-accordion-group ng-repeat="job in data.jobs" is-open="job.isOpened" is-disabled="!job.points.length">
 				<uib-accordion-heading>
-					<b class="col-md-2 col-sm-2 table-value">{{job.number}}</b>
+					<b class="col-md-1 col-sm-1 table-value">{{job.number}}</b>
 					<span class="col-md-2 col-sm-2 table-value">{{job.priority}}</span>
 					<b class="col-md-2 col-sm-2 table-value"
 						  ng-class="{'running': job.jobStatus === jobStatuses.running,
 						  'partlyRunning': job.jobStatus === jobStatuses.partlyRunning,
-						  'finished': job.jobStatus === jobStatuses.finished}">{{job.jobStatus}}
+						  'finished': job.jobStatus === jobStatuses.finished,
+						  'cancelled': job.jobStatus === jobStatuses.cancelled}">{{job.jobStatus}}
 					</b>
-					<span class="col-md-2 col-sm-2 table-value">{{job.startTimeUtc | date: "HH:mm"}}</span>
-					<span class="col-md-2 col-sm-2 table-value">{{job.finishTimeUtc | date: "HH:mm"}}</span>
+					<span class="col-md-2 col-sm-2 table-value">{{job.startTimeUtc | date: "HH:mm:ss"}}</span>
+					<span class="col-md-2 col-sm-2 table-value">{{job.finishTimeUtc | date: "HH:mm:ss"}}</span>
+					<i class="text-right glyphicon glyphicon-remove-circle removeButton coll-md-1 col-sm-1" title="Cancel"
+							ng-click="cancelJob(job)" ng-if="job.jobStatus !== jobStatuses.finished && job.jobStatus !== jobStatuses.cancelled"></i>
 					<i class="text-right glyphicon coll-md-2 col-sm-2"
 					   ng-class="{'glyphicon-chevron-down': job.isOpened, 'glyphicon-chevron-right': !job.isOpened}"
 					   ng-show="job.points && job.points.length">
@@ -61,7 +68,6 @@
 	<div class="table-responsive col-md-6 hosts" ng-if="data.hosts.length">
 		<div class="row hosts-header">
 			<h4 class="col-md-6 col-sm-6">Hosts</h4>
-			<i class="glyphicon glyphicon-plus-sign col-md-6 col-sm-6 hosts-add"></i>
 		</div>
 		<div class="table-title row">
 			<table class="table table-hover">

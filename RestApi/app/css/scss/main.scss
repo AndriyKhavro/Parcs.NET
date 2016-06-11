@@ -25,11 +25,19 @@ body {
   height: 300px;
   width: 100%;
 }
-.hosts-add {
+
+.jobs-header {
+  padding-bottom: 10px;
+  span {
+    padding-right: 0;
+    font-size: 18px;
+  }
+}
+.jobs-add {
   padding-right: 0;
-  font-size: 20px;
+  font-size: 18px;
   color: #5cb85c;
-  text-align: right;
+  text-align: left;
 
   &:hover {
     color: lighten(#5cb85c, 10%);
@@ -92,7 +100,7 @@ body {
     &.partlyRunning {
       color: #5cb85c;
     }
-    &.pending {
+    &.cancelled {
       color: #f0ad4e;
     }
     &.finished {
@@ -157,4 +165,12 @@ body {
   top: 10%;
   right: 33%;
   z-index: 10;
+}
+
+.removeButton {
+  font-size: 18px;
+  color: #C9302C;
+  &:hover {
+    cursor: pointer;
+  }
 }
