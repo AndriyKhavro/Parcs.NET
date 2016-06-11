@@ -21,7 +21,9 @@ function MainController($scope, $timeout, constants, dataService, authService, $
         $timeout(getDataFromServer, constants.serverQueryTimeout);
     })();
 
-    $scope.cancelJob = function(job) {
+    $scope.cancelJob = function(job, $event) {
+        $event.preventDefault();
+        $event.stopPropagation();
         dataService.cancelJob(job).then(function() {
 
         });
@@ -36,7 +38,7 @@ function MainController($scope, $timeout, constants, dataService, authService, $
             size: 'sm',
             backdrop: 'static'
         });
-    }
+    };
     
     $scope.isAuthenticated = function() { return authService.authentication.isAuth; }
 }
