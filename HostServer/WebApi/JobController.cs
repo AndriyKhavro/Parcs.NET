@@ -37,7 +37,7 @@ namespace HostServer.WebApi
         }
 
         [HttpPost]
-        [Route("cancel")]
+        [ActionName("cancel")]
         public IHttpActionResult CancelJob(CancelJobDto dto)
         {
             _log.Debug($"Cancelling Job N {dto.Number}...");
