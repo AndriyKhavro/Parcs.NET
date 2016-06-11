@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-function MainController($scope, $timeout, constants, dataService, $uibModal) {
-=======
-function MainController($scope, $timeout, constants, dataService, authService) {
->>>>>>> b48bc3329a5d77302c421185ea30a0b69714ab2a
+function MainController($scope, $timeout, constants, dataService, authService, $uibModal) {
 
     $scope.charts = [constants.charts.processors, constants.charts.benchmark];
     $scope.data = {
@@ -30,7 +26,6 @@ function MainController($scope, $timeout, constants, dataService, authService) {
 
         });
     };
-<<<<<<< HEAD
 
     $scope.addJob = function() {
         var modalInstance = $uibModal.open({
@@ -42,10 +37,8 @@ function MainController($scope, $timeout, constants, dataService, authService) {
             backdrop: 'static'
         });
     }
-=======
     
     $scope.isAuthenticated = function() { return authService.authentication.isAuth; }
->>>>>>> b48bc3329a5d77302c421185ea30a0b69714ab2a
 }
 
 module.exports = MainController;
