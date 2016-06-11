@@ -38,6 +38,7 @@ body {
   font-size: 18px;
   color: #5cb85c;
   text-align: left;
+  vertical-align: top;
 
   &:hover {
     color: lighten(#5cb85c, 10%);
@@ -118,7 +119,8 @@ body {
 
 .noDataContainer-title {
   position: absolute;
-  width: 200px;
+  display: inline-block;
+  width: 220px;
   left: 50%;
   top: 50%;
   right: 0;
