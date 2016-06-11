@@ -1,4 +1,4 @@
-function MainController($scope, $timeout, constants, dataService) {
+function MainController($scope, $timeout, constants, dataService, authService) {
 
     $scope.charts = [constants.charts.processors, constants.charts.benchmark];
     $scope.data = {
@@ -26,6 +26,8 @@ function MainController($scope, $timeout, constants, dataService) {
 
         });
     };
+    
+    $scope.isAuthenticated = function() { return authService.authentication.isAuth; }
 }
 
 module.exports = MainController;

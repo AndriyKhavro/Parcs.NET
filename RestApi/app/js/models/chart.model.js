@@ -61,7 +61,9 @@ Chart.prototype.setOptions = function(options) {
     chartOptions.title.text = options.title;
     chartOptions.series[0].name = options.title;
     chartOptions.series[0].color = options.color;
-
+    
+    angular.merge(chartOptions.yAxis, options.yAxis);
+    
     this.options = chartOptions;
 };
 

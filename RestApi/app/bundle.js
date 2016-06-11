@@ -100,7 +100,7 @@ function loginController ($scope, $location, authService) {
 module.exports = loginController;
 
 },{}],7:[function(require,module,exports){
-function MainController($scope, $timeout, constants, dataService) {
+function MainController($scope, $timeout, constants, dataService, authService) {
 
     $scope.charts = [constants.charts.processors, constants.charts.benchmark];
     $scope.data = {
@@ -122,6 +122,14 @@ function MainController($scope, $timeout, constants, dataService) {
 
         $timeout(getDataFromServer, constants.serverQueryTimeout);
     })();
+
+    $scope.cancelJob = function(job) {
+        dataService.cancelJob(job).then(function() {
+
+        });
+    };
+    
+    $scope.isAuthenticated = function() { return authService.authentication.isAuth; }
 }
 
 module.exports = MainController;
@@ -293,7 +301,9 @@ Chart.prototype.setOptions = function(options) {
     chartOptions.title.text = options.title;
     chartOptions.series[0].name = options.title;
     chartOptions.series[0].color = options.color;
-
+    
+    angular.merge(chartOptions.yAxis, options.yAxis);
+    
     this.options = chartOptions;
 };
 
@@ -503,25 +513,45 @@ module.exports = function() {
         charts: {
             processors: {
                 title: 'Performance by Processors',
-                color: '#28ABE3'
+                color: '#28ABE3',
+                yAxis: {
+                    min: 0,
+                    max: 1,
+                    labels: {
+                        formatter: function() {
+                            return (this.value * 100).toFixed() + '%';
+                        }
+                    }
+                }
             },
             benchmark: {
                 title: 'Performance by Benchmark',
-                color: '#1FDA9A'
+                color: '#1FDA9A',
+                yAxis: {
+                    min: 0,
+                    max: 1,
+                    labels: {
+                        formatter: function() {
+                            return (this.value * 100).toFixed() + '%';
+                        }
+                    }
+                }
             }
         },
 
         urls: {
             jobs: '/api/parcs/job',
             hosts: '/api/parcs/host/list',
-            logs: '/api/log'
+            logs: '/api/log',
+            cancelJob: '/api/parcs/job'
         },
 
         jobStatuses: {
             running: 'Running',
             partlyRunning: 'PartlyRunning',
             pending: 'Pending',
-            finished: 'Finished'
+            finished: 'Finished',
+            cancelled: 'Cancelled'
         },
         serverQueryTimeout: 3000
     }
@@ -548,6 +578,10 @@ module.exports = function($http, $q, constants) {
                 points: job.points
             }
         })
+    }
+
+    function cancelJob(job) {
+        return $http.post(constants.urls.cancelJob, {number: job.number});
     }
 
 };
