@@ -1,4 +1,4 @@
-function MainController($scope, $timeout, constants, dataService) {
+function MainController($scope, $timeout, constants, dataService, $uibModal) {
 
     $scope.charts = [constants.charts.processors, constants.charts.benchmark];
     $scope.data = {
@@ -26,6 +26,17 @@ function MainController($scope, $timeout, constants, dataService) {
 
         });
     };
+
+    $scope.addJob = function() {
+        var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'app/views/addJobModal.html',
+            controller: 'addJobModalController',
+            controllerAs: 'modal',
+            size: 'sm',
+            backdrop: 'static'
+        });
+    }
 }
 
 module.exports = MainController;

@@ -20,7 +20,7 @@ app.config(require('./js/authConfig'));
 app.config(require('./js/routeConfig'));
 app.run(require('./js/appRun'));
 
-},{"./js/appRun":2,"./js/authConfig":3,"./js/controllers":5,"./js/directives":10,"./js/routeConfig":13,"./js/services":19,"angular":26,"angular-local-storage":20,"angular-ui-bootstrap":23,"angular-ui-router":24}],2:[function(require,module,exports){
+},{"./js/appRun":2,"./js/authConfig":3,"./js/controllers":6,"./js/directives":11,"./js/routeConfig":14,"./js/services":20,"angular":27,"angular-local-storage":21,"angular-ui-bootstrap":24,"angular-ui-router":25}],2:[function(require,module,exports){
 appRun.$inject = ['$rootScope', 'authService'];
 
 function appRun($rootScope, authService) {
@@ -64,14 +64,43 @@ module.exports = aboutController;
 
 },{}],5:[function(require,module,exports){
 'use strict';
+AddJobModalController.$inject = ['$scope', 'constants', '$uibModalInstance', 'dataService'];
+
+function AddJobModalController ($scope, constants, $uibModalInstance, dataService) {
+
+    $scope.jobs = constants.jobs;
+    $scope.selectedJob = $scope.jobs[0];
+    $scope.jobOptions = {
+        priority: 0,
+        pointCount: 1,
+        matrixSize: 2000
+    };
+
+    $scope.startJob = function() {
+        /*dataService.startJob($scope.jobOptions).then(function() {
+            $modalInstance.close('ok');
+        });*/
+        $uibModalInstance.close('ok');
+    };
+
+    $scope.cancel = function() {
+        $uibModalInstance.dismiss('cancel');
+    };
+}
+
+module.exports = AddJobModalController;
+
+},{}],6:[function(require,module,exports){
+'use strict';
 var app = require('angular').module('parcs');
 
 app.controller('MainController', require('./main.controller'));
 app.controller('loginController', require('./login.controller'));
 app.controller('signupController', require('./signup.controller'));
 app.controller('aboutController', require('./about.controller'));
+app.controller('addJobModalController', require('./addJobModal.controller'));
 
-},{"./about.controller":4,"./login.controller":6,"./main.controller":7,"./signup.controller":8,"angular":26}],6:[function(require,module,exports){
+},{"./about.controller":4,"./addJobModal.controller":5,"./login.controller":7,"./main.controller":8,"./signup.controller":9,"angular":27}],7:[function(require,module,exports){
 'use strict';
 loginController.$inject = ['$scope', '$location', 'authService']; 
 
@@ -99,8 +128,8 @@ function loginController ($scope, $location, authService) {
 
 module.exports = loginController;
 
-},{}],7:[function(require,module,exports){
-function MainController($scope, $timeout, constants, dataService) {
+},{}],8:[function(require,module,exports){
+function MainController($scope, $timeout, constants, dataService, $uibModal) {
 
     $scope.charts = [constants.charts.processors, constants.charts.benchmark];
     $scope.data = {
@@ -122,10 +151,27 @@ function MainController($scope, $timeout, constants, dataService) {
 
         $timeout(getDataFromServer, constants.serverQueryTimeout);
     })();
+
+    $scope.cancelJob = function(job) {
+        dataService.cancelJob(job).then(function() {
+
+        });
+    };
+
+    $scope.addJob = function() {
+        var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'app/views/addJobModal.html',
+            controller: 'addJobModalController',
+            controllerAs: 'modal',
+            size: 'sm',
+            backdrop: 'static'
+        });
+    }
 }
 
 module.exports = MainController;
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 signupController.$inject = ['$scope', '$location', '$timeout', 'authService']; 
 
@@ -169,7 +215,7 @@ function signupController ($scope, $location, $timeout, authService) {
 }
 
 module.exports = signupController;
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var Chart = require('./../models/chart.model');
 function ChartDirective (chartService) {
     return {
@@ -204,14 +250,14 @@ function ChartDirective (chartService) {
 }
 
  module.exports = ChartDirective;
-},{"./../models/chart.model":12}],10:[function(require,module,exports){
+},{"./../models/chart.model":13}],11:[function(require,module,exports){
 'use strict';
 var app = require('angular').module('parcs');
 
 app.directive('chart', require('./chart.directive'));
 app.component('navbar', require('./navbar.component'));
 
-},{"./chart.directive":9,"./navbar.component":11,"angular":26}],11:[function(require,module,exports){
+},{"./chart.directive":10,"./navbar.component":12,"angular":27}],12:[function(require,module,exports){
 var navbarComponent = {
     templateUrl: 'app/views/navbar.html',
     controller: navbarController
@@ -229,7 +275,7 @@ function navbarController(authService, $location) {
 }
 
 module.exports = navbarComponent;
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var Highcharts = require('highcharts');
 var noData = require('highcharts/modules/no-data-to-display');
 noData(Highcharts);
@@ -304,7 +350,7 @@ Chart.prototype.addPoint = function(value) {
 };
 
 module.exports = Chart;
-},{"highcharts":27,"highcharts/modules/no-data-to-display":28}],13:[function(require,module,exports){
+},{"highcharts":28,"highcharts/modules/no-data-to-display":29}],14:[function(require,module,exports){
 module.exports = configRoutes;
 
 configRoutes.$inject = ["$stateProvider", "$urlRouterProvider"];
@@ -341,7 +387,7 @@ function configRoutes($stateProvider, $urlRouterProvider) {
         controller: "aboutController"
     });
 }
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 AuthService.$inject = ['$http', '$q', '$rootScope', 'localStorageService'];
 
 function AuthService($http, $q, $rootScope, localStorageService) {
@@ -416,7 +462,7 @@ function AuthService($http, $q, $rootScope, localStorageService) {
 };
 
 module.exports = AuthService;
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 authInterceptorService.$inject = ['$q', '$location', 'localStorageService'];
@@ -450,7 +496,7 @@ function authInterceptorService ($q, $location, localStorageService) {
 }
 
 module.exports = authInterceptorService;
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = function(constants) {
 
     var chartDataMap = {};
@@ -497,7 +543,7 @@ module.exports = function(constants) {
 
 
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 module.exports = function() {
     return {
         charts: {
@@ -514,19 +560,29 @@ module.exports = function() {
         urls: {
             jobs: '/api/parcs/job',
             hosts: '/api/parcs/host/list',
-            logs: '/api/log'
+            logs: '/api/log',
+            cancelJob: '/api/parcs/cancelJob',
+            startJob: 'api/module/matrix'
         },
 
         jobStatuses: {
             running: 'Running',
             partlyRunning: 'PartlyRunning',
             pending: 'Pending',
-            finished: 'Finished'
+            finished: 'Finished',
+            cancelled: 'Cancelled'
         },
+
+        jobs: [{
+            name: "Matrix"
+        }, {
+            name: "Knapsack"
+        }],
+
         serverQueryTimeout: 3000
     }
 };
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 module.exports = function($http, $q, constants) {
 
     return {
@@ -550,12 +606,19 @@ module.exports = function($http, $q, constants) {
         })
     }
 
+    function cancelJob(job) {
+        return $http.post(constants.urls.cancelJob, {number: job.number});
+    }
+
+    function startJob(options) {
+        return $http.post(constants.urls.startJob, options);
+    }
 };
 
 
 
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 var app = require('angular').module('parcs');
 
@@ -565,11 +628,11 @@ app.factory('constants', require('./constants'));
 app.factory('authService', require('./auth.service'));
 app.factory('authInterceptorService', require('./authInterceptor.service'));
 
-},{"./auth.service":14,"./authInterceptor.service":15,"./chart.service":16,"./constants":17,"./data.service":18,"angular":26}],20:[function(require,module,exports){
+},{"./auth.service":15,"./authInterceptor.service":16,"./chart.service":17,"./constants":18,"./data.service":19,"angular":27}],21:[function(require,module,exports){
 require('./src/angular-local-storage.js');
 module.exports = 'LocalStorageModule';
 
-},{"./src/angular-local-storage.js":21}],21:[function(require,module,exports){
+},{"./src/angular-local-storage.js":22}],22:[function(require,module,exports){
 var isDefined = angular.isDefined,
   isUndefined = angular.isUndefined,
   isNumber = angular.isNumber,
@@ -1008,7 +1071,7 @@ angular
       }];
   });
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /*
  * angular-ui-bootstrap
  * http://angular-ui.github.io/bootstrap/
@@ -8356,12 +8419,12 @@ angular.module('ui.bootstrap.datepickerPopup').run(function() {!angular.$$csp().
 angular.module('ui.bootstrap.tooltip').run(function() {!angular.$$csp().noInlineStyle && !angular.$$uibTooltipCss && angular.element(document).find('head').prepend('<style type="text/css">[uib-tooltip-popup].tooltip.top-left > .tooltip-arrow,[uib-tooltip-popup].tooltip.top-right > .tooltip-arrow,[uib-tooltip-popup].tooltip.bottom-left > .tooltip-arrow,[uib-tooltip-popup].tooltip.bottom-right > .tooltip-arrow,[uib-tooltip-popup].tooltip.left-top > .tooltip-arrow,[uib-tooltip-popup].tooltip.left-bottom > .tooltip-arrow,[uib-tooltip-popup].tooltip.right-top > .tooltip-arrow,[uib-tooltip-popup].tooltip.right-bottom > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.top-left > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.top-right > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.bottom-left > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.bottom-right > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.left-top > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.left-bottom > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.right-top > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.right-bottom > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.top-left > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.top-right > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.bottom-left > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.bottom-right > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.left-top > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.left-bottom > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.right-top > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.right-bottom > .tooltip-arrow,[uib-popover-popup].popover.top-left > .arrow,[uib-popover-popup].popover.top-right > .arrow,[uib-popover-popup].popover.bottom-left > .arrow,[uib-popover-popup].popover.bottom-right > .arrow,[uib-popover-popup].popover.left-top > .arrow,[uib-popover-popup].popover.left-bottom > .arrow,[uib-popover-popup].popover.right-top > .arrow,[uib-popover-popup].popover.right-bottom > .arrow,[uib-popover-html-popup].popover.top-left > .arrow,[uib-popover-html-popup].popover.top-right > .arrow,[uib-popover-html-popup].popover.bottom-left > .arrow,[uib-popover-html-popup].popover.bottom-right > .arrow,[uib-popover-html-popup].popover.left-top > .arrow,[uib-popover-html-popup].popover.left-bottom > .arrow,[uib-popover-html-popup].popover.right-top > .arrow,[uib-popover-html-popup].popover.right-bottom > .arrow,[uib-popover-template-popup].popover.top-left > .arrow,[uib-popover-template-popup].popover.top-right > .arrow,[uib-popover-template-popup].popover.bottom-left > .arrow,[uib-popover-template-popup].popover.bottom-right > .arrow,[uib-popover-template-popup].popover.left-top > .arrow,[uib-popover-template-popup].popover.left-bottom > .arrow,[uib-popover-template-popup].popover.right-top > .arrow,[uib-popover-template-popup].popover.right-bottom > .arrow{top:auto;bottom:auto;left:auto;right:auto;margin:0;}[uib-popover-popup].popover,[uib-popover-html-popup].popover,[uib-popover-template-popup].popover{display:block !important;}</style>'); angular.$$uibTooltipCss = true; });
 angular.module('ui.bootstrap.timepicker').run(function() {!angular.$$csp().noInlineStyle && !angular.$$uibTimepickerCss && angular.element(document).find('head').prepend('<style type="text/css">.uib-time input{width:50px;}</style>'); angular.$$uibTimepickerCss = true; });
 angular.module('ui.bootstrap.typeahead').run(function() {!angular.$$csp().noInlineStyle && !angular.$$uibTypeaheadCss && angular.element(document).find('head').prepend('<style type="text/css">[uib-typeahead-popup].dropdown-menu{display:block;}</style>'); angular.$$uibTypeaheadCss = true; });
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 require('./dist/ui-bootstrap-tpls');
 
 module.exports = 'ui.bootstrap';
 
-},{"./dist/ui-bootstrap-tpls":22}],24:[function(require,module,exports){
+},{"./dist/ui-bootstrap-tpls":23}],25:[function(require,module,exports){
 /**
  * State-based routing for AngularJS
  * @version v0.3.1
@@ -12938,7 +13001,7 @@ angular.module('ui.router.state')
   .filter('isState', $IsStateFilter)
   .filter('includedByState', $IncludedByStateFilter);
 })(window, window.angular);
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /**
  * @license AngularJS v1.5.6
  * (c) 2010-2016 Google, Inc. http://angularjs.org
@@ -43962,11 +44025,11 @@ $provide.value("$locale", {
 })(window);
 
 !window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 require('./angular');
 module.exports = angular;
 
-},{"./angular":25}],27:[function(require,module,exports){
+},{"./angular":26}],28:[function(require,module,exports){
 /*
  Highcharts JS v4.2.5 (2016-05-06)
 
@@ -44311,7 +44374,7 @@ for(c.attr(a);this["zoneGraph"+b];)this["zoneGraph"+b].attr(a),b+=1}},setVisible
 a.visible)a.isDirty=!0});p(c.linkedSeries,function(b){b.setVisible(a,!1)});if(g)d.isDirtyBox=!0;b!==!1&&d.redraw();I(c,f)},show:function(){this.setVisible(!0)},hide:function(){this.setVisible(!1)},select:function(a){this.selected=a=a===y?!this.selected:a;if(this.checkbox)this.checkbox.checked=a;I(this,a?"select":"unselect")},drawTracker:ga.drawTrackerGraph});u(x,{Color:ma,Point:Ja,Tick:Va,Renderer:cb,SVGElement:O,SVGRenderer:Da,arrayMin:La,arrayMax:Ga,charts:T,correctFloat:ca,dateFormat:Qa,error:aa,
 format:Ka,pathAnim:void 0,getOptions:function(){return U},hasBidiBug:Pb,isTouchDevice:Lb,setOptions:function(a){U=E(!0,U,a);Eb();return U},addEvent:N,removeEvent:X,createElement:ba,discardElement:Sa,css:M,each:p,map:Ca,merge:E,splat:ta,stableSort:hb,extendClass:qa,pInt:C,svg:fa,canvas:ka,vml:!fa&&!ka,product:"Highcharts",version:"4.2.5"});return x});
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /*
  Highcharts JS v4.2.5 (2016-05-06)
  Plugin for displaying a message when there is no data visible in chart.

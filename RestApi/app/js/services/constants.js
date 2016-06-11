@@ -15,7 +15,8 @@ module.exports = function() {
             jobs: '/api/parcs/job',
             hosts: '/api/parcs/host/list',
             logs: '/api/log',
-            cancelJob: '/api/parcs/job'
+            cancelJob: '/api/parcs/cancelJob',
+            startJob: 'api/module/matrix'
         },
 
         jobStatuses: {
@@ -25,6 +26,13 @@ module.exports = function() {
             finished: 'Finished',
             cancelled: 'Cancelled'
         },
+
+        jobs: [{
+            name: "Matrix"
+        }, {
+            name: "Knapsack"
+        }],
+
         serverQueryTimeout: 3000
     }
 };

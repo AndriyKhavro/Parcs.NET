@@ -25,6 +25,9 @@ module.exports = function($http, $q, constants) {
         return $http.post(constants.urls.cancelJob, {number: job.number});
     }
 
+    function startJob(options) {
+        return $http.post(constants.urls.startJob, options);
+    }
 };
 
 
