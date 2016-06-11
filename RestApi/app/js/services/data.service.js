@@ -1,7 +1,9 @@
 module.exports = function($http, $q, constants) {
 
     return {
-        getData: getData
+        getData: getData,
+		cancelJob: cancelJob,
+		startJob: startJob
     };
 
     function getData() {
