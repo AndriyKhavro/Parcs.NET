@@ -6,6 +6,7 @@ using RestApi.Services;
 
 namespace RestApi.Controllers
 {
+    [AllowAnonymous]
     public class ParcsController : ApiController
     {
         private readonly IParcsService _parcsService;

@@ -33,7 +33,7 @@
 					<span class="col-md-2 col-sm-2 table-value">{{job.startTimeUtc | date: "HH:mm:ss"}}</span>
 					<span class="col-md-2 col-sm-2 table-value">{{job.finishTimeUtc | date: "HH:mm:ss"}}</span>
 					<i class="text-right glyphicon glyphicon-remove-circle removeButton coll-md-1 col-sm-1" title="Cancel"
-							ng-click="cancelJob(job)" ng-if="job.jobStatus !== jobStatuses.finished && job.jobStatus !== jobStatuses.cancelled"></i>
+							ng-click="cancelJob(job)" ng-if="job.jobStatus !== jobStatuses.finished && job.jobStatus !== jobStatuses.cancelled && isAuthenticated()"></i>
 					<i class="text-right glyphicon coll-md-2 col-sm-2"
 					   ng-class="{'glyphicon-chevron-down': job.isOpened, 'glyphicon-chevron-right': !job.isOpened}"
 					   ng-show="job.points && job.points.length">

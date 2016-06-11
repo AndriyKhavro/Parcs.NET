@@ -3,11 +3,29 @@ module.exports = function() {
         charts: {
             processors: {
                 title: 'Performance by Processors',
-                color: '#28ABE3'
+                color: '#28ABE3',
+                yAxis: {
+                    min: 0,
+                    max: 1,
+                    labels: {
+                        formatter: function() {
+                            return (this.value * 100).toFixed() + '%';
+                        }
+                    }
+                }
             },
             benchmark: {
                 title: 'Performance by Benchmark',
-                color: '#1FDA9A'
+                color: '#1FDA9A',
+                yAxis: {
+                    min: 0,
+                    max: 1,
+                    labels: {
+                        formatter: function() {
+                            return (this.value * 100).toFixed() + '%';
+                        }
+                    }
+                }
             }
         },
 
