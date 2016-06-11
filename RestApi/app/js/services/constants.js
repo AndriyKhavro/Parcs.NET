@@ -39,7 +39,7 @@ module.exports = function() {
 
         jobStatuses: {
             running: 'Running',
-            partlyRunning: 'PartlyRunning',
+            partlyRunning: 'Partly',
             pending: 'Pending',
             finished: 'Finished',
             cancelled: 'Cancelled'

@@ -8,7 +8,7 @@ namespace Parcs.Api.Dto
     public enum JobStatus
     {
         Pending,
-        PartlyRunning,
+        Partly,
         Running,
         Cancelled,
         Finished
