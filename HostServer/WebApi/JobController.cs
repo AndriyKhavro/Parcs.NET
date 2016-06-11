@@ -59,7 +59,7 @@ namespace HostServer.WebApi
             
             if (jobInfo.PointDictionary.Any())
             {
-                return jobInfo.NeedsPoint ? JobStatus.PartlyRunning : JobStatus.Running;
+                return jobInfo.NeedsPoint ? JobStatus.Partly : JobStatus.Running;
             }
 
             return JobStatus.Pending;
