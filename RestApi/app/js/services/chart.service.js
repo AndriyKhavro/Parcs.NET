@@ -23,7 +23,7 @@ module.exports = function(constants) {
             return 0;
         }
 
-        return parseFloat((pointCountSum / processorCountSum).toFixed(1));
+        return parseFloat((pointCountSum / processorCountSum).toFixed(2));
     }
 
     function getBenchmarkPerformanceChartValue(response) {
@@ -37,7 +37,7 @@ module.exports = function(constants) {
             return 0;
         }
 
-        return parseFloat((pointCountSum / processorCountSum).toFixed(1));
+        return parseFloat((pointCountSum / processorCountSum).toFixed(2));
     }
 };
 
