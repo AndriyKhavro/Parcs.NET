@@ -29,6 +29,7 @@ namespace RestApi.Controllers
             return _parcsService.GetHosts();
         }
 
+        [Authorize]
         [HttpPost]
         [ActionName("cancelJob")]
         public async Task<IHttpActionResult> Cancel(CancelJobDto cancelJobDto)
