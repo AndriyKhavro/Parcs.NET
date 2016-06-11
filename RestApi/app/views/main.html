@@ -3,7 +3,7 @@
 	<div class="col-md-6 noDataWrapper">
 		<div class="noDataContainer" ng-if="!data.jobs.length">
 			<div class="noDataContainer-title"><span>Start module to see Jobs</span>
-				<i class="glyphicon glyphicon-plus-sign jobs-add" ng-click="addJob()"></i>
+				<i class="glyphicon glyphicon-plus-sign jobs-add" ng-click="addJob()" ng-if="data.hosts.length"></i>
 			</div>
 		</div>
 	</div>
