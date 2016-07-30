@@ -3,7 +3,9 @@ module.exports = function($http, $q, constants) {
     return {
         getData: getData,
 		cancelJob: cancelJob,
-		startJob: startJob
+		startJob: startJob,
+        getAvailableModules: getAvailableModules,
+        saveAvailableModules: saveAvailableModules
     };
 
     function getData() {
@@ -29,6 +31,20 @@ module.exports = function($http, $q, constants) {
 
     function startJob(options) {
         return $http.post(constants.urls.startJob, options);
+    }
+    
+    
+    var availableModules;
+    
+    function getAvailableModules() {
+        return availableModules;
+    }
+    
+    function saveAvailableModules() {
+        return $http.get(constants.urls.modules).then(function(response){
+           availableModules = response.data;
+           return availableModules; 
+        });
     }
 };
 

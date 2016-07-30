@@ -34,7 +34,8 @@ module.exports = function() {
             hosts: '/api/parcs/host/list',
             logs: '/api/log',
             cancelJob: '/api/parcs/cancelJob',
-            startJob: 'api/module/matrix'
+            startJob: 'api/module/matrix',
+            modules: 'api/module'
         },
 
         jobStatuses: {

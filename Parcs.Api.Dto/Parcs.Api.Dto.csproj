@@ -47,6 +47,7 @@
     <Compile Include="JobStatus.cs" />
     <Compile Include="MatrixModuleDto.cs" />
     <Compile Include="MatrixSize.cs" />
+    <Compile Include="ModuleDto.cs" />
     <Compile Include="PointInfoDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

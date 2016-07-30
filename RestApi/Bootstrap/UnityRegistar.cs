@@ -14,6 +14,7 @@ namespace RestApi.Bootstrap
             container.RegisterType<IParcsService, ParcsService>();
             container.RegisterType<IAuthRepository, AuthRepository>();
             container.RegisterType<IModuleRunner, ModuleRunner>();
+            container.RegisterType<IModuleService, ModuleService>();
         }
     }
 }

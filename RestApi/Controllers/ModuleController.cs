@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Parcs.Api.Dto;
@@ -10,11 +11,19 @@ namespace RestApi.Controllers
     {
         private readonly IModuleRunner _moduleRunner;
         private readonly IParcsService _parcsService;
+        private readonly IModuleService _moduleService;
 
-        public ModuleController(IModuleRunner moduleRunner, IParcsService parcsService)
+        public ModuleController(IModuleRunner moduleRunner, IParcsService parcsService, IModuleService moduleService)
         {
             _moduleRunner = moduleRunner;
             _parcsService = parcsService;
+            _moduleService = moduleService;
+        }
+
+        [HttpGet]
+        public ModuleDto[] Get()
+        {
+            return _moduleService.GetAvailableModules().Select(m => new ModuleDto {Name = m}).ToArray();
         }
 
         [HttpPost]

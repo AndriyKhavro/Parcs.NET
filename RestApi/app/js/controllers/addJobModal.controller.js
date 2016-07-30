@@ -2,9 +2,19 @@
 AddJobModalController.$inject = ['$scope', 'constants', '$uibModalInstance', 'dataService'];
 
 function AddJobModalController ($scope, constants, $uibModalInstance, dataService) {
-
-    $scope.jobs = constants.jobs;
-    $scope.selectedJob = $scope.jobs[0];
+    var modules = dataService.getAvailableModules();
+    
+    $scope.jobs = modules || [];
+    
+    if (modules) {
+        $scope.selectedJob = $scope.jobs[0];
+    } else {
+        dataService.saveAvailableModules().then(function(response) {
+            $scope.jobs = response.data;
+            $scope.selectedJob = $scope.jobs[0]; 
+        });    
+    }
+    
     $scope.jobOptions = {
         priority: 0,
         pointCount: 1,

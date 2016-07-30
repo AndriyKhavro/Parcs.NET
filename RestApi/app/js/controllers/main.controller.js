@@ -41,6 +41,8 @@ function MainController($scope, $timeout, constants, dataService, authService, $
     };
     
     $scope.isAuthenticated = function() { return authService.authentication.isAuth; }
+    
+    dataService.saveAvailableModules();
 }
 
 module.exports = MainController;
