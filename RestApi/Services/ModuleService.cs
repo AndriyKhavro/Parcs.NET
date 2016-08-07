@@ -12,5 +12,10 @@ namespace RestApi.Services
         {
             return Directory.GetDirectories(_moduleFolder).Select(Path.GetFileName).ToArray();
         }
+
+        public string GetModuleFilePath(string moduleName)
+        {
+            return Path.Combine(_moduleFolder, moduleName, $"{moduleName}.exe");
+        }
     }
 }

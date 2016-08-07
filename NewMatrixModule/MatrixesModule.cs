@@ -21,19 +21,8 @@ namespace NewMatrixModule
         {
             log4net.Config.XmlConfigurator.Configure();
             options = new CommandLineOptions();
-            if (!CommandLine.Parser.Default.ParseArguments(args, options))
-            {
-                _log.Error($@"Cannot parse the arguments. Possible usages:
-{options.GetUsage()}");                
-                return;
-            }
-
-            if (!string.IsNullOrEmpty(options.ServerIp))
-            {
-                Job.SetServerIp(options.ServerIp);
-            }
-
-            (new MatrixesModule()).RunModule(options.Priority, options.Username ?? "");
+            
+            (new MatrixesModule()).RunModule(args, options);
         }
 
         public override void Run(ModuleInfo info, CancellationToken token = default(CancellationToken))

@@ -21,12 +21,11 @@ function AddJobModalController ($scope, constants, $uibModalInstance, dataServic
     
     $scope.jobOptions = {
         priority: 0,
-        pointCount: 1,
-        matrixSize: 2000
+        commandLineParameters: ''
     };
 
     $scope.startJob = function() {
-        dataService.startJob($scope.jobOptions).then(function() {
+        dataService.startJob(angular.extend($scope.jobOptions, {name: $scope.selectedJob.name})).then(function() {
             $uibModalInstance.close('ok');
         });
     };

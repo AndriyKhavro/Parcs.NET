@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using log4net;
 using Parcs.Api.Dto;
 
@@ -13,21 +9,22 @@ namespace RestApi.Services
 {
     public class ModuleRunner : IModuleRunner
     {
+        private readonly IModuleService _moduleService;
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(0);
-        private readonly string _matrixModuleFilePath = ConfigurationManager.AppSettings["matrixModuleFilePath"];
-        private readonly string _matrixStorageFolder = ConfigurationManager.AppSettings["matrixStorageFolder"];
+        private readonly ILog _log = LogManager.GetLogger(typeof(ModuleRunner));
 
-        private readonly ILog _log = LogManager.GetLogger(typeof (ModuleRunner));
-
-        public async Task<bool> TryRunMatrixModule(MatrixSize matrixSize, int pointCount, string serverIp, int priority)
+        public ModuleRunner(IModuleService moduleService)
         {
-            int matrixFilePrefix = (int) matrixSize/1000;
+            _moduleService = moduleService;
+        }
+        
+        public async Task<bool> TryRunModule(RunModuleDto module, string serverIp)
+        {
             var username = Thread.CurrentPrincipal.Identity.Name;
-            var userArg = string.IsNullOrEmpty(username) ? "" : $" --user {username}";
+            var userArg = string.IsNullOrEmpty(username)  ? "" : $" --user {username}";
+            var commandLineParams = $@"{module.CommandLineParameters} --serverip {serverIp} --priority {module.Priority}{userArg}";
             var processStartInfo =
-                new ProcessStartInfo(
-                    $@"{_matrixModuleFilePath}",
-                    $@"--m1 {_matrixStorageFolder}\{matrixFilePrefix}1.mtr --m2 {_matrixStorageFolder}\{matrixFilePrefix}2.mtr --p {pointCount} --serverip {serverIp} --priority {priority}{userArg}")
+                new ProcessStartInfo(_moduleService.GetModuleFilePath(module.Name), commandLineParams)
                 {
                     UseShellExecute = false,
                     RedirectStandardError = true,
@@ -52,7 +49,7 @@ namespace RestApi.Services
             await _semaphore.WaitAsync();
             return !isError;
         }
-
+        
         private void OutputReceived(string data, ref bool isError)
         {
             _log.Info("MODULE OUTPUT: " + data);

@@ -11,10 +11,8 @@
 		</ul>
 	</div>
 	<div class="form-group" style="margin-top: 10px">
-		<label for="dimension">Dimension:</label>
-		<input type="number" class="form-control" id="dimension"  min="1000" max="4000" ng-model="jobOptions.matrixSize">
-		<label for="pointCount">Point count:</label>
-		<input type="number" class="form-control" id="pointCount" min="1" max="16" ng-model="jobOptions.pointCount">
+		<label for="commandLineParameters">Command Line Parameters:</label>
+		<input type="text" class="form-control" id="commandLineParameters" ng-model="jobOptions.commandLineParameters">
 		<label for="priority">Priority:</label>
 		<input type="number" class="form-control" id="priority" min="1" max="16" ng-model="jobOptions.priority">
 	</div>

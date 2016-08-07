@@ -27,11 +27,16 @@ namespace RestApi.Controllers
         }
 
         [HttpPost]
-        [ActionName("matrix")]
-        public async Task<IHttpActionResult> RunMatrixModule(MatrixModuleDto moduleDto)
+        [ActionName("run")]
+        public async Task<IHttpActionResult> RunModule(RunModuleDto moduleDto)
         {
+            if (string.IsNullOrEmpty(moduleDto.Name))
+            {
+                throw new ArgumentException("Value cannot be null or empty", nameof(moduleDto.Name));
+            }
+
             var serverIp = await _parcsService.GetServerIp();
-            bool isRunSuccessfully = await _moduleRunner.TryRunMatrixModule(moduleDto.MatrixSize, moduleDto.PointCount, serverIp, moduleDto.Priority);
+            bool isRunSuccessfully = await _moduleRunner.TryRunModule(moduleDto, serverIp);
             if (!isRunSuccessfully)
             {
                 throw new InvalidOperationException("Module didn't start successfully");

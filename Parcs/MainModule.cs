@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Threading;
 
 namespace Parcs
@@ -16,22 +17,33 @@ namespace Parcs
             return job;
         }
 
-        public void RunModule(int priority = 0, string username = "")
+        public void RunModule(string[] args = null, BaseModuleOptions options = null)
         {
+            if (options != null && args != null)
+            {
+                if (!CommandLine.Parser.Default.ParseArguments(args, options))
+                {
+                    throw new ArgumentException($@"Cannot parse the arguments. Possible usages:
+{options.GetUsage()}");
+                }
+
+                if (!string.IsNullOrEmpty(options.ServerIp))
+                {
+                    Job.SetServerIp(options.ServerIp);
+                }
+            }
+            
             IJob job = null;
 
             try
             {
-                job = CreateJob(priority, username);
+                job = CreateJob(options?.Priority ?? 0, options?.Username ?? "");
                 Run(new ModuleInfo(job, null));
             }
 
             finally
             {
-                if (job != null)
-                {
-                    job.FinishJob();
-                }
+                job?.FinishJob();
             }
         }
 

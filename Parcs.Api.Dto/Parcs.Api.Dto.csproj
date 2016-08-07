@@ -50,6 +50,7 @@
     <Compile Include="ModuleDto.cs" />
     <Compile Include="PointInfoDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RunModuleDto.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
