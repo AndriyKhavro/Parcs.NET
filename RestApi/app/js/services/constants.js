@@ -45,13 +45,7 @@ module.exports = function() {
             finished: 'Finished',
             cancelled: 'Cancelled'
         },
-
-        jobs: [{
-            name: "Matrix"
-        }, {
-            name: "Knapsack"
-        }],
-
+        
         serverQueryTimeout: 3000
     }
 };
