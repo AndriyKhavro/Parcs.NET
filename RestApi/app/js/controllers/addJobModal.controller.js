@@ -15,6 +15,10 @@ function AddJobModalController ($scope, constants, $uibModalInstance, dataServic
         });    
     }
     
+    $scope.setJob = function(job) {
+        $scope.selectedJob = job;  
+    };
+    
     $scope.jobOptions = {
         priority: 0,
         pointCount: 1,

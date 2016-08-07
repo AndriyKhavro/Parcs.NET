@@ -7,7 +7,7 @@
 			{{selectedJob.name}} <span class="caret"></span>
 		</button>
 		<ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-			<li role="menuitem" ng-repeat="job in jobs"><a href="#">{{job.name}}</a></li>
+			<li role="menuitem" ng-repeat="job in jobs"><a href="#" ng-click="setJob(job)">{{job.name}}</a></li>
 		</ul>
 	</div>
 	<div class="form-group" style="margin-top: 10px">
