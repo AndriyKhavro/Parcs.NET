@@ -1,9 +1,9 @@
 ﻿using CommandLine;
 using CommandLine.Text;
 
-namespace Parcs
+namespace Parcs.Module.CommandLine
 {
-    public class BaseModuleOptions
+    public class BaseModuleOptions : IModuleOptions
     {
         [Option("priority", Required = false, HelpText = "Priority of Job used for job dispatching")]
         public int Priority { get; set; }

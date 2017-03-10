@@ -17,22 +17,13 @@ namespace Parcs
             return job;
         }
 
-        public void RunModule(string[] args = null, BaseModuleOptions options = null)
+        public void RunModule(IModuleOptions options = null)
         {
-            if (options != null && args != null)
+            if (!string.IsNullOrEmpty(options?.ServerIp))
             {
-                if (!CommandLine.Parser.Default.ParseArguments(args, options))
-                {
-                    throw new ArgumentException($@"Cannot parse the arguments. Possible usages:
-{options.GetUsage()}");
-                }
-
-                if (!string.IsNullOrEmpty(options.ServerIp))
-                {
-                    Job.SetServerIp(options.ServerIp);
-                }
+                Job.SetServerIp(options.ServerIp);
             }
-            
+
             IJob job = null;
 
             try

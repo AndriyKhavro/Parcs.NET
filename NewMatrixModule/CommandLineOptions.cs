@@ -1,4 +1,4 @@
-﻿using Parcs;
+﻿using Parcs.Module.CommandLine;
 
 namespace NewMatrixModule
 {

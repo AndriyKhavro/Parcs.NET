@@ -21,8 +21,17 @@ namespace NewMatrixModule
         {
             log4net.Config.XmlConfigurator.Configure();
             options = new CommandLineOptions();
-            
-            (new MatrixesModule()).RunModule(args, options);
+
+            if (args != null)
+            {
+                if (!CommandLine.Parser.Default.ParseArguments(args, options))
+                {
+                    throw new ArgumentException($@"Cannot parse the arguments. Possible usages:
+{options.GetUsage()}");
+                }
+            }
+
+            (new MatrixesModule()).RunModule(options);
         }
 
         public override void Run(ModuleInfo info, CancellationToken token = default(CancellationToken))

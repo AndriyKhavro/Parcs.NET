@@ -79,6 +79,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Parcs.Module.CommandLine\Parcs.Module.CommandLine.csproj">
+      <Project>{b466666e-3104-4cf5-ade0-9441bb964aea}</Project>
+      <Name>Parcs.Module.CommandLine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Parcs\Parcs.csproj">
       <Project>{73e7db23-be33-4c7f-89b5-e27523e71496}</Project>
       <Name>Parcs</Name>
