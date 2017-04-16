@@ -43,7 +43,7 @@ namespace HostServer
                 ip = HostInfo.LocalIP;
             }
 
-            catch (Exception)
+            catch (Exception ex)
             {
                 Log.Warn("Cannot get local IP", ex);
                 Console.WriteLine("Cannot get local IP. Please, enter your IP:");
