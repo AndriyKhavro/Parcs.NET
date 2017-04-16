@@ -162,5 +162,26 @@ namespace Parcs
                 return Dns.GetHostName();
             }
         }
+
+        public static IPAddress GetLocalIpAddress(bool allowUserInput)
+        {
+            IPAddress ip;
+            try
+            {
+                ip = HostInfo.LocalIP;
+            }
+
+            catch (Exception)
+            {
+                if (!allowUserInput)
+                    throw;
+
+                Console.WriteLine("Cannot get local IP. Please, enter your IP:");
+                string ipStr = Console.ReadLine();
+                ip = IPAddress.Parse(ipStr);
+                HostInfo.LocalIP = ip;
+            }
+            return ip;
+        }
     }
 }

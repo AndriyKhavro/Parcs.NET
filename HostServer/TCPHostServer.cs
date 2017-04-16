@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using Parcs;
@@ -24,7 +22,7 @@ namespace HostServer
 
         protected override void OnStart(string[] args)
         {
-            Task.Factory.StartNew(() => Run(ExtractIpFromArgs(args)));
+            Task.Factory.StartNew(() => Run(ExtractIpFromArgs(args), false));
         }
 
         protected override void OnStop()
@@ -33,11 +31,11 @@ namespace HostServer
             _webApi?.Dispose();
         }
 
-        public void Run(string localIp)
+        public void Run(string localIp, bool allowUserInput)
         {
             _webApi = WebApp.Start<Startup>($"http://localhost:{WEB_API_PORT}");
 
-            IPAddress ip = string.IsNullOrEmpty(localIp) ? GetLocalIpAddress() : IPAddress.Parse(localIp);
+            IPAddress ip = string.IsNullOrEmpty(localIp) ? HostInfo.GetLocalIpAddress(allowUserInput) : IPAddress.Parse(localIp);
 
             int port = (int)Ports.ServerPort;
             _listener = new TcpListener(ip, port);
@@ -45,26 +43,7 @@ namespace HostServer
             Log.Info($"Accepting connections from clients, IP: {ip}, port: {port}");
             RunListener();
         }
-
-        private static IPAddress GetLocalIpAddress()
-        {
-            IPAddress ip;
-            try
-            {
-                ip = HostInfo.LocalIP;
-            }
-
-            catch (Exception ex)
-            {
-                Log.Warn("Cannot get local IP", ex);
-                Console.WriteLine("Cannot get local IP. Please, enter your IP:");
-                string ipStr = Console.ReadLine();
-                ip = IPAddress.Parse(ipStr);
-                HostInfo.LocalIP = ip;
-            }
-            return ip;
-        }
-
+        
         private void RunListener()
         {
             _listener.Start();
@@ -181,7 +160,7 @@ namespace HostServer
                 {
                     // running as console app
                     ListenToKeyboard();
-                    service.Run(ExtractIpFromArgs(args));
+                    service.Run(ExtractIpFromArgs(args), true);
                 }
             }
         }
