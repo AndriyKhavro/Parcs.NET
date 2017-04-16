@@ -23,7 +23,7 @@ namespace DaemonPr
 
         protected override void OnStart(string[] args)
         {
-            Task.Factory.StartNew(Run);
+            Task.Factory.StartNew(() => Run(ExtractIpFromArgs(args)));
         }
 
         protected override void OnStop()
@@ -31,7 +31,17 @@ namespace DaemonPr
             _listener.Stop();
         }
 
-        public void Run()
+        public void Run(string localIp)
+        {
+            IPAddress ip = string.IsNullOrEmpty(localIp) ? GetLocalIpAddress() : IPAddress.Parse(localIp);
+
+            int port = (int)Ports.DaemonPort;
+            _listener = new TcpListener(ip, port);
+            _log.InfoFormat("Accepting connections from clients, IP: {0}, port: {1}", ip, port);
+            RunListener();
+        }
+
+        private IPAddress GetLocalIpAddress()
         {
             IPAddress ip;
             try
@@ -46,11 +56,7 @@ namespace DaemonPr
                 string ipStr = Console.ReadLine();
                 ip = IPAddress.Parse(ipStr);
             }
-
-            int port = (int)Ports.DaemonPort;
-            _listener = new TcpListener(ip, port);
-            _log.InfoFormat("Accepting connections from clients, IP: {0}, port: {1}", ip, port);
-            RunListener();
+            return ip;
         }
 
 
@@ -250,9 +256,14 @@ namespace DaemonPr
                 else
                 {
                     // running as console app
-                    daemon.Run();
+                    daemon.Run(ExtractIpFromArgs(args));
                 }
             }
+        }
+
+        private static string ExtractIpFromArgs(string[] args)
+        {
+            return args.Length > 0 ? args[0] : "";
         }
     }
 

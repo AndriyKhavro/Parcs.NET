@@ -24,7 +24,7 @@ namespace HostServer
 
         protected override void OnStart(string[] args)
         {
-            Task.Factory.StartNew(Run);
+            Task.Factory.StartNew(() => Run(ExtractIpFromArgs(args)));
         }
 
         protected override void OnStop()
@@ -33,10 +33,21 @@ namespace HostServer
             _webApi?.Dispose();
         }
 
-        public void Run()
+        public void Run(string localIp)
         {
             _webApi = WebApp.Start<Startup>($"http://localhost:{WEB_API_PORT}");
 
+            IPAddress ip = string.IsNullOrEmpty(localIp) ? GetLocalIpAddress() : IPAddress.Parse(localIp);
+
+            int port = (int)Ports.ServerPort;
+            _listener = new TcpListener(ip, port);
+            _hostServer = Server.Instance; //make it a singleton and use in self-hosted WebAPI
+            Log.Info($"Accepting connections from clients, IP: {ip}, port: {port}");
+            RunListener();
+        }
+
+        private static IPAddress GetLocalIpAddress()
+        {
             IPAddress ip;
             try
             {
@@ -51,12 +62,7 @@ namespace HostServer
                 ip = IPAddress.Parse(ipStr);
                 HostInfo.LocalIP = ip;
             }
-
-            int port = (int)Ports.ServerPort;
-            _listener = new TcpListener(ip, port);
-            _hostServer = Server.Instance; //make it a singleton and use in self-hosted WebAPI
-            Log.Info($"Accepting connections from clients, IP: {ip}, port: {port}");
-            RunListener();
+            return ip;
         }
 
         private void RunListener()
@@ -175,9 +181,14 @@ namespace HostServer
                 {
                     // running as console app
                     ListenToKeyboard();
-                    service.Run();
+                    service.Run(ExtractIpFromArgs(args));
                 }
             }
+        }
+
+        private static string ExtractIpFromArgs(string[] args)
+        {
+            return args.Length > 0 ? args[0] : "";
         }
     }
 }
