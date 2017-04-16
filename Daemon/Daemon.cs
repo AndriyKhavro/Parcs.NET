@@ -39,8 +39,9 @@ namespace DaemonPr
                 ip = HostInfo.LocalIP;
             }
 
-            catch (Exception)
+            catch (Exception ex)
             {
+                _log.Warn("Cannot get local IP", ex);
                 Console.WriteLine("Cannot get local IP. Please, enter your IP:");
                 string ipStr = Console.ReadLine();
                 ip = IPAddress.Parse(ipStr);

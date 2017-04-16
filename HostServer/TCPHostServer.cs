@@ -45,6 +45,7 @@ namespace HostServer
 
             catch (Exception)
             {
+                Log.Warn("Cannot get local IP", ex);
                 Console.WriteLine("Cannot get local IP. Please, enter your IP:");
                 string ipStr = Console.ReadLine();
                 ip = IPAddress.Parse(ipStr);
