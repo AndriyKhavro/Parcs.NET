@@ -58,6 +58,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <None Include="Parcs.Module.CommandLine.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Parcs\Parcs.csproj">
