@@ -1,20 +1,22 @@
-﻿#Set-ExecutionPolicy Unrestricted
+﻿Param(
+	[Parameter(Mandatory = $True)]
+	[string[]]$IpAddresses,
+	[string]$LocalIp,
+	[string]$SolutionPath = ".."
+)
+
+$ErrorActionPreference = "Stop"
+$VerbosePreference = "Continue"
+
+#Set-ExecutionPolicy Unrestricted
 
 Import-Module -Name ".\Invoke-MsBuild.psm1"
 Import-Module -Name ".\ParcsSetup.psm1"
 
-#$VerbosePreference = "Continue"
-
-Remove-Item "C:\Parcs.NET" -Recurse -Force
-
-.\Copy-GithubRepository.ps1 -Name "Parcs.NET" -Author AndriyKhavro -OutVariable SolutionPath
-
-& nuget restore $SolutionPath
+& nuget restore "$SolutionPath\Parcs.sln"
 
 Invoke-MsBuild -Path "$SolutionPath\Parcs.sln" -MsBuildParameters "/p:Configuration=Release" -ShowBuildOutputInNewWindow
 
-Start-Daemon -BinFolder "$SolutionPath\Daemon\bin\Release" -LocalIp "192.168.11.112"
+Start-Daemon -BinFolder "$SolutionPath\Daemon\bin\Release" -LocalIp $LocalIp -Verbose
 
-Start-HostServer -BinFolder "$SolutionPath\HostServer\bin\Release" -LocalIp "192.168.11.112" -IpAddresses @("192.168.11.112")
-
-#.\Create-ParcsApiWebsite.ps1 -SiteDirectory "$SolutionPath\RestApi"
+Start-HostServer -BinFolder "$SolutionPath\HostServer\bin\Release" -LocalIp $LocalIp -IpAddresses $IpAddresses -Verbose

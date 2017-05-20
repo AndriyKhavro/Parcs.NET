@@ -13,7 +13,18 @@
 		New-Item "$BinFolder\hosts.txt" -ItemType File -Force -Value $HostFileContent
 	}
 
-    Start-Process $BinFolder\HostServer.exe $LocalIp
+	Write-Verbose "Starting HostServer..."
+
+	if ($LocalIp)
+	{
+		Start-Process $BinFolder\HostServer.exe $LocalIp
+	}
+    else 
+	{
+		Start-Process $BinFolder\HostServer.exe
+	}
+
+	Write-Verbose "HostServer has started"
 }
 
 function Start-Daemon(
@@ -23,7 +34,16 @@ function Start-Daemon(
     [string] $LocalIp
 )
 {
-    Start-Process $BinFolder\DaemonPr.exe $LocalIp
+	Write-Verbose "Starting Daemon..."
+	if ($LocalIp)
+	{
+		Start-Process $BinFolder\DaemonPr.exe $LocalIp
+	}
+    else 
+	{
+		Start-Process "$BinFolder\DaemonPr.exe"
+	}
+	Write-Verbose "Daemon has started"
 }
 
 function Install-AndRunService(

@@ -36,8 +36,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", 
 		Deployment\Invoke-MsBuild.psm1 = Deployment\Invoke-MsBuild.psm1
 		Deployment\ParcsSetup.psm1 = Deployment\ParcsSetup.psm1
 		Deployment\Setup.ps1 = Deployment\Setup.ps1
-		Deployment\Start-Daemon.ps1 = Deployment\Start-Daemon.ps1
-		Deployment\Start-HostServer.ps1 = Deployment\Start-HostServer.ps1
 	EndProjectSection
 EndProject
 Global
