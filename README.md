@@ -26,6 +26,9 @@ Alternatively, you can do those steps manually using Visual Studio.
 4. Create a number of classes (usually one) which implement IModule interface. Run method will be run on Daemon. To run this method, call point.ExecuteClass() method with full name of the class.
 5. Create a class implementing IModuleOptions interface or use BaseModuleOptions from Parcs.Module.CommandLine NuGet package. (optional)
 6. Inside Main method call ModuleInfo.RunModule() method on the class derived from MainModule. Pass an instance of IModuleOptions to the method or null if you don't want to run your module with Web interface.
+7. Add server.txt file next to .exe file with your HostServer IP address or set it to IModuleOptions.ServerIp.
+8. Make sure HostServer and Daemon are running. (see Installation steps)
+9. Run your module.
 
 <b>Examples</b>
 
