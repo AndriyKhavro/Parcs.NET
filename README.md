@@ -22,9 +22,11 @@ Alternatively, you can do those steps manually using Visual Studio.
 <b>How to create your own module</b>
 1. Create Visual Studio Console Application project.
 2. Install Parcs and Parcs.Module.CommandLine (optional) NuGet packages.
-3. ...
-4. PROFIT
+3. Create a class derived from MainModule and write Run method with orchestration logic which will be run locally.
+4. Create a number of classes (usually one) which implement IModule interface. Run method will be run on Daemon. To run this method, call point.ExecuteClass() method with full name of the class.
+5. Create a class implementing IModuleOptions interface or use BaseModuleOptions from Parcs.Module.CommandLine NuGet package. (optional)
+6. Inside Main method call ModuleInfo.RunModule() method on the class derived from MainModule. Pass an instance of IModuleOptions to the method or null if you don't want to run your module with Web interface.
 
-<b>Example</b>
+<b>Examples</b>
 
 The example of a module can be found in NewMatrixModule folder.
