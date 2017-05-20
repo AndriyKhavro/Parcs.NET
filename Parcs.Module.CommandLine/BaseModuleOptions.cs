@@ -9,7 +9,7 @@ namespace Parcs.Module.CommandLine
         public int Priority { get; set; }
         [Option("user", Required = false, HelpText = "Username under which the job will be running")]
         public string Username { get; set; }
-        [Option("serverip", Required = false, HelpText = "Path to the file with the sever IP")]
+        [Option("serverip", Required = false, HelpText = "Path to the file with the server IP")]
         public string ServerIp { get; set; }
 
         public string GetUsage()
