@@ -33,3 +33,4 @@ Alternatively, you can do those steps manually using Visual Studio.
 <b>Examples</b>
 
 The example of a module can be found in NewMatrixModule folder.
+To run the module, perform Installation steps, add server.txt file with HostServer IP Address (your local) and run NewMatrixModule.exe.
