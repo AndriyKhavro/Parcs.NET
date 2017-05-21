@@ -67,17 +67,30 @@ module.exports = aboutController;
 AddJobModalController.$inject = ['$scope', 'constants', '$uibModalInstance', 'dataService'];
 
 function AddJobModalController ($scope, constants, $uibModalInstance, dataService) {
-
-    $scope.jobs = constants.jobs;
-    $scope.selectedJob = $scope.jobs[0];
+    var modules = dataService.getAvailableModules();
+    
+    $scope.jobs = modules || [];
+    
+    if (modules) {
+        $scope.selectedJob = $scope.jobs[0];
+    } else {
+        dataService.saveAvailableModules().then(function(response) {
+            $scope.jobs = response.data;
+            $scope.selectedJob = $scope.jobs[0]; 
+        });    
+    }
+    
+    $scope.setJob = function(job) {
+        $scope.selectedJob = job;  
+    };
+    
     $scope.jobOptions = {
         priority: 0,
-        pointCount: 1,
-        matrixSize: 2000
+        commandLineParameters: ''
     };
 
     $scope.startJob = function() {
-        dataService.startJob($scope.jobOptions).then(function() {
+        dataService.startJob(angular.extend($scope.jobOptions, {name: $scope.selectedJob.name})).then(function() {
             $uibModalInstance.close('ok');
         });
     };
@@ -171,6 +184,8 @@ function MainController($scope, $timeout, constants, dataService, authService, $
     };
     
     $scope.isAuthenticated = function() { return authService.authentication.isAuth; }
+    
+    dataService.saveAvailableModules();
 }
 
 module.exports = MainController;
@@ -585,7 +600,8 @@ module.exports = function() {
             hosts: '/api/parcs/host/list',
             logs: '/api/log',
             cancelJob: '/api/parcs/cancelJob',
-            startJob: 'api/module/matrix'
+            startJob: 'api/module/run',
+            modules: 'api/module'
         },
 
         jobStatuses: {
@@ -595,13 +611,7 @@ module.exports = function() {
             finished: 'Finished',
             cancelled: 'Cancelled'
         },
-
-        jobs: [{
-            name: "Matrix"
-        }, {
-            name: "Knapsack"
-        }],
-
+        
         serverQueryTimeout: 3000
     }
 };
@@ -611,7 +621,9 @@ module.exports = function($http, $q, constants) {
     return {
         getData: getData,
 		cancelJob: cancelJob,
-		startJob: startJob
+		startJob: startJob,
+        getAvailableModules: getAvailableModules,
+        saveAvailableModules: saveAvailableModules
     };
 
     function getData() {
@@ -637,6 +649,20 @@ module.exports = function($http, $q, constants) {
 
     function startJob(options) {
         return $http.post(constants.urls.startJob, options);
+    }
+    
+    
+    var availableModules;
+    
+    function getAvailableModules() {
+        return availableModules;
+    }
+    
+    function saveAvailableModules() {
+        return $http.get(constants.urls.modules).then(function(response){
+           availableModules = response.data;
+           return availableModules; 
+        });
     }
 };
 
