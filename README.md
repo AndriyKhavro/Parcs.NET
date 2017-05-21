@@ -33,4 +33,11 @@ Alternatively, you can do those steps manually using Visual Studio.
 <b>Examples</b>
 
 The example of a module can be found in NewMatrixModule folder.
-To run the module, perform Installation steps, add server.txt file with HostServer IP Address (your local) and run NewMatrixModule.exe.
+To run the module:
+1. Perform Installation steps (see Installation section)
+2. Add server.txt file with HostServer IP Address (your local) 
+3. Create two matrixes with MatrixGenerator
+4. Copy NewMatrixModule/launch.bat and created matrixes to bin folder with NewMatrixModule.exe.
+5. Open launch.bat with notepad or any text editor.
+6. Replace matrix file names in launch.bat and number of points (threads) you want to run the module on.
+7. Run launch.bat
