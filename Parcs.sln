@@ -36,6 +36,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installation", "Installatio
 		Installation\Azure.ps1 = Installation\Azure.ps1
 		Installation\Invoke-MsBuild.psm1 = Installation\Invoke-MsBuild.psm1
 		Installation\ParcsSetup.psm1 = Installation\ParcsSetup.psm1
+		RemoteDaemon.ps1 = RemoteDaemon.ps1
+		RemoteHostServer.ps1 = RemoteHostServer.ps1
 		Installation\Setup.ps1 = Installation\Setup.ps1
 	EndProjectSection
 EndProject
