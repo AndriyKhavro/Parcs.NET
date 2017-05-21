@@ -60,8 +60,9 @@ Then connect to HostServer VM using RDP and do the following:
 1. Run Installation\RemoteHostServer.ps1 which will open firewall and enable IIS
 2. Copy HostServer\bin\Release folder to VM.
 3. Add/Update Release\hosts.txt with Daemon local IP addresses (which are displayed in console when you run DaemonPr.exe each of Daemom VM)
-4. Copy RestApi folder to VM
-5. Open IIS (Windows Administrative Tools -> Internet Information Services (IIS) Manager
-6. Point Sites -> Default Web Site -> Advanced Settings -> Physical Path to RestApi folder
+4. Run HostServer.exe from Release folder
+5. Copy RestApi folder to VM
+6. Open IIS (Windows Administrative Tools -> Internet Information Services (IIS) Manager
+7. Point Sites -> Default Web Site -> Advanced Settings -> Physical Path to RestApi folder
 
 After all those steps you should be able to open the site by HostServer Public IP address.
