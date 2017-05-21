@@ -81,5 +81,3 @@ New-AzureRmVM -ResourceGroupName ParcsResourceGroup -Location westeurope -VM $vm
 
 Get-AzureRmPublicIpAddress -ResourceGroupName ParcsResourceGroup | Select IpAddress
 
-##remote:
-#Install-WindowsFeature -name Web-Server -IncludeManagementTools
