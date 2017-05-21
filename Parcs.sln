@@ -33,6 +33,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installation", "Installation", "{C9ACBD4B-640D-47C9-AE4B-58A6C8C06F6D}"
 	ProjectSection(SolutionItems) = preProject
+		Installation\Azure.ps1 = Installation\Azure.ps1
 		Installation\Invoke-MsBuild.psm1 = Installation\Invoke-MsBuild.psm1
 		Installation\ParcsSetup.psm1 = Installation\ParcsSetup.psm1
 		Installation\Setup.ps1 = Installation\Setup.ps1
