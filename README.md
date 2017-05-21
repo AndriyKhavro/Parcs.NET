@@ -45,7 +45,7 @@ To run the module:
 <b>Azure</b>
 
 To create Azure Virtual Machine for HostServer and Web Application, run Installation/Azure.ps1 script. The script is taken from https://docs.microsoft.com/en-us/azure/virtual-machines/windows/quick-create-powershell.
-Script creates Azure Resource Group called <i>ParcsResourceGroup</i> with all necessary stuff for Virtual Machine. The most important part of it is Network Security Group (called ParcsSecurityGroup) which allows communication using the ports used by Parcs. The script will prompt to login to Azure and then enter credential which will be used for RDP connection to new Virtual Machine. If the script is executed successfully, you should have HostServer VM up and running.
+Script creates Azure Resource Group called <i>ParcsResourceGroup</i> with all necessary stuff for Virtual Machine. The most important part of it is Network Security Group (called <i>ParcsSecurityGroup</i>) which allows communication using the ports used by Parcs. The script will prompt to login to Azure and then enter credential which will be used for RDP connection to new Virtual Machine. If the script is executed successfully, you should have HostServer VM up and running.
 
 After you have created HostServer VM, you can create VM for Daemon using Azure portal (the script is not written yet). Make sure you use the same ParcsResourceGroup, ParcsSecurityGroup and Public Addresses.
 
