@@ -49,6 +49,8 @@ Script creates Azure Resource Group called <i>ParcsResourceGroup</i> with all ne
 
 After you have created HostServer VM, you can create VM for Daemon using Azure portal (the script is not written yet). Make sure you use the same ParcsResourceGroup, ParcsSecurityGroup and Public Addresses.
 
+Also create Azure SQL database via Azure Portal for web authentication. Username and password will be used in connection string. After creating it, you will be able to copy connection string from Azure Portal.
+
 Then connect to Daemon VM using RDP and do the following:
 1. Run Installation\RemoteDaemon.ps1 which will open firewall
 2. Copy Daemon\bin\Release folder to VM. 
@@ -60,9 +62,12 @@ Then connect to HostServer VM using RDP and do the following:
 1. Run Installation\RemoteHostServer.ps1 which will open firewall and enable IIS
 2. Copy HostServer\bin\Release folder to VM.
 3. Add/Update Release\hosts.txt with Daemon local IP addresses (which are displayed in console when you run DaemonPr.exe each of Daemom VM)
-4. Run HostServer.exe from Release folder
+4. Update HostServerContext connection string with created SQL Database in HostServer Web.config.
 5. Copy RestApi folder to VM
-6. Open IIS (Windows Administrative Tools -> Internet Information Services (IIS) Manager
-7. Point Sites -> Default Web Site -> Advanced Settings -> Physical Path to RestApi folder
+6. Update HostServerContext connection string with created SQL Database in RestApi Web.config.
+7. Open IIS (Windows Administrative Tools -> Internet Information Services (IIS) Manager
+8. Point Sites -> Default Web Site -> Advanced Settings -> Physical Path to RestApi folder
+9. Recycle Default App Pool
+10. Run HostServer.exe from Release folder
 
 After all those steps you should be able to open the site by HostServer Public IP address.
