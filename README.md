@@ -71,3 +71,5 @@ Then connect to HostServer VM using RDP and do the following:
 10. Run HostServer.exe from Release folder
 
 After all those steps you should be able to open the site by HostServer Public IP address.
+
+To run the module via web interface, create C:\ParcsModules folder and place there your module.
