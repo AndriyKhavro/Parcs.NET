@@ -14,7 +14,7 @@ namespace Parcs
 
         private void CreateChannel(IPoint point)
         {
-            _channel = new Channel(point.Host.Reader, point.Host.Writer, point.Host.IsConnected) { From = _from };
+            _channel = new Channel(point.Host.Reader, point.Host.Writer) { From = _from };
         }
         
 

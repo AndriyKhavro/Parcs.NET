@@ -40,7 +40,7 @@ namespace Parcs
 
         protected virtual IChannel CreateNewChannel()
         {
-            return new Channel(Host.Reader, Host.Writer, Host.IsConnected) { From = Number };
+            return new Channel(Host.Reader, Host.Writer) { From = Number };
         }
 
 

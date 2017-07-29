@@ -74,7 +74,7 @@ namespace DaemonPr
             {
                 using (BinaryWriter writer = new BinaryWriter(clientStream))
                 {
-                    channel = new Channel(reader, writer, true);
+                    channel = new Channel(reader, writer);
 
                     while (true)
                     {

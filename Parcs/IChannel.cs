@@ -4,7 +4,6 @@ namespace Parcs
 {
     public interface IChannel 
     {
-        bool Works { get; }
         void WriteData(bool data);
         void WriteData(byte data);
         void WriteData(int data);

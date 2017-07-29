@@ -18,8 +18,6 @@ namespace Parcs
         public int From { get; set; }
 
         public int Index { get; set; } = -1;
-
-        public bool Works { get; }
         public void WriteData(bool data)
         {
             _writer.Write(data);
@@ -56,19 +54,10 @@ namespace Parcs
             _writer.Flush();
         }
 
-        public Channel(BinaryReader reader, BinaryWriter writer, bool works)//, int from, int index, bool works)
+        public Channel(BinaryReader reader, BinaryWriter writer)
         {
             _reader = reader;
             _writer = writer;
-            Works = works;
-        }
-
-        public Channel(BinaryReader reader, BinaryWriter writer, int pointNumber, int index, bool works)
-            : this(reader, writer, true)
-        {
-            From = pointNumber;
-            Index = index;
-            Works = works;
         }
 
         public bool ReadBoolean()
