@@ -6,15 +6,15 @@ namespace Parcs
     public class Point : IPoint
     {
         public HostInfo Host { get; private set; }
-        public IChannel channel;
-        public IJob job;
+        private IChannel _channel;
+        private readonly IJob _job;
         public int Number { get; private set; }
-        public int parentNumber;
+        private readonly int _parentNumber;
 
         public Point(IJob job, int parentNumber)
         {
-            this.job = job;
-            this.parentNumber = parentNumber;
+            _job = job;
+            _parentNumber = parentNumber;
 
             Initialize();
         }
@@ -26,8 +26,8 @@ namespace Parcs
             if (serv.IsConnected || serv.Connect())
             {
                 serv.Writer.Write((byte) Constants.PointCreated);
-                serv.Writer.Write(job.Number);
-                serv.Writer.Write(parentNumber);
+                serv.Writer.Write(_job.Number);
+                serv.Writer.Write(_parentNumber);
 
                 ipAddress = ReadIPFromStream(serv.Reader);
                 Host = new HostInfo(ipAddress, (int)Ports.DaemonPort);
@@ -46,30 +46,28 @@ namespace Parcs
 
         public virtual IChannel CreateChannel()
         {
-            channel = CreateNewChannel();
+            _channel = CreateNewChannel();
             InitializeChannel();
 
-            return channel;
+            return _channel;
         }
 
         public virtual void ExecuteClass(string className)
         {
-            channel.WriteData((byte)Constants.ExecuteClass);
-            channel.WriteData(className);
+            _channel.WriteData((byte)Constants.ExecuteClass);
+            _channel.WriteData(className);
         }
 
         private void InitializeChannel()
         {
-            channel.WriteData((byte)Constants.RecieveTask);
-            channel.WriteObject(job);
+            _channel.WriteData((byte)Constants.RecieveTask);
+            _channel.WriteObject(_job);
             WriteNumberToChannel();
-            string fileName = job.FileName;
+            string fileName = _job.FileName;
             if (fileName != null)
             {
-                channel.WriteData((byte)Constants.LoadFile);
-                channel.WriteFile(fileName);
-                //bool fileSent = channel.ReadData(typeof(bool));
-                //if (!fileSent) return null;
+                _channel.WriteData((byte)Constants.LoadFile);
+                _channel.WriteFile(fileName);
             }
         }
 
