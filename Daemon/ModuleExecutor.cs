@@ -27,7 +27,7 @@ namespace DaemonPr
         public void Run(CancellationToken token)
         {
             IModule module = null;
-            string classname = (string)_channel.ReadData(typeof(string));
+            string classname = _channel.ReadString();
             byte[] file = File.ReadAllBytes(_assemblyFullPath);
             Assembly assembly = Assembly.Load(file);
 

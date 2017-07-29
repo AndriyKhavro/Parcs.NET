@@ -1,6 +1,6 @@
 ﻿namespace Parcs
 {
-    public class ConcurrentPoint : Point
+    internal class ConcurrentPoint : Point
     {
         internal ConcurrentPoint(IJob job, int parentNumber) : base(job, parentNumber) { }
 

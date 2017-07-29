@@ -1,17 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 
 namespace Parcs
 {
     public interface IChannel 
     {
         bool Works { get; }
-        void WriteData(dynamic data);
-        dynamic ReadData(Type type);
+        void WriteData(bool data);
+        void WriteData(byte data);
+        void WriteData(int data);
+        void WriteData(long data);
+        void WriteData(double data);
+        void WriteData(string data);
+        bool ReadBoolean();
+        byte ReadByte();
+        int ReadInt();
+        long ReadLong();
+        double ReadDouble();
+        string ReadString();
         void WriteObject(object obj);
         object ReadObject();
         void WriteFile(string filePath);

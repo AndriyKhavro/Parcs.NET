@@ -21,9 +21,9 @@ namespace FirstModule
 
         public void Run(ModuleInfo info, CancellationToken token = default(CancellationToken))
         {
-            double a = info.Parent.ReadData(typeof(double));
-            double b = info.Parent.ReadData(typeof(double));
-            double h = info.Parent.ReadData(typeof(double));
+            double a = info.Parent.ReadDouble();
+            double b = info.Parent.ReadDouble();
+            double h = info.Parent.ReadDouble();
             var func = new Func<double, double>(x => Math.Cos(x));
 
             double res = Integral(a, b, h, func);

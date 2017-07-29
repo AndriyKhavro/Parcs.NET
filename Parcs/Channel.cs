@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Net.Sockets;
 using System.Reflection;
 using System.IO;
 using System.IO.IsolatedStorage;
@@ -14,26 +11,50 @@ namespace Parcs
 {
     public class Channel : IChannel
     {
-        private BinaryReader _reader;
-        private BinaryWriter _writer;
-        private int _from;
-        private static object _syncRoot = new object();
+        private readonly BinaryReader _reader;
+        private readonly BinaryWriter _writer;
+        private static readonly object SyncRoot = new object();
 
-        public int From
+        public int From { get; set; }
+
+        public int Index { get; set; } = -1;
+
+        public bool Works { get; }
+        public void WriteData(bool data)
         {
-            get { return _from; }
-            set { _from = value; }
+            _writer.Write(data);
+            _writer.Flush();
         }
 
-        private int _index = -1;
-
-        public int Index
+        public void WriteData(byte data)
         {
-            get { return _index; }
-            set { _index = value; }
+            _writer.Write(data);
+            _writer.Flush();
         }
-      
-        public bool Works { get; private set; }
+
+        public void WriteData(int data)
+        {
+            _writer.Write(data);
+            _writer.Flush();
+        }
+
+        public void WriteData(long data)
+        {
+            _writer.Write(data);
+            _writer.Flush();
+        }
+
+        public void WriteData(double data)
+        {
+            _writer.Write(data);
+            _writer.Flush();
+        }
+
+        public void WriteData(string data)
+        {
+            _writer.Write(data);
+            _writer.Flush();
+        }
 
         public Channel(BinaryReader reader, BinaryWriter writer, bool works)//, int from, int index, bool works)
         {
@@ -46,52 +67,40 @@ namespace Parcs
             : this(reader, writer, true)
         {
             From = pointNumber;
-            _index = index;
+            Index = index;
             Works = works;
         }
 
-        public virtual void WriteData(dynamic data)
+        public bool ReadBoolean()
         {
-            _writer.Write(data);
-            _writer.Flush();
+            return _reader.ReadBoolean();
         }
 
-        public virtual dynamic ReadData(Type type)
+        public byte ReadByte()
         {
-            if (type == typeof(bool))
-            {
-                return _reader.ReadBoolean();
-            }
-
-            if (type == typeof(byte))
-            {
-                return _reader.ReadByte();
-            }
-
-            if (type == typeof(int))
-            {
-                return _reader.ReadInt32();
-            }
-
-            if (type == typeof(long))
-            {
-                return _reader.ReadInt64();
-            }
-
-            if (type == typeof(double))
-            {
-                double val = _reader.ReadDouble(); 
-                return val;
-            }
-
-            if (type == typeof(string))
-            {
-                return _reader.ReadString();
-            }
-
-            return null;
+            return _reader.ReadByte();
         }
 
+        public int ReadInt()
+        {
+            return _reader.ReadInt32();
+        }
+
+        public long ReadLong()
+        {
+            return _reader.ReadInt64();
+        }
+
+        public double ReadDouble()
+        {
+            return _reader.ReadDouble();
+        }
+
+        public string ReadString()
+        {
+            return _reader.ReadString();
+        }
+        
         public virtual void WriteObject(object obj)
         {
             using (MemoryStream memoryStream = new MemoryStream())
@@ -127,7 +136,7 @@ namespace Parcs
         {
             int numberOfBytes = _reader.ReadInt32();
             byte[] obj = _reader.ReadBytes(numberOfBytes);
-            object o = null;
+            object o;
             using (MemoryStream memoryStream = new MemoryStream(obj))
             {
                 o = formatter.Deserialize(memoryStream);
@@ -156,7 +165,7 @@ namespace Parcs
 
             if (!userFile.FileExists(fileName))
             {
-                lock (_syncRoot)
+                lock (SyncRoot)
                 {
                     if (!userFile.FileExists(fileName))
                     {
@@ -172,7 +181,6 @@ namespace Parcs
 
             return userFile.GetType().GetField("m_RootDir", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(userFile).ToString() + "\\" + fileName;
             
-            //return isolatedStream.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(isolatedStream).ToString();
         }
 
         public virtual void Close()

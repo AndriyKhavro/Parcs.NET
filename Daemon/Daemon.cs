@@ -80,14 +80,14 @@ namespace DaemonPr
                     {
                         try
                         {
-                            signal = channel.ReadData(typeof(byte));
+                            signal = channel.ReadByte();
 
                             switch (signal)
                             {
                                 case ((byte)Constants.RecieveTask):
 
                                     currentJob = (Job)channel.ReadObject();
-                                    pointNumber = channel.ReadData(typeof(int));
+                                    pointNumber = channel.ReadInt();
                                     _jobPointNumberDictionary.AddOrUpdate(currentJob.Number, new List<int> { pointNumber },
                                         (key, oldvalue) =>
                                         {
@@ -155,7 +155,7 @@ namespace DaemonPr
 
                                 case ((byte)Constants.ServerIP):
                                     {
-                                        string ip = channel.ReadData(typeof(string));
+                                        string ip = channel.ReadString();
                                         if (_server == null || _server.IpAddress.ToString() != ip)
                                         {
                                             _server = new HostInfo(ip, (int)Ports.ServerPort);
@@ -165,7 +165,7 @@ namespace DaemonPr
                                     }
                                 case ((byte)Constants.CancelJob):
                                 {
-                                    int jobNumber = channel.ReadData(typeof (int));
+                                    int jobNumber = channel.ReadInt();
                                     CancellationTokenSource tokenSource;
                                     if (_cancellationDictionary.TryGetValue(jobNumber, out tokenSource))
                                     {

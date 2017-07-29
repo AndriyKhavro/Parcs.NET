@@ -50,7 +50,7 @@ namespace FirstModule
             double res = 0;
             for (int i = pointsNum - 1; i >= 0; --i)
             {
-                res += channels[i].ReadData(typeof(double));
+                res += channels[i].ReadDouble();
             }
 
             Console.WriteLine("Result found: res = {0}, time = {1}", res, Math.Round((DateTime.Now - time).TotalSeconds,3));

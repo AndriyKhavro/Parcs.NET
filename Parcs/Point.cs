@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Net.Sockets;
-using System.IO;
+﻿using System.IO;
 
 
 namespace Parcs
@@ -31,9 +25,9 @@ namespace Parcs
             string ipAddress = null;
             if (serv.IsConnected || serv.Connect())
             {
-                WriteToStream(serv.Writer, (byte)Constants.PointCreated);
-                WriteToStream(serv.Writer, job.Number);
-                WriteToStream(serv.Writer, parentNumber);
+                serv.Writer.Write((byte) Constants.PointCreated);
+                serv.Writer.Write(job.Number);
+                serv.Writer.Write(parentNumber);
 
                 ipAddress = ReadIPFromStream(serv.Reader);
                 Host = new HostInfo(ipAddress, (int)Ports.DaemonPort);
@@ -82,11 +76,6 @@ namespace Parcs
         protected virtual void WriteNumberToChannel()
         {
             Host.Writer.Write(Number); //to wrap it with continuewith
-        }
-
-        private static void WriteToStream(BinaryWriter binaryWriter, dynamic data)
-        {
-            binaryWriter.Write(data);
         }
 
         private string ReadIPFromStream(BinaryReader binaryReader)

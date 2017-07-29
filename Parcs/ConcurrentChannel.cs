@@ -2,11 +2,11 @@
 
 namespace Parcs
 {
-    public class ConcurrentChannel : IChannel
+    internal class ConcurrentChannel : IChannel
     {
         volatile Channel _channel;
 
-        internal ConcurrentChannel(IPoint point, TaskQueue taskQueue)//: base(reader, writer, works)
+        internal ConcurrentChannel(IPoint point, TaskQueue taskQueue)
         {
             _taskQueue = taskQueue;
             _taskQueue.StartNewTask(() => CreateChannel(point));
@@ -23,9 +23,45 @@ namespace Parcs
             _taskQueue.StartNewTask(() => _channel.Close());
         }
 
-        public void WriteData(dynamic data)
+        public void WriteData(string data)
         {
             _taskQueue.StartNewTask(() => _channel.WriteData(data));
+        }
+
+        public bool ReadBoolean()
+        {
+            _taskQueue.Wait();
+            return _channel.ReadBoolean();
+        }
+
+        public byte ReadByte()
+        {
+            _taskQueue.Wait();
+            return _channel.ReadByte();
+        }
+
+        public int ReadInt()
+        {
+            _taskQueue.Wait();
+            return _channel.ReadInt();
+        }
+
+        public long ReadLong()
+        {
+            _taskQueue.Wait();
+            return _channel.ReadLong();
+        }
+
+        public double ReadDouble()
+        {
+            _taskQueue.Wait();
+            return _channel.ReadDouble();
+        }
+
+        public string ReadString()
+        {
+            _taskQueue.Wait();
+            return _channel.ReadString();
         }
 
         public void WriteFile(string fullPath)
@@ -36,12 +72,6 @@ namespace Parcs
         public void WriteObject(object obj)
         {
            _taskQueue.StartNewTask(() => _channel.WriteObject(obj));
-        }
-
-        public dynamic ReadData(Type type)
-        {
-            _taskQueue.Wait();
-            return _channel.ReadData(type);
         }
 
         public string ReadFile()
@@ -72,6 +102,31 @@ namespace Parcs
         public bool Works
         {
             get { return true; }
+        }
+
+        public void WriteData(bool data)
+        {
+            _taskQueue.StartNewTask(() => _channel.WriteData(data)); ;
+        }
+
+        public void WriteData(byte data)
+        {
+            _taskQueue.StartNewTask(() => _channel.WriteData(data)); ;
+        }
+
+        public void WriteData(int data)
+        {
+            _taskQueue.StartNewTask(() => _channel.WriteData(data)); ;
+        }
+
+        public void WriteData(long data)
+        {
+            _taskQueue.StartNewTask(() => _channel.WriteData(data)); ;
+        }
+
+        public void WriteData(double data)
+        {
+            _taskQueue.StartNewTask(() => _channel.WriteData(data)); ;
         }
 
         public int From
