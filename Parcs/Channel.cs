@@ -121,7 +121,7 @@ namespace Parcs
             return (T) ReadObject(typeof (T));
         }
 
-        protected virtual object ReadObject(BinaryFormatter formatter)
+        private object ReadObject(BinaryFormatter formatter)
         {
             int numberOfBytes = _reader.ReadInt32();
             byte[] obj = _reader.ReadBytes(numberOfBytes);

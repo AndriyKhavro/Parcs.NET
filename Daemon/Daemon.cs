@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
 using log4net;
@@ -228,7 +229,7 @@ namespace DaemonPr
         {
             using (var daemon = new Daemon())
             {
-                if (!Environment.UserInteractive)
+                if (!Environment.UserInteractive && !args.Contains("--docker"))
                 {
                     // running as service
                     ServiceBase.Run(daemon);
@@ -244,7 +245,7 @@ namespace DaemonPr
 
         private static string ExtractIpFromArgs(string[] args)
         {
-            return args.Length > 0 ? args[0] : "";
+            return args.FirstOrDefault(a => !a.Contains("docker")) ?? string.Empty;
         }
     }
 

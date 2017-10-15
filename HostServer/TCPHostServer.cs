@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using Parcs;
 using System.IO;
+using System.Linq;
 using System.ServiceProcess;
 using System.Threading.Tasks;
 using HostServer.WebApi;
@@ -33,7 +34,7 @@ namespace HostServer
 
         public void Run(string localIp, bool allowUserInput)
         {
-            _webApi = WebApp.Start<Startup>($"http://localhost:{WEB_API_PORT}");
+            _webApi = WebApp.Start<Startup>($"http://*:{WEB_API_PORT}");
 
             IPAddress ip = string.IsNullOrEmpty(localIp) ? HostInfo.GetLocalIpAddress(allowUserInput) : IPAddress.Parse(localIp);
 
@@ -150,7 +151,7 @@ namespace HostServer
         {
             using (var service = new TCPHostServer())
             {
-                if (!Environment.UserInteractive)
+                if (!Environment.UserInteractive && !args.Contains("--docker"))
                 {
                     // running as service
                     ServiceBase.Run(service);
@@ -167,7 +168,7 @@ namespace HostServer
 
         private static string ExtractIpFromArgs(string[] args)
         {
-            return args.Length > 0 ? args[0] : "";
+            return args.FirstOrDefault(a => !a.Contains("docker")) ?? string.Empty;
         }
     }
 }
