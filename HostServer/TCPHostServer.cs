@@ -154,6 +154,8 @@ namespace HostServer
         
         static void Main(string[] args)
         {
+            LogConfigurator.Configure();
+
             using (var service = new TCPHostServer())
             {
                 if (!Environment.UserInteractive && !args.Contains("--docker"))
