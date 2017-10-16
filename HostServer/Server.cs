@@ -10,22 +10,19 @@ using log4net;
 
 namespace HostServer
 {
-    class Server
+    internal class Server
     {
         private static readonly Lazy<Server> _instance = new Lazy<Server>(() => new Server());
         private static readonly ILog Log = LogManager.GetLogger(typeof(Server));
 
-        public static Server Instance
-        {
-            get { return _instance.Value; }
-        }
+        public static Server Instance => _instance.Value;
 
         private Server()
         {
             ReadHostsFromFile();
         }
 
-        public IList<HostInfo> HostList { get; private set; }
+        public IList<HostInfo> HostList { get; private set; } = new List<HostInfo>();
 
         readonly ConcurrentDictionary<int, JobInfo> _taskDictionary = new ConcurrentDictionary<int, JobInfo>();
 
@@ -35,21 +32,17 @@ namespace HostServer
         
         public void ReadHostsFromFile()
         {
-            HostList = new List<HostInfo>();
-            StreamReader reader = null;
             var hostsFileName = File.Exists(fileName)
                 ? fileName
                 : Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), fileName);
             try
             {
-                using (reader = new StreamReader(hostsFileName))
+                using (var reader = new StreamReader(hostsFileName))
                 {
 
                     while (!reader.EndOfStream)
                     {
-                        string ip = reader.ReadLine();
-                        if (string.IsNullOrEmpty(ip)) break;
-                        HostList.Add(new HostInfo(ip, (int)Ports.DaemonPort));
+                        AddDaemon(reader.ReadLine());
                     }
                 }
             }
@@ -62,13 +55,19 @@ namespace HostServer
 
             if (HostList.Count == 0)
             {
-                var errorMessage = "Host list is empty!";
-                Log.Error(errorMessage);
-                throw new ParcsException(errorMessage);
+                Log.Warn("Host list is empty!");
             }
         }
 
-
+        public void AddDaemon(string ip)
+        {
+            if (string.IsNullOrEmpty(ip)) return;
+            if (HostList.All(h => h.IpAddress.ToString() != ip))
+            {
+                HostList.Add(new HostInfo(ip, (int) Ports.DaemonPort));
+            }
+        }
+        
         public void UpdateHostList()
         {
             ReadHostsFromFile();

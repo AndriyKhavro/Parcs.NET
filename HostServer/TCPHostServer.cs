@@ -90,24 +90,29 @@ namespace HostServer
                                     }
                                     writer.Write(point.Number);
                                     writer.Write(point.Host.IpAddress.ToString()); //provide client with point and daemon IP adress
-                                    break;
+                                    continue;
                                 case ((byte)Constants.PointDeleted):
                                     {
                                         jobNumber = reader.ReadInt32();
                                         var pointNumber = reader.ReadInt32();
                                         _hostServer.DeletePoint(jobNumber, pointNumber);
                                     }
-                                    break;
+                                    continue;
                                 case ((byte)Constants.BeginJob):
                                     int priority = reader.ReadInt32();
                                     string username = reader.ReadString();
                                     jobNumber = _hostServer.BeginJob(priority, username);
                                     writer.Write(jobNumber);
-                                    break;
+                                    continue;
                                 case ((byte)Constants.FinishJob):
                                     jobNumber = reader.ReadInt32();
                                     _hostServer.EndJob(jobNumber);
                                     return;
+                                case (byte)Constants.IpAddress:
+                                    string ip = reader.ReadString();
+                                    Log.Info($"Adding new daemon. IP: {ip}");
+                                    _hostServer.AddDaemon(ip);
+                                    continue;
                             }
                         }
                         catch (Exception ex)

@@ -19,7 +19,7 @@ namespace Parcs
         ProcessorsCountRequest = 8,
         FinishJob = 9,
         LinpackRequest = 10,
-        ServerIP = 11,
+        IpAddress = 11,
         CancelJob = 12
     }
     public enum Ports
@@ -28,6 +28,4 @@ namespace Parcs
         ServerWebApiPort = 1236,
         DaemonPort = 2222
     }
-
- 
 }

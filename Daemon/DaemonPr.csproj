@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EnvironmentVariables.cs" />
     <Compile Include="Daemon.cs">
       <SubType>Component</SubType>
     </Compile>

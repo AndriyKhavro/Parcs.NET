@@ -115,7 +115,7 @@ namespace Parcs
 
         public void SendLocalIp()
         {
-            Writer.Write((byte)Constants.ServerIP);
+            Writer.Write((byte)Constants.IpAddress);
             Writer.Write(LocalIP.ToString());
         }
 

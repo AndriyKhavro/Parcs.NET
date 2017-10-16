@@ -20,7 +20,7 @@ namespace DaemonPr
         private readonly ConcurrentDictionary<int, List<int>> _jobPointNumberDictionary = new ConcurrentDictionary<int, List<int>>(); //stores numbers of points
         private readonly ConcurrentDictionary<int, CancellationTokenSource> _cancellationDictionary = new ConcurrentDictionary<int, CancellationTokenSource>();
         static HostInfo _server;
-        private readonly ILog _log = LogManager.GetLogger(typeof(Daemon));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(Daemon));
 
         protected override void OnStart(string[] args)
         {
@@ -35,13 +35,36 @@ namespace DaemonPr
         public void Run(string localIp, bool allowUserInput)
         {
             IPAddress ip = string.IsNullOrEmpty(localIp) ? HostInfo.GetLocalIpAddress(allowUserInput) : IPAddress.Parse(localIp);
-
+            
             int port = (int)Ports.DaemonPort;
             _listener = new TcpListener(ip, port);
-            _log.InfoFormat("Accepting connections from clients, IP: {0}, port: {1}", ip, port);
-            RunListener();
+            TryConnectToHostServer();
+            Log.InfoFormat("Accepting connections from clients, IP: {0}, port: {1}", ip, port);
+            RunListener();   
         }
-        
+
+        private static void TryConnectToHostServer()
+        {
+            string hostServerIp = Environment.GetEnvironmentVariable(EnvironmentVariables.HostServerAddress);
+
+            if (!string.IsNullOrWhiteSpace(hostServerIp))
+            {
+                int serverPort = (int) Ports.ServerPort;
+
+                Log.InfoFormat("Connecting to Host Server, IP: {0}, port: {1}", hostServerIp, serverPort);
+
+                _server = new HostInfo(hostServerIp, serverPort);
+                if (_server.Connect())
+                {
+                    _server.SendLocalIp();
+                }
+            }
+            else
+            {
+                Log.Warn($"Environment Variable {EnvironmentVariables.HostServerAddress} is not set");
+            }
+        }
+
         private void RunListener()
         {
             _listener.Start();
@@ -58,7 +81,7 @@ namespace DaemonPr
                 }
                 catch (SocketException)
                 {
-                    _log.Error("Unknown error, stopping the listener...");
+                    Log.Error("Unknown error, stopping the listener...");
                     _listener.Stop();
                     return;
                 }
@@ -114,7 +137,7 @@ namespace DaemonPr
                                             }
                                             catch (OperationCanceledException)
                                             {
-                                                _log.Info($"Point N {currentJob.Number}:{pointNumber} was cancelled");
+                                                Log.Info($"Point N {currentJob.Number}:{pointNumber} was cancelled");
                                             }
 
                                             DeletePoint(currentJob.Number, pointNumber);
@@ -154,7 +177,7 @@ namespace DaemonPr
                                         continue;
                                     }
 
-                                case ((byte)Constants.ServerIP):
+                                case ((byte)Constants.IpAddress):
                                     {
                                         string ip = channel.ReadString();
                                         if (_server == null || _server.IpAddress.ToString() != ip)
@@ -171,24 +194,24 @@ namespace DaemonPr
                                     if (_cancellationDictionary.TryGetValue(jobNumber, out tokenSource))
                                     {
                                         tokenSource.Cancel();
-                                        _log.Info($"Cancelling job N {jobNumber}");
+                                        Log.Info($"Cancelling job N {jobNumber}");
                                     }
                                     else
                                     {
-                                        _log.Info($"Job N {jobNumber} does not exist or does not have cancellation token");
+                                        Log.Info($"Job N {jobNumber} does not exist or does not have cancellation token");
                                     }
                                     continue;
                                 }
 
                                 default:
-                                    _log.Error("Unknown signal received, stopping the application...");
+                                    Log.Error("Unknown signal received, stopping the application...");
                                     return;
                             }
                         }
 
                         catch (Exception ex)
                         {
-                            _log.Error(ex.Message);
+                            Log.Error(ex.Message);
                             return;
                         }
                     }
