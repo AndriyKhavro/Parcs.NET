@@ -10,8 +10,12 @@ namespace DataAccess
     {
         public DbSet<LogEntry> Logs { get; set; }
 
-        public HostServerContext()
-            : base("HostServerContext")
+        public HostServerContext(): this("HostServerContext")
+        {
+        }
+
+        public HostServerContext(string nameOrConnectionString)
+            : base(nameOrConnectionString)
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<HostServerContext, Configuration>());
             Configuration.LazyLoadingEnabled = false;

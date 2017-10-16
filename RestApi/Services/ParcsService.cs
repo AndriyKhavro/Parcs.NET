@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using Parcs.Api.Dto;
 
 namespace RestApi.Services
@@ -12,7 +9,9 @@ namespace RestApi.Services
     {
         private readonly IRestApiClient _restApiClient;
 
-        private readonly string _hostServerUrl = ConfigurationManager.AppSettings["hostServerUrl"];
+        private readonly string _hostServerUrl =
+            Environment.GetEnvironmentVariable(EnvironmentVariables.HostServerUrl) ??
+            ConfigurationManager.AppSettings["hostServerUrl"];
 
         public ParcsService(IRestApiClient restApiClient)
         {
