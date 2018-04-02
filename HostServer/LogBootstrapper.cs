@@ -9,7 +9,7 @@ namespace HostServer
     {
         public static void Configure()
         {
-            string connectionString = Environment.GetEnvironmentVariable(EnviromentVariables.LogConnectionString);
+            string connectionString = Environment.GetEnvironmentVariable(EnvironmentVariables.LogConnectionString);
 
             if (!string.IsNullOrWhiteSpace(connectionString))
             {

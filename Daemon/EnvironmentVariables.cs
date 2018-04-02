@@ -5,5 +5,7 @@
         public const string HostServerAddress = "PARCS_HOST_SERVER_IP_ADDRESS";
 
         public const string LocalIp = "LOCAL_IP_ADDRESS";
+
+        public const string ExternalLocalIp = "EXTERNAL_LOCAL_UP_ADDRESS";
     }
 }

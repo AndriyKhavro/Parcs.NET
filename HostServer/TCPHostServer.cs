@@ -158,6 +158,8 @@ namespace HostServer
 
             using (var service = new TCPHostServer())
             {
+                HostInfo.ExternalLocalIP = Environment.GetEnvironmentVariable(EnvironmentVariables.ExternalLocalIp);
+
                 if (!Environment.UserInteractive && !args.Contains("--docker"))
                 {
                     // running as service
@@ -168,7 +170,7 @@ namespace HostServer
                 {
                     // running as console app
                     ListenToKeyboard();
-                    string envVariableValue = Environment.GetEnvironmentVariable(EnviromentVariables.LocalIp);
+                    string envVariableValue = Environment.GetEnvironmentVariable(EnvironmentVariables.LocalIp);
                     string localIp = !string.IsNullOrWhiteSpace(envVariableValue)
                         ? envVariableValue
                         : ExtractIpFromArgs(args);

@@ -26,7 +26,7 @@ namespace HostServer.WebApi
         [ActionName("serverip")]
         public string GetServerIp()
         {
-            return HostInfo.LocalIP.ToString();
+            return HostInfo.ExternalLocalIP;
         }
     }
 }

@@ -88,7 +88,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EnviromentVariables.cs" />
+    <Compile Include="EnvironmentVariables.cs" />
     <Compile Include="IPointInfo.cs" />
     <Compile Include="LogBootstrapper.cs" />
     <Compile Include="PointInfo.cs" />

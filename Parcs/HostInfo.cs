@@ -116,7 +116,7 @@ namespace Parcs
         public void SendLocalIp()
         {
             Writer.Write((byte)Constants.IpAddress);
-            Writer.Write(LocalIP.ToString());
+            Writer.Write(ExternalLocalIP);
         }
 
         private int GetProcessorCount()
@@ -131,7 +131,7 @@ namespace Parcs
             return Reader.ReadDouble();
         }
 
-        public static IPAddress LocalIP //192.168 if necessary
+        public static IPAddress LocalIP
         {
             get
             {
@@ -142,27 +142,19 @@ namespace Parcs
                 string hostName = Dns.GetHostName();
                 var ipHostEntry = Dns.GetHostEntry(hostName);
 
-                // ProtocolFamily.InterNetwork.ToString
                 return _localIp = ipHostEntry.AddressList.Where(x => x.AddressFamily == AddressFamily.InterNetwork).Single(x => !IPAddress.IsLoopback(x) && !x.ToString().StartsWith("192.168.56"));
-                //return ipHostEntry.AddressList;
             }
+        }
 
-            set
-            {
-                _localIp = value;
-            }
+        public static string ExternalLocalIP
+        {
+            get { return _externalLocalIp ?? _localIp.ToString(); }
+            set { _externalLocalIp = value; }
         }
 
         private static IPAddress _localIp;
-
-        public static string LocalName
-        {
-            get
-            {
-                return Dns.GetHostName();
-            }
-        }
-
+        private static string _externalLocalIp;
+        
         public static IPAddress GetLocalIpAddress(bool allowUserInput)
         {
             IPAddress ip;
@@ -179,7 +171,7 @@ namespace Parcs
                 Console.WriteLine("Cannot get local IP. Please, enter your IP:");
                 string ipStr = Console.ReadLine();
                 ip = IPAddress.Parse(ipStr);
-                HostInfo.LocalIP = ip;
+                _localIp = ip;
             }
             return ip;
         }

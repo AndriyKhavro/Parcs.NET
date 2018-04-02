@@ -252,6 +252,8 @@ namespace DaemonPr
         {
             using (var daemon = new Daemon())
             {
+                HostInfo.ExternalLocalIP = Environment.GetEnvironmentVariable(EnvironmentVariables.ExternalLocalIp);
+
                 if (!Environment.UserInteractive && !args.Contains("--docker"))
                 {
                     // running as service
