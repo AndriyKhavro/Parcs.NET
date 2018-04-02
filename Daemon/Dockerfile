@@ -1,9 +1,9 @@
-FROM microsoft/windowsservercore
+FROM microsoft/windowsservercore:1709
 
 WORKDIR /parcs-daemon
 
-ADD bin/Release /parcs-daemon
-
 EXPOSE 2222
+
+ADD bin/Release /parcs-daemon
 
 CMD ["DaemonPr.exe", "--docker"]
