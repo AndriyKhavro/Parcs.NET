@@ -261,7 +261,12 @@ namespace DaemonPr
                 else
                 {
                     // running as console app
-                    daemon.Run(ExtractIpFromArgs(args), true);
+                    string localIp = Environment.GetEnvironmentVariable(EnvironmentVariables.LocalIp);
+
+                    daemon.Run(
+                        !string.IsNullOrWhiteSpace(localIp)
+                            ? localIp
+                            : ExtractIpFromArgs(args), true);
                 }
             }
         }

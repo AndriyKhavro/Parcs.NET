@@ -168,7 +168,11 @@ namespace HostServer
                 {
                     // running as console app
                     ListenToKeyboard();
-                    service.Run(ExtractIpFromArgs(args), true);
+                    string envVariableValue = Environment.GetEnvironmentVariable(EnviromentVariables.LocalIp);
+                    string localIp = !string.IsNullOrWhiteSpace(envVariableValue)
+                        ? envVariableValue
+                        : ExtractIpFromArgs(args);
+                    service.Run(localIp, true);
                 }
             }
         }
