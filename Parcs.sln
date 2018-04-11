@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DaemonPr", "Daemon\DaemonPr.csproj", "{6F5C397E-9D66-4D4A-B543-6987036B33BE}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -14,7 +14,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HostServer", "HostServer\Ho
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFirstModule", "MyFirstModule\MyFirstModule.csproj", "{639A859D-4EFA-4B4C-A45F-1041A2553EBE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatrixGenerator", "MatrixGenerator\MatrixGenerator.csproj", "{E987257F-20CD-4EF6-955D-165C6F03959A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatrixGenerator", "NewMatrixModule\MatrixGenerator\MatrixGenerator.csproj", "{E987257F-20CD-4EF6-955D-165C6F03959A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewMatrixModule", "NewMatrixModule\NewMatrixModule.csproj", "{9494FDE9-BE22-45B5-A852-FA0494FCB14D}"
 EndProject
