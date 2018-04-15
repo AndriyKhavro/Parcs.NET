@@ -21,7 +21,7 @@ namespace RestApi.Bootstrap
 
             OAuthConfig.ConfigureOAuth(appBuilder);
 
-            var configuration = new HttpConfiguration();
+            var configuration = new HttpConfiguration {IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always};
             WebApiConfig.Register(configuration, UnityContainer);
 
             appBuilder.UseWebApi(configuration);
