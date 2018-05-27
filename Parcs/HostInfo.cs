@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Net;
 using System.Net.Sockets;
 using System.IO;
@@ -14,7 +11,6 @@ namespace Parcs
         public IPAddress IpAddress
         {
             get;
-            private set;
         }
 
         private int _port;
@@ -27,7 +23,7 @@ namespace Parcs
 
         private TcpClient _tcpClient;
         private NetworkStream _stream;
-        //public NetworkStream networkStream { get; private set; }
+
         public BinaryReader Reader { get; private set; }
         public BinaryWriter Writer { get; private set; }
 

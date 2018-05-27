@@ -1,9 +1,9 @@
-FROM microsoft/windowsservercore:1709
+FROM microsoft/nanoserver:1709
 
 WORKDIR /parcs-daemon
 
 EXPOSE 2222
 
-ADD bin/Release /parcs-daemon
+COPY . .
 
 CMD ["DaemonPr.exe", "--docker"]
