@@ -1,4 +1,4 @@
-FROM microsoft/nanoserver:1709
+FROM microsoft/windowsservercore:1709
 
 WORKDIR /parcs-daemon
 
