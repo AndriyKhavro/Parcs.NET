@@ -6,14 +6,14 @@ using Parcs;
 using System.Reflection;
 using System.Collections.Concurrent;
 using System.Threading;
-using log4net;
+using Serilog;
 
 namespace HostServer
 {
     internal class Server
     {
         private static readonly Lazy<Server> _instance = new Lazy<Server>(() => new Server());
-        private static readonly ILog Log = LogManager.GetLogger(typeof(Server));
+        private static readonly ILogger _log = Log.Logger.ForContext<Server>();
 
         public static Server Instance => _instance.Value;
 
@@ -49,13 +49,13 @@ namespace HostServer
 
             catch (FileNotFoundException)            
             {
-                Log.Warn("File " + fileName + " was not found!");
+                _log.Warning("File " + fileName + " was not found!");
             }
 
 
             if (HostList.Count == 0)
             {
-                Log.Warn("Host list is empty!");
+                _log.Warning("Host list is empty!");
             }
         }
 
@@ -141,7 +141,7 @@ namespace HostServer
             var listToRemove = HostList.Where(host => !host.IsConnected && !host.Connect()).ToList();
             foreach (var host in listToRemove)
             {
-                Log.Warn($"Host {host.IpAddress} is not responding...");
+                _log.Warning($"Host {host.IpAddress} is not responding...");
             }
 
             HostList = HostList.Except(listToRemove).ToList();
@@ -180,7 +180,7 @@ namespace HostServer
         /// <returns>task number</returns>
         public int BeginJob(int priority, string username)
         {
-            Log.Info($"Starting a new job with priority {priority}. Username: {username}");
+            _log.Information($"Starting a new job with priority {priority}. Username: {username}");
             var t = new JobInfo(++_taskNumber) {Priority = priority, Username = username};
             _taskDictionary.AddOrUpdate(t.Number, t, (key, value) => value);
             CheckHostNames();
@@ -194,7 +194,7 @@ namespace HostServer
                 JobInfo ti;
                 if (!_taskDictionary.TryGetValue(number, out ti))
                 {
-                    Log.Warn("End job: task with such number doesn't exist");
+                    _log.Warning("End job: task with such number doesn't exist");
                     return;
                 }
 
@@ -206,7 +206,7 @@ namespace HostServer
                 }
             }
 
-            Log.Info($"Job N {number} has finished");
+            _log.Information($"Job N {number} has finished");
         }
 
         public void CancelJob(int number)
@@ -218,7 +218,7 @@ namespace HostServer
             }
             foreach (var host in jobToCancel.PointDictionary.Values.Select(p => p.Host).Distinct())
             {
-                Log.Debug($"Cancelling job N {number} on host {host.IpAddress}...");
+                _log.Information($"Cancelling job N {number} on host {host.IpAddress}...");
                 host.Writer.Write((byte)Constants.CancelJob);
                 host.Writer.Write(number);
             }

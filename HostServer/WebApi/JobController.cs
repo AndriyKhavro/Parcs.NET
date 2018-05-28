@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
-using log4net;
 using Parcs;
 using Parcs.Api.Dto;
+using Serilog;
 
 namespace HostServer.WebApi
 {
     public class JobController : ApiController
     {
-        private readonly ILog _log = LogManager.GetLogger(typeof(JobController));
+        private readonly ILogger _log = Log.Logger.ForContext<JobController>();
 
         // GET api/job
         public IEnumerable<JobInfoDto> Get()

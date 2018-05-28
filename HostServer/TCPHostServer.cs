@@ -7,8 +7,8 @@ using System.Linq;
 using System.ServiceProcess;
 using System.Threading.Tasks;
 using HostServer.WebApi;
-using log4net;
 using Microsoft.Owin.Hosting;
+using Serilog;
 
 namespace HostServer
 {
@@ -19,7 +19,7 @@ namespace HostServer
         private const int WEB_API_PORT = 1236;
         private IDisposable _webApi;
 
-        private static readonly ILog Log = LogManager.GetLogger(typeof(TCPHostServer));
+        private static readonly ILogger _log = Log.Logger.ForContext<TCPHostServer>();
 
         protected override void OnStart(string[] args)
         {
@@ -41,7 +41,7 @@ namespace HostServer
             int port = (int)Ports.ServerPort;
             _listener = new TcpListener(ip, port);
             _hostServer = Server.Instance; //make it a singleton and use in self-hosted WebAPI
-            Log.Info($"Accepting connections from clients, IP: {ip}, port: {port}");
+            _log.Information($"Accepting connections from clients, IP: {ip}, port: {port}");
             RunListener();
         }
         
@@ -110,7 +110,7 @@ namespace HostServer
                                     return;
                                 case (byte)Constants.IpAddress:
                                     string ip = reader.ReadString();
-                                    Log.Info($"Adding new daemon. IP: {ip}");
+                                    _log.Information($"Adding new daemon. IP: {ip}");
                                     _hostServer.AddDaemon(ip);
                                     continue;
                             }
@@ -148,7 +148,7 @@ namespace HostServer
 
         private static void UpdateHostList()
         {
-            Log.Debug("Updating host list...");
+            _log.Debug("Updating host list...");
             _hostServer.UpdateHostList();
         }
         
