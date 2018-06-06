@@ -122,7 +122,7 @@ namespace HostServer
                                 _hostServer.EndJob(jobNumber);
                             }
 
-                            Console.WriteLine(ex.Message);
+                            _log.Error(ex, "An error occurred during job execution");
                             _hostServer.UpdateHostList();
                             return;
                         }

@@ -46,7 +46,7 @@ namespace DaemonPr
             }
             catch (Exception ex)
             {
-                _log.Error(ex.Message);
+                _log.Error(ex.Message, ex);
                 return;
             }
 
