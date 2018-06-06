@@ -13,11 +13,9 @@ namespace Parcs
             get;
         }
 
-        private int _port;
         public int Port
         {
-            get { return _port; }
-            set { _port = value; IsConnected = false; }
+            get; private set;
         }
 
 
@@ -27,7 +25,11 @@ namespace Parcs
         public BinaryReader Reader { get; private set; }
         public BinaryWriter Writer { get; private set; }
 
-        public bool IsConnected { get; private set; }
+        public bool IsConnected
+        {
+            get { return _tcpClient != null && _tcpClient.Connected; }
+        }
+
         public int PointCount { get; set; }
         public int ProcessorCount
         {
@@ -61,7 +63,7 @@ namespace Parcs
         public bool Connect()
         {
             var ipEndPoint = new IPEndPoint(IpAddress, Port);
-            if (_tcpClient == null)
+            if (_tcpClient == null || !_tcpClient.Connected)
             {
                 _tcpClient = new TcpClient();
             }
@@ -79,14 +81,12 @@ namespace Parcs
                     Reader = new BinaryReader(_stream);
                     Writer = new BinaryWriter(_stream);
                     Console.WriteLine("Connection to host (IP: {0}) is established", IpAddress.ToString());
-                    IsConnected = true;
                     return true;
                 }
 
                 catch (SocketException)
                 {
                     Console.WriteLine("Cannot connect to host, IP: {0}", IpAddress.ToString());
-                    IsConnected = false;
                     return false;
                 }
             }
@@ -105,8 +105,6 @@ namespace Parcs
         {
             IpAddress = ipAddress;
             Port = port;
-            _tcpClient = new TcpClient();
-            IsConnected = false;
         }
 
         public void SendLocalIp()
@@ -150,7 +148,7 @@ namespace Parcs
 
         private static IPAddress _localIp;
         private static string _externalLocalIp;
-        
+
         public static IPAddress GetLocalIpAddress(bool allowUserInput)
         {
             IPAddress ip;
