@@ -220,7 +220,7 @@ namespace Parcs
 
             public override Type BindToType(string assemblyName, string typeName)
             {
-                return _type;
+                return Assembly.GetAssembly(_type).GetType(typeName);
             }
         }
 
