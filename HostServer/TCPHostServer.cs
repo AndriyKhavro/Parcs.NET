@@ -122,6 +122,10 @@ namespace HostServer
                         {
                             string clientName = string.IsNullOrEmpty(daemonIp) ? $"Job {jobNumber}" : $"Daemon with IP {daemonIp}";
                             _log.Information($"{clientName} disconnected");
+                            if (jobNumber != 0)
+                            {
+                                _hostServer.EndJob(jobNumber);
+                            }
                             return;
                         }
                         catch (Exception ex)
