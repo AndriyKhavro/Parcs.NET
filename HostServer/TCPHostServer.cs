@@ -19,7 +19,7 @@ namespace HostServer
         private const int WEB_API_PORT = 1236;
         private IDisposable _webApi;
 
-        private static readonly ILogger _log = Log.Logger.ForContext<TCPHostServer>();
+        private static ILogger _log;
 
         protected override void OnStart(string[] args)
         {
@@ -37,6 +37,8 @@ namespace HostServer
             _webApi = WebApp.Start<Startup>($"http://*:{WEB_API_PORT}");
 
             IPAddress ip = string.IsNullOrEmpty(localIp) ? HostInfo.GetLocalIpAddress(allowUserInput) : IPAddress.Parse(localIp);
+
+            HostInfo.ExternalLocalIP = Environment.GetEnvironmentVariable(EnvironmentVariables.ExternalLocalIp) ?? ip.ToString();
 
             int port = (int)Ports.ServerPort;
             _listener = new TcpListener(ip, port);
@@ -67,6 +69,7 @@ namespace HostServer
         private void RunClient(NetworkStream clientStream)
         {
             int jobNumber = 0;
+            string daemonIp = null;
 
             using (var writer = new BinaryWriter(clientStream))
             {
@@ -109,11 +112,17 @@ namespace HostServer
                                     _hostServer.EndJob(jobNumber);
                                     return;
                                 case (byte)Constants.IpAddress:
-                                    string ip = reader.ReadString();
-                                    _log.Information($"Adding new daemon. IP: {ip}");
-                                    _hostServer.AddDaemon(ip);
+                                    daemonIp = reader.ReadString();
+                                    _log.Information($"Adding new daemon. IP: {daemonIp}");
+                                    _hostServer.AddDaemon(daemonIp);
                                     continue;
                             }
+                        }
+                        catch (IOException)
+                        {
+                            string clientName = string.IsNullOrEmpty(daemonIp) ? $"Job {jobNumber}" : $"Daemon with IP {daemonIp}";
+                            _log.Information($"{clientName} disconnected");
+                            return;
                         }
                         catch (Exception ex)
                         {
@@ -155,11 +164,10 @@ namespace HostServer
         static void Main(string[] args)
         {
             LogConfigurator.Configure();
+            _log = Log.Logger.ForContext<TCPHostServer>();
 
             using (var service = new TCPHostServer())
             {
-                HostInfo.ExternalLocalIP = Environment.GetEnvironmentVariable(EnvironmentVariables.ExternalLocalIp);
-
                 if (!Environment.UserInteractive && !args.Contains("--docker"))
                 {
                     // running as service

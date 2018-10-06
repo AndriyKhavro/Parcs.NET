@@ -35,7 +35,9 @@ namespace DaemonPr
         public void Run(string localIp, bool allowUserInput)
         {
             IPAddress ip = string.IsNullOrEmpty(localIp) ? HostInfo.GetLocalIpAddress(allowUserInput) : IPAddress.Parse(localIp);
-            
+
+            HostInfo.ExternalLocalIP = Environment.GetEnvironmentVariable(EnvironmentVariables.ExternalLocalIp) ?? ip.ToString();
+
             int port = (int)Ports.DaemonPort;
             _listener = new TcpListener(ip, port);
             TryConnectToHostServer();
@@ -252,8 +254,6 @@ namespace DaemonPr
         {
             using (var daemon = new Daemon())
             {
-                HostInfo.ExternalLocalIP = Environment.GetEnvironmentVariable(EnvironmentVariables.ExternalLocalIp);
-
                 if (!Environment.UserInteractive && !args.Contains("--docker"))
                 {
                     // running as service
