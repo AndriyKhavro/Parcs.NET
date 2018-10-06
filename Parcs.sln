@@ -38,6 +38,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installation", "Installatio
 		Installation\ParcsSetup.psm1 = Installation\ParcsSetup.psm1
 		Installation\RemoteDaemon.ps1 = Installation\RemoteDaemon.ps1
 		Installation\RemoteHostServer.ps1 = Installation\RemoteHostServer.ps1
+		RunWithDocker.ps1 = RunWithDocker.ps1
 		Installation\Setup.ps1 = Installation\Setup.ps1
 	EndProjectSection
 EndProject
@@ -90,5 +91,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AE42FF03-98F7-439B-AD8C-6CA3D6AB1B62}
 	EndGlobalSection
 EndGlobal
