@@ -120,30 +120,37 @@ namespace HostServer
                         }
                         catch (IOException)
                         {
-                            string clientName = string.IsNullOrEmpty(daemonIp) ? $"Job {jobNumber}" : $"Daemon with IP {daemonIp}";
-                            _log.Information($"{clientName} disconnected");
-                            if (string.IsNullOrEmpty(daemonIp) && jobNumber > 0)
-                            {
-                                _hostServer.EndJob(jobNumber);
-                            }
+                            HandleDisconnect(jobNumber, daemonIp);
                             return;
                         }
                         catch (Exception ex)
                         {
-                            if (jobNumber != 0)
-                            {
-                                _hostServer.EndJob(jobNumber);
-                            }
-
                             _log.Error(ex, "An error occurred during job execution");
-                            _hostServer.UpdateHostList();
+                            HandleDisconnect(jobNumber, daemonIp);
                             return;
                         }
                     }
                 }
             }
         }
-        
+
+        private static void HandleDisconnect(int jobNumber, string daemonIp)
+        {
+            if (string.IsNullOrEmpty(daemonIp))
+            {
+                if (jobNumber != 0)
+                {
+                    _log.Information($"Job N {jobNumber} disconnected");
+                    _hostServer.EndJob(jobNumber);
+                }
+            }
+            else
+            {
+                _log.Information($"Daemon with IP {daemonIp} disconnected");
+                _hostServer.UpdateHostList();
+            }
+        }
+
         private static void ListenToKeyboard()
         {
             Task.Factory.StartNew(() =>
