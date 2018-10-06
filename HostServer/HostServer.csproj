@@ -124,6 +124,9 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="buildAndPush.cmd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Dockerfile">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
