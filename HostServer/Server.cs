@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Collections.Concurrent;
 using System.Threading;
 using Serilog;
+using System.Threading.Tasks;
 
 namespace HostServer
 {
@@ -19,16 +20,17 @@ namespace HostServer
 
         private Server()
         {
-            ReadHostsFromFile();
+            Task.Run(() => ReadHostsFromFile());
         }
 
-        public IList<HostInfo> HostList { get; private set; } = new List<HostInfo>();
+        public HostInfo[] HostList { get; private set; } = Array.Empty<HostInfo>();
 
         readonly ConcurrentDictionary<int, JobInfo> _taskDictionary = new ConcurrentDictionary<int, JobInfo>();
 
         private int _taskNumber;
         private const string fileName = "hosts.txt";
         private readonly object _syncRoot = new object();
+        private readonly object _hostSyncRoot = new object();
         
         public void ReadHostsFromFile()
         {
@@ -49,13 +51,7 @@ namespace HostServer
 
             catch (FileNotFoundException)            
             {
-                _log.Warning("File " + fileName + " was not found!");
-            }
-
-
-            if (HostList.Count == 0)
-            {
-                _log.Warning("Host list is empty!");
+                _log.Information("File " + fileName + " was not found!");
             }
         }
 
@@ -64,14 +60,15 @@ namespace HostServer
             if (string.IsNullOrEmpty(ip)) return;
             if (HostList.All(h => h.IpAddress.ToString() != ip))
             {
-                HostList.Add(new HostInfo(ip, (int) Ports.DaemonPort));
+                var newHost = new HostInfo(ip, (int)Ports.DaemonPort);
+                if (newHost.Connect())
+                {
+                    lock (_hostSyncRoot)
+                    {
+                        HostList = HostList.Concat(new[] { newHost }).ToArray();
+                    }
+                }
             }
-        }
-        
-        public void UpdateHostList()
-        {
-            ReadHostsFromFile();
-            CheckHostNames();
         }
 
         public IPointInfo CreatePoint(int jobNumber, int parentNumber)
@@ -120,15 +117,9 @@ namespace HostServer
         /// <returns>Target host. Returns null in case there is no free host.</returns>
         public HostInfo GetTargetHost()
         {
-            foreach (var host in HostList.OrderByDescending(host => host.LinpackResult))
-            {
-                if (host.PointCount < host.ProcessorCount)
-                {
-                    return host;
-                }
-            }
-
-            return null;
+            return HostList.Where(host => host.IsConnected && host.PointCount < host.ProcessorCount)
+                .OrderByDescending(host => host.LinpackResult)
+                .FirstOrDefault();
         }
 
         public IEnumerable<JobInfo> GetCurrentJobs()
@@ -136,15 +127,22 @@ namespace HostServer
             return _taskDictionary.Values;
         }
 
-        private void CheckHostNames()
+        public void CheckHostNames()
         {
             var listToRemove = HostList.Where(host => !host.IsConnected && !host.Connect()).ToList();
-            foreach (var host in listToRemove)
+            
+            if (listToRemove.Any())
             {
-                _log.Warning($"Host {host.IpAddress} is not responding...");
-            }
+                foreach (var host in listToRemove)
+                {
+                    _log.Warning($"Host {host.IpAddress} is not responding...");
+                }
 
-            HostList = HostList.Except(listToRemove).ToList();
+                lock (_hostSyncRoot)
+                {
+                    HostList = HostList.Except(listToRemove).ToArray();
+                }
+            }
 
             foreach (var host in HostList)
             {
@@ -154,7 +152,7 @@ namespace HostServer
 
         private JobInfo GetTheMostUrgentTask()
         {
-            return _taskDictionary.Values.Where(x => x.NeedsPoint).OrderByDescending(x => x.Priority).ThenBy(x => x.Number).FirstOrDefault();
+            return _taskDictionary.Values.Where(x => x.NeedsPoint && !x.IsFinished && !x.IsCancelled).OrderByDescending(x => x.Priority).ThenBy(x => x.Number).FirstOrDefault();
         }
 
         public void DeletePoint(int jobsNum, int pointNum)
@@ -198,6 +196,7 @@ namespace HostServer
                     return;
                 }
 
+                ti.NeedsPoint = false;
                 ti.IsFinished = true;
 
                 foreach (var p in ti.PointDictionary.ToList())

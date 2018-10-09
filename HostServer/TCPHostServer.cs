@@ -147,7 +147,7 @@ namespace HostServer
             else
             {
                 _log.Information($"Daemon with IP {daemonIp} disconnected");
-                _hostServer.UpdateHostList();
+                _hostServer.CheckHostNames();
             }
         }
 
@@ -169,7 +169,8 @@ namespace HostServer
         private static void UpdateHostList()
         {
             _log.Debug("Updating host list...");
-            _hostServer.UpdateHostList();
+            _hostServer.ReadHostsFromFile();
+            _hostServer.CheckHostNames();
         }
         
         static void Main(string[] args)
