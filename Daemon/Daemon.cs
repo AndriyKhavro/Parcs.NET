@@ -21,10 +21,13 @@ namespace DaemonPr
         private readonly ConcurrentDictionary<int, CancellationTokenSource> _cancellationDictionary = new ConcurrentDictionary<int, CancellationTokenSource>();
         static HostInfo _server;
         private static readonly ILog Log = LogManager.GetLogger(typeof(Daemon));
+        private const string LocalIpArgument = "--localIp";
+        private const string ExternalLocalIpArgument = "--externalLocalIp";
+        private const string HostServerIpArgument = "--hostServerIp";
 
         protected override void OnStart(string[] args)
         {
-            Task.Factory.StartNew(() => Run(ExtractIpFromArgs(args), false));
+            Task.Factory.StartNew(() => Run(args, false));
         }
 
         protected override void OnStop()
@@ -32,23 +35,29 @@ namespace DaemonPr
             _listener.Stop();
         }
 
-        public void Run(string localIp, bool allowUserInput)
+        public void Run(string[] args, bool allowUserInput)
         {
+            string localIp = Environment.GetEnvironmentVariable(EnvironmentVariables.LocalIp)
+                ?? ExtractFromArgs(args, LocalIpArgument);
+
+            string hostServerIp = Environment.GetEnvironmentVariable(EnvironmentVariables.HostServerAddress)
+                ?? ExtractFromArgs(args, HostServerIpArgument);
+
             IPAddress ip = string.IsNullOrEmpty(localIp) ? HostInfo.GetLocalIpAddress(allowUserInput) : IPAddress.Parse(localIp);
 
-            HostInfo.ExternalLocalIP = Environment.GetEnvironmentVariable(EnvironmentVariables.ExternalLocalIp) ?? ip.ToString();
+            HostInfo.ExternalLocalIP = Environment.GetEnvironmentVariable(EnvironmentVariables.ExternalLocalIp)
+                ?? ExtractFromArgs(args, ExternalLocalIpArgument)
+                ?? ip.ToString();
 
             int port = (int)Ports.DaemonPort;
             _listener = new TcpListener(ip, port);
-            TryConnectToHostServer();
+            TryConnectToHostServer(hostServerIp);
             Log.InfoFormat("Accepting connections from clients, IP: {0}, port: {1}", ip, port);
             RunListener();   
         }
 
-        private static void TryConnectToHostServer()
+        private static void TryConnectToHostServer(string hostServerIp)
         {
-            string hostServerIp = Environment.GetEnvironmentVariable(EnvironmentVariables.HostServerAddress);
-
             if (!string.IsNullOrWhiteSpace(hostServerIp))
             {
                 int serverPort = (int) Ports.ServerPort;
@@ -265,17 +274,15 @@ namespace DaemonPr
                     // running as console app
                     string localIp = Environment.GetEnvironmentVariable(EnvironmentVariables.LocalIp);
 
-                    daemon.Run(
-                        !string.IsNullOrWhiteSpace(localIp)
-                            ? localIp
-                            : ExtractIpFromArgs(args), true);
+                    daemon.Run(args, true);
                 }
             }
         }
 
-        private static string ExtractIpFromArgs(string[] args)
+        private static string ExtractFromArgs(string[] args, string argName)
         {
-            return args.FirstOrDefault(a => !a.Contains("docker")) ?? string.Empty;
+            int localIpIndex = Array.FindIndex(args, arg => arg.Equals(argName, StringComparison.OrdinalIgnoreCase));
+            return localIpIndex == -1 ? null : args[localIpIndex + 1];
         }
     }
 
