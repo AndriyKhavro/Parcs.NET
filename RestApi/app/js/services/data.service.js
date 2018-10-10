@@ -1,17 +1,25 @@
-module.exports = function($http, $q, constants) {
+module.exports = function($http, constants) {
 
     return {
-        getData: getData,
+        getHosts: getHosts,
+        getJobs: getJobs,
+        getLogs: getLogs,
 		cancelJob: cancelJob,
 		startJob: startJob,
         getAvailableModules: getAvailableModules,
         saveAvailableModules: saveAvailableModules
     };
 
-    function getData() {
-        return $q.all([$http.get(constants.urls.hosts), $http.get(constants.urls.jobs), $http.get(constants.urls.logs)]);
+    function getHosts() {
+        return $http.get(constants.urls.hosts);
+    }
 
-        //return $q.resolve([null, getPreparedJobs(mockedJobs)]);
+    function getJobs() {
+        return $http.get(constants.urls.jobs);
+    }
+
+    function getLogs() {
+        return $http.get(constants.urls.logs);
     }
 
     function getPreparedJobs(jobs) {

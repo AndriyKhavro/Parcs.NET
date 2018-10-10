@@ -10,15 +10,26 @@ function MainController($scope, $timeout, constants, dataService, authService, $
 
     $scope.jobStatuses = constants.jobStatuses;
 
-    (function getDataFromServer() {
-        dataService.getData().then(function(response) {
-            angular.merge($scope.data.hosts, response[0].data);
-            angular.merge($scope.data.jobs, response[1].data);
-            $scope.data.logs = response[2].data;
+    (function getHostsFromServer() {
+        dataService.getHosts().then(function(response) {
+            angular.merge($scope.data.hosts, response.data);
             $scope.data.chartsData = angular.copy($scope.data.hosts);
+            $timeout(getHostsFromServer, constants.serverQueryTimeout);
         });
+    })();
 
-        $timeout(getDataFromServer, constants.serverQueryTimeout);
+    (function getJobsFromServer() {
+        dataService.getJobs().then(function(response) {
+            angular.merge($scope.data.jobs, response.data);
+            $timeout(getJobsFromServer, constants.serverQueryTimeout);
+        });
+    })();
+
+    (function getLogsFromServer() {
+        dataService.getLogs().then(function(response) {
+            $scope.data.logs = response.data;
+            $timeout(getLogsFromServer, constants.serverQueryTimeout);
+        });
     })();
 
     $scope.cancelJob = function(job, $event) {
