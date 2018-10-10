@@ -40,8 +40,12 @@ gulp.task('sass', function () {
         .pipe(gulp.dest('./dist'));
 });*/
 
-gulp.task('default', function(){
+gulp.task('build', function(){
     gulp.run('lint', 'bundle', 'sass');
+});
+
+gulp.task('default', function(){
+    gulp.run('build');
 
     // Отслеживаем изменения в файлах
     gulp.watch("./js", ['lint', 'bundle']);
