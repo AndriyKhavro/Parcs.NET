@@ -7,15 +7,27 @@ namespace HostServer
     {
         public static void Configure()
         {
-            string connectionString = Environment.GetEnvironmentVariable(EnvironmentVariables.LogConnectionString);
             var log = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
                 .WriteTo.RollingFile("HostServer.log.txt");
 
-            if (!String.IsNullOrEmpty(connectionString))
+            string connectionString = Environment.GetEnvironmentVariable(EnvironmentVariables.LogConnectionString);
+
+            if (!String.IsNullOrWhiteSpace(connectionString))
             {
                 log.WriteTo.MSSqlServer(connectionString, "LogEntries", autoCreateSqlTable: true);
+            }
+
+            string elasticSearchUrl = Environment.GetEnvironmentVariable(EnvironmentVariables.LogElasticSearchUrl);
+
+            if (!String.IsNullOrWhiteSpace(elasticSearchUrl))
+            {
+                log.WriteTo.Elasticsearch(new Serilog.Sinks.Elasticsearch.ElasticsearchSinkOptions(new Uri(elasticSearchUrl))
+                {
+                    AutoRegisterTemplate = true,
+                    AutoRegisterTemplateVersion = Serilog.Sinks.Elasticsearch.AutoRegisterTemplateVersion.ESv5
+                });
             }
 
             Log.Logger = log.CreateLogger();
