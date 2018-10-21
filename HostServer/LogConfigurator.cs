@@ -7,10 +7,13 @@ namespace HostServer
     {
         public static void Configure()
         {
+            const string outputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj} {Properties}{NewLine}{Exception}";
+
             var log = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .WriteTo.Console()
-                .WriteTo.RollingFile("HostServer.log.txt");
+                .Enrich.WithThreadId()
+                .WriteTo.Console(outputTemplate: outputTemplate)
+                .WriteTo.RollingFile("HostServer.log.txt", outputTemplate: outputTemplate);
 
             string connectionString = Environment.GetEnvironmentVariable(EnvironmentVariables.LogConnectionString);
 
