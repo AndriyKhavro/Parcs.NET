@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
-using log4net;
+using Serilog;
 
 namespace DaemonPr
 {
@@ -20,7 +20,7 @@ namespace DaemonPr
         private readonly ConcurrentDictionary<int, List<int>> _jobPointNumberDictionary = new ConcurrentDictionary<int, List<int>>(); //stores numbers of points
         private readonly ConcurrentDictionary<int, CancellationTokenSource> _cancellationDictionary = new ConcurrentDictionary<int, CancellationTokenSource>();
         static HostInfo _server;
-        private static readonly ILog Log = LogManager.GetLogger(typeof(Daemon));
+        private static ILogger _log;
         private const string LocalIpArgument = "--localIp";
         private const string ExternalLocalIpArgument = "--externalLocalIp";
         private const string HostServerIpArgument = "--hostServerIp";
@@ -52,7 +52,7 @@ namespace DaemonPr
             int port = (int)Ports.DaemonPort;
             _listener = new TcpListener(ip, port);
             TryConnectToHostServer(hostServerIp);
-            Log.InfoFormat("Accepting connections from clients, IP: {0}, port: {1}", ip, port);
+            _log.Information($"Accepting connections from clients, IP: {ip}, port: {port}");
             RunListener();   
         }
 
@@ -62,7 +62,7 @@ namespace DaemonPr
             {
                 int serverPort = (int) Ports.ServerPort;
 
-                Log.InfoFormat("Connecting to Host Server, IP: {0}, port: {1}", hostServerIp, serverPort);
+                _log.Information($"Connecting to Host Server, IP: {hostServerIp}, port: {serverPort}");
 
                 _server = new HostInfo(hostServerIp, serverPort);
                 if (_server.Connect())
@@ -72,7 +72,7 @@ namespace DaemonPr
             }
             else
             {
-                Log.Warn($"Environment Variable {EnvironmentVariables.HostServerAddress} is not set");
+                _log.Warning($"Environment Variable {EnvironmentVariables.HostServerAddress} is not set");
             }
         }
 
@@ -90,9 +90,9 @@ namespace DaemonPr
                     clientTask.Start();
 
                 }
-                catch (SocketException)
+                catch (SocketException e)
                 {
-                    Log.Error("Unknown error, stopping the listener...");
+                    _log.Error(e, "Stopping the listener...");
                     _listener.Stop();
                     return;
                 }
@@ -146,7 +146,7 @@ namespace DaemonPr
                                             }
                                             catch (OperationCanceledException)
                                             {
-                                                Log.Info($"Point N {currentJob.Number}:{pointNumber} was cancelled");
+                                                _log.Information($"Point N {currentJob.Number}:{pointNumber} was cancelled");
                                             }
 
                                             DeletePoint(currentJob.Number, pointNumber);
@@ -203,24 +203,24 @@ namespace DaemonPr
                                     if (_cancellationDictionary.TryGetValue(jobNumber, out tokenSource))
                                     {
                                         tokenSource.Cancel();
-                                        Log.Info($"Cancelling job N {jobNumber}");
+                                        _log.Information($"Cancelling job N {jobNumber}");
                                     }
                                     else
                                     {
-                                        Log.Info($"Job N {jobNumber} does not exist or does not have cancellation token");
+                                        _log.Information($"Job N {jobNumber} does not exist or does not have cancellation token");
                                     }
                                     continue;
                                 }
 
                                 default:
-                                    Log.Warn($"Unknown signal received: {signal}");
+                                    _log.Warning($"Unknown signal received: {signal}");
                                     return;
                             }
                         }
 
                         catch (Exception ex)
                         {
-                            Log.Error(ex.Message, ex);
+                            Log.Error(ex, ex.Message);
                             return;
                         }
                     }
@@ -259,6 +259,9 @@ namespace DaemonPr
 
         public static void Main(string[] args)
         {
+            LogConfigurator.Configure();
+            _log = Log.Logger.ForContext<Daemon>();
+
             using (var daemon = new Daemon())
             {
                 if (!Environment.UserInteractive && !args.Contains("--docker"))

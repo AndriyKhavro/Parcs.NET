@@ -3,7 +3,7 @@ using Parcs;
 using System.Reflection;
 using System.IO;
 using System.Threading;
-using log4net;
+using Serilog;
 
 namespace DaemonPr
 {
@@ -14,7 +14,7 @@ namespace DaemonPr
         private IJob _currentJob;
         private int _pointNum;
         private string _assemblyFullPath;
-        private readonly ILog _log = LogManager.GetLogger(typeof(ModuleExecutor));
+        private static readonly ILogger _log = Log.Logger.ForContext<ModuleExecutor>();
         
         public ModuleExecutor(IChannel chan, IJob curJob, int pointNum)
         {
@@ -37,26 +37,26 @@ namespace DaemonPr
                 module = (IModule)Activator.CreateInstance(type);
             }
 
-            catch (ArgumentException)
+            catch (ArgumentException ex)
             {
-                _log.Error("Class "
+                _log.Error(ex, "Class "
                     + classname + " for point " + _pointNum +
                     " not found");
                 return;
             }
             catch (Exception ex)
             {
-                _log.Error(ex.Message, ex);
+                _log.Error(ex, ex.Message);
                 return;
             }
 
-            _log.Info("Starting class " + module.GetType() +
+            _log.Information("Starting class " + module.GetType() +
                     " on point "
                     + _currentJob.Number + ":" + _pointNum + " ...");
 
             module.Run(new ModuleInfo(_currentJob, _channel), token);
 
-            _log.Info("Calcutations finished on point "
+            _log.Information("Calcutations finished on point "
                     + _currentJob.Number + ":" + _pointNum + " ...");	                           
         }
     }
