@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using System;
 
 namespace DaemonPr
 {
@@ -14,6 +15,17 @@ namespace DaemonPr
                 .Enrich.WithMachineName()
                 .WriteTo.Console(outputTemplate: outputTemplate)
                 .WriteTo.RollingFile("Daemon.log.txt", outputTemplate: outputTemplate);
+
+            string elasticSearchUrl = Environment.GetEnvironmentVariable(EnvironmentVariables.LogElasticSearchUrl);
+
+            if (!String.IsNullOrWhiteSpace(elasticSearchUrl))
+            {
+                log.WriteTo.Elasticsearch(new Serilog.Sinks.Elasticsearch.ElasticsearchSinkOptions(new Uri(elasticSearchUrl))
+                {
+                    AutoRegisterTemplate = true,
+                    AutoRegisterTemplateVersion = Serilog.Sinks.Elasticsearch.AutoRegisterTemplateVersion.ESv5
+                });
+            }
 
             Log.Logger = log.CreateLogger();
         }
