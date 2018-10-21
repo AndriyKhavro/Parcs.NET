@@ -191,7 +191,7 @@ namespace DaemonPr
                                 case ((byte)Constants.IpAddress):
                                     {
                                         string ip = channel.ReadString();
-                                        if (_server == null || _server.IpAddress.ToString() != ip)
+                                        if (_server == null || !_server.IsConnected)
                                         {
                                             _server = new HostInfo(ip, (int)Ports.ServerPort);
                                         }
