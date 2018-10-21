@@ -126,7 +126,7 @@ namespace DaemonPr
                                     _jobPointNumberDictionary.AddOrUpdate(currentJob.Number, new List<int> { pointNumber },
                                         (key, oldvalue) =>
                                         {
-                                            oldvalue.Add(pointNumber);
+                                            lock (oldvalue) oldvalue.Add(pointNumber);
                                             return oldvalue;
                                         });
                                     _cancellationDictionary.AddOrUpdate(currentJob.Number, new CancellationTokenSource(),
@@ -244,7 +244,7 @@ namespace DaemonPr
         {
             _jobPointNumberDictionary.AddOrUpdate(jobNum, new List<int>(), (key, oldvalue) =>
             {
-                oldvalue.Remove(pointNum);
+                lock(oldvalue) oldvalue.Remove(pointNum);
                 return oldvalue;
             });
 
