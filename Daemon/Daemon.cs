@@ -24,6 +24,7 @@ namespace DaemonPr
         private const string LocalIpArgument = "--localIp";
         private const string ExternalLocalIpArgument = "--externalLocalIp";
         private const string HostServerIpArgument = "--hostServerIp";
+        private static string _hostServerIp;
 
         protected override void OnStart(string[] args)
         {
@@ -40,7 +41,7 @@ namespace DaemonPr
             string localIp = Environment.GetEnvironmentVariable(EnvironmentVariables.LocalIp)
                 ?? ExtractFromArgs(args, LocalIpArgument);
 
-            string hostServerIp = Environment.GetEnvironmentVariable(EnvironmentVariables.HostServerAddress)
+            _hostServerIp = Environment.GetEnvironmentVariable(EnvironmentVariables.HostServerAddress)
                 ?? ExtractFromArgs(args, HostServerIpArgument);
 
             IPAddress ip = string.IsNullOrEmpty(localIp) ? HostInfo.GetLocalIpAddress(allowUserInput) : IPAddress.Parse(localIp);
@@ -51,20 +52,20 @@ namespace DaemonPr
 
             int port = (int)Ports.DaemonPort;
             _listener = new TcpListener(ip, port);
-            TryConnectToHostServer(hostServerIp);
+            TryConnectToHostServer();
             _log.Information($"Accepting connections from clients, IP: {ip}, port: {port}");
             RunListener();   
         }
 
-        private static void TryConnectToHostServer(string hostServerIp)
+        private static void TryConnectToHostServer()
         {
-            if (!string.IsNullOrWhiteSpace(hostServerIp))
+            if (!string.IsNullOrWhiteSpace(_hostServerIp))
             {
                 int serverPort = (int) Ports.ServerPort;
 
-                _log.Information($"Connecting to Host Server, IP: {hostServerIp}, port: {serverPort}");
+                _log.Information($"Connecting to Host Server, IP: {_hostServerIp}, port: {serverPort}");
 
-                _server = new HostInfo(hostServerIp, serverPort);
+                _server = new HostInfo(_hostServerIp, serverPort);
                 if (_server.Connect())
                 {
                     _server.SendLocalIp();
@@ -192,6 +193,14 @@ namespace DaemonPr
                                         if (_server == null || !_server.IsConnected)
                                         {
                                             _server = new HostInfo(ip, (int)Ports.ServerPort);
+                                            if (!_server.Connect())
+                                            {
+                                                TryConnectToHostServer();
+                                            }
+                                            else
+                                            {
+                                                _hostServerIp = ip;
+                                            }
                                         }
 
                                         continue;
