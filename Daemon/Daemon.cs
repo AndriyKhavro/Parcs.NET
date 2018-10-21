@@ -101,21 +101,19 @@ namespace DaemonPr
 
         private void RunClient(NetworkStream clientStream)
         {
-            Channel channel;
-            byte signal;
-            Job currentJob = null;
-            int pointNumber = 0;
             using (BinaryReader reader = new BinaryReader(clientStream))
             {
                 using (BinaryWriter writer = new BinaryWriter(clientStream))
                 {
-                    channel = new Channel(reader, writer);
+                    Channel channel = new Channel(reader, writer);
+                    Job currentJob = null;
+                    int pointNumber = 0;
 
                     while (true)
                     {
                         try
                         {
-                            signal = channel.ReadByte();
+                            byte signal = channel.ReadByte();
 
                             switch (signal)
                             {
@@ -215,7 +213,7 @@ namespace DaemonPr
                                 }
 
                                 default:
-                                    Log.Error("Unknown signal received, stopping the application...");
+                                    Log.Warn($"Unknown signal received: {signal}");
                                     return;
                             }
                         }
