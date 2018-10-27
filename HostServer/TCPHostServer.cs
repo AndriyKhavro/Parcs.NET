@@ -41,7 +41,7 @@ namespace HostServer
             HostInfo.ExternalLocalIP = Environment.GetEnvironmentVariable(EnvironmentVariables.ExternalLocalIp) ?? ip.ToString();
 
             int port = (int)Ports.ServerPort;
-            _listener = new TcpListener(ip, port);
+            _listener = new TcpListener(ip, port); // TODO: try IPAddress.Any
             _hostServer = Server.Instance; //make it a singleton and use in self-hosted WebAPI
             _log.Information($"Accepting connections from clients, IP: {ip}, port: {port}");
             RunListener();
@@ -86,13 +86,21 @@ namespace HostServer
                                 case ((byte)Constants.PointCreated):
                                     jobNumber = reader.ReadInt32();
                                     int parentNumber = reader.ReadInt32();
-                                    IPointInfo point = _hostServer.CreatePoint(jobNumber, parentNumber);
-                                    if (point == null)
+                                    Task.Run(async () =>
                                     {
-                                        return;
-                                    }
-                                    writer.Write(point.Number);
-                                    writer.Write(point.Host.IpAddress.ToString()); //provide client with point and daemon IP adress
+                                        IPointInfo point = await _hostServer.CreatePoint(jobNumber, parentNumber);
+                                        if (point == null)
+                                        {
+                                            return;
+                                        }
+
+                                        lock (writer)
+                                        {
+                                            //provide client with point and daemon IP address
+                                            writer.Write(point.Number);
+                                            writer.Write(point.Host.IpAddress.ToString());
+                                        }                                        
+                                    });                                  
                                     continue;
                                 case ((byte)Constants.PointDeleted):
                                     {

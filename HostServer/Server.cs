@@ -5,7 +5,6 @@ using System.IO;
 using Parcs;
 using System.Reflection;
 using System.Collections.Concurrent;
-using System.Threading;
 using Serilog;
 using System.Threading.Tasks;
 
@@ -71,14 +70,13 @@ namespace HostServer
             }
         }
 
-        public IPointInfo CreatePoint(int jobNumber, int parentNumber)
+        public async Task<IPointInfo> CreatePoint(int jobNumber, int parentNumber)
         {
             var jobInfo = _taskDictionary[jobNumber];            
             HostInfo target = null;
-            bool targetChosen = false;
-            while (!targetChosen)
+            while (true)
             {
-                if (jobInfo.IsCancelled)
+                if (jobInfo.IsCancelled || jobInfo.IsFinished)
                 {
                     return null;
                 }
@@ -93,12 +91,13 @@ namespace HostServer
 
                 if (target == null) 
                 {
-                    Thread.Sleep(100);
+                    _log.Debug($"Cannot find a host for Job {jobNumber}");
+                    await Task.Delay(1000);
                 }
 
                 else
                 {
-                    targetChosen = true;
+                    break;
                 }
             }
 
