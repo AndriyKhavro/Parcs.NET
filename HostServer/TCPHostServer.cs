@@ -41,9 +41,9 @@ namespace HostServer
             HostInfo.ExternalLocalIP = Environment.GetEnvironmentVariable(EnvironmentVariables.ExternalLocalIp) ?? ip.ToString();
 
             int port = (int)Ports.ServerPort;
-            _listener = new TcpListener(ip, port); // TODO: try IPAddress.Any
+            _listener = new TcpListener(IPAddress.Any, port);
             _hostServer = Server.Instance; //make it a singleton and use in self-hosted WebAPI
-            _log.Information($"Accepting connections from clients, IP: {ip}, port: {port}");
+            _log.Information($"Accepting connections from clients, port: {port}");
             RunListener();
         }
         
@@ -198,10 +198,7 @@ namespace HostServer
                 {
                     // running as console app
                     ListenToKeyboard();
-                    string envVariableValue = Environment.GetEnvironmentVariable(EnvironmentVariables.LocalIp);
-                    string localIp = !string.IsNullOrWhiteSpace(envVariableValue)
-                        ? envVariableValue
-                        : ExtractIpFromArgs(args);
+                    string localIp = ExtractIpFromArgs(args);
                     service.Run(localIp, true);
                 }
             }

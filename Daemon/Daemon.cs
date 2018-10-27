@@ -38,8 +38,7 @@ namespace DaemonPr
 
         public void Run(string[] args, bool allowUserInput)
         {
-            string localIp = Environment.GetEnvironmentVariable(EnvironmentVariables.LocalIp)
-                ?? ExtractFromArgs(args, LocalIpArgument);
+            string localIp = ExtractFromArgs(args, LocalIpArgument);
 
             _hostServerIp = Environment.GetEnvironmentVariable(EnvironmentVariables.HostServerAddress)
                 ?? ExtractFromArgs(args, HostServerIpArgument);
@@ -51,9 +50,9 @@ namespace DaemonPr
                 ?? ip.ToString();
 
             int port = (int)Ports.DaemonPort;
-            _listener = new TcpListener(ip, port);
+            _listener = new TcpListener(IPAddress.Any, port);
             TryConnectToHostServer();
-            _log.Information($"Accepting connections from clients, IP: {ip}, port: {port}");
+            _log.Information($"Accepting connections from clients, port: {port}");
             RunListener();   
         }
 
@@ -282,8 +281,6 @@ namespace DaemonPr
                 else
                 {
                     // running as console app
-                    string localIp = Environment.GetEnvironmentVariable(EnvironmentVariables.LocalIp);
-
                     daemon.Run(args, true);
                 }
             }
