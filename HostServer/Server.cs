@@ -97,6 +97,7 @@ namespace HostServer
 
                 else
                 {
+                    _log.Information($"Found a host for Job {jobNumber}. IP: {target.IpAddress}");
                     break;
                 }
             }
