@@ -93,16 +93,9 @@ namespace Parcs
             return new ConcurrentPoint(this, parentNumber);
         }
 
-        public bool AddFile(string fileName)
+        public void AddFile(string fileName)
         {
-            if (FileName == fileName) { return true; }
-            if (File.Exists(fileName))
-            {
-                FileName = fileName;
-                return true;
-            }
-
-            return false;
+            FileName = fileName;
         }
     }
 }

@@ -8,11 +8,7 @@ namespace Parcs
         private IJob CreateJob(int priority, string username)
         {
             var job = new Job(priority, username);
-            if (!job.AddFile(Assembly.GetEntryAssembly().Location))
-            {
-                throw new ParcsException();
-            }
-            
+            job.AddFile(Assembly.GetEntryAssembly().Location);            
             return job;
         }
 

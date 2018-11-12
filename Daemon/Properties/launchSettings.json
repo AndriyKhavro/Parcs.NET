@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DaemonPr": {
+      "commandName": "Project",
+      "commandLineArgs": "--hostserverip 127.0.0.1"
+    }
+  }
+}

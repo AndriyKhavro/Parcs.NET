@@ -6,14 +6,12 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.ServiceProcess;
 using System.Threading;
 using Serilog;
 
 namespace DaemonPr
 {
-    public class Daemon : ServiceBase
+    public class Daemon
     {
         TcpListener _listener;
         private readonly object _locker = new object();
@@ -26,24 +24,14 @@ namespace DaemonPr
         private const string HostServerIpArgument = "--hostServerIp";
         private static string _hostServerIp;
 
-        protected override void OnStart(string[] args)
-        {
-            Task.Factory.StartNew(() => Run(args, false));
-        }
-
-        protected override void OnStop()
-        {
-            _listener.Stop();
-        }
-
-        public void Run(string[] args, bool allowUserInput)
+        public void Run(string[] args)
         {
             string localIp = ExtractFromArgs(args, LocalIpArgument);
 
             _hostServerIp = Environment.GetEnvironmentVariable(EnvironmentVariables.HostServerAddress)
                 ?? ExtractFromArgs(args, HostServerIpArgument);
 
-            IPAddress ip = string.IsNullOrEmpty(localIp) ? HostInfo.GetLocalIpAddress(allowUserInput) : IPAddress.Parse(localIp);
+            IPAddress ip = string.IsNullOrEmpty(localIp) ? HostInfo.GetLocalIpAddress(true) : IPAddress.Parse(localIp);
 
             HostInfo.ExternalLocalIP = Environment.GetEnvironmentVariable(EnvironmentVariables.ExternalLocalIp)
                 ?? ExtractFromArgs(args, ExternalLocalIpArgument)
@@ -108,6 +96,7 @@ namespace DaemonPr
                     Channel channel = new Channel(reader, writer);
                     Job currentJob = null;
                     int pointNumber = 0;
+                    var fileStorage = new ModuleFileStorage();
 
                     while (true)
                     {
@@ -138,7 +127,7 @@ namespace DaemonPr
                                         var cancellationTokenSource = _cancellationDictionary[currentJob.Number];
                                         if (!_cancellationDictionary[currentJob.Number].IsCancellationRequested)
                                         {
-                                            var executor = new ModuleExecutor(channel, currentJob, pointNumber);
+                                            var executor = new ModuleExecutor(channel, currentJob, pointNumber, fileStorage);
 
                                             try
                                             {
@@ -155,10 +144,7 @@ namespace DaemonPr
                                             {
                                                 lock (_locker)
                                                 {
-                                                    if (File.Exists(currentJob.FileName))
-                                                    {
-                                                        File.Delete(currentJob.FileName);
-                                                    }
+                                                    fileStorage.DeleteFileIfExists(currentJob.FileName);
                                                 }
                                             }
                                         }
@@ -168,7 +154,7 @@ namespace DaemonPr
 
                                 case ((byte)Constants.LoadFile):
                                     {
-                                        LoadFile(channel, currentJob);
+                                        LoadFile(channel, currentJob, fileStorage);
                                         continue;
                                     }
 
@@ -236,14 +222,13 @@ namespace DaemonPr
             }
         }
 
-        private void LoadFile(IChannel channel, IJob curJob)
+        private void LoadFile(IChannel channel, IJob curJob, ModuleFileStorage fileStorage)
         {
-            string fileName = channel.ReadFile();
+            byte[] file = channel.ReadFile();
 
-            if (!curJob.AddFile(fileName))
-            {
-                throw new ParcsException("File was not sent");
-            }
+            string fileName = fileStorage.SaveFile(file);
+
+            curJob.AddFile(fileName);
         }
 
         private void DeletePoint(int jobNum, int pointNum)
@@ -270,20 +255,8 @@ namespace DaemonPr
             LogConfigurator.Configure();
             _log = Log.Logger.ForContext<Daemon>();
 
-            using (var daemon = new Daemon())
-            {
-                if (!Environment.UserInteractive && !args.Contains("--docker"))
-                {
-                    // running as service
-                    ServiceBase.Run(daemon);
-                }
-
-                else
-                {
-                    // running as console app
-                    daemon.Run(args, true);
-                }
-            }
+            var daemon = new Daemon();
+            daemon.Run(args);
         }
 
         private static string ExtractFromArgs(string[] args, string argName)

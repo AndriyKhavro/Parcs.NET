@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Text;
 using System.Reflection;
 using System.IO;
-using System.IO.IsolatedStorage;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
-using System.Security.Cryptography;
 
 namespace Parcs
 {
@@ -13,7 +10,6 @@ namespace Parcs
     {
         private readonly BinaryReader _reader;
         private readonly BinaryWriter _writer;
-        private static readonly object SyncRoot = new object();
 
         public int From { get; set; }
 
@@ -137,39 +133,20 @@ namespace Parcs
         public virtual void WriteFile(string fullPath)
         {
             byte[] file = File.ReadAllBytes(fullPath);
-            //_writer.Write((new FileInfo(fullPath)).Name);
             _writer.Write(file.Length);
             _writer.Write(file);
             _writer.Flush();
         }
 
-        public virtual string ReadFile()//сохраняет файл в хранилище.
+        /// <summary>
+        /// Reads the file from a binary stream
+        /// </summary>
+        /// <returns>File as an array of bytes</returns>
+        public virtual byte[] ReadFile()
         {
-            //string fileName = _reader.ReadString();
             int fileSize = _reader.ReadInt32();
             byte[] file = _reader.ReadBytes(fileSize);
-            string fileName = GetHashedFileName(file);
-            
-            IsolatedStorageFile userFile = IsolatedStorageFile.GetUserStoreForAssembly();
-
-            if (!userFile.FileExists(fileName))
-            {
-                lock (SyncRoot)
-                {
-                    if (!userFile.FileExists(fileName))
-                    {
-                        IsolatedStorageFileStream isolatedStream = new IsolatedStorageFileStream(fileName, FileMode.Create, userFile);
-                        BinaryWriter writer = new BinaryWriter(isolatedStream);
-                        writer.Write(file);
-
-                        writer.Close();
-                        isolatedStream.Close();
-                    }
-                }
-            }
-
-            return userFile.GetType().GetField("m_RootDir", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(userFile).ToString() + "\\" + fileName;
-            
+            return file;
         }
 
         public virtual void Close()
@@ -183,30 +160,6 @@ namespace Parcs
             {
                 _writer.Close();
             }
-        }
-
-        private string GetHashedFileName(byte[] file)
-        {
-            return ByteArrayToString(GetHash(file));
-        }
-
-        private byte[] GetHash(byte[] data)
-        {
-            using (var sha1 = new SHA1CryptoServiceProvider())
-            {
-                return sha1.ComputeHash(data);
-            }
-        }
-
-        private string ByteArrayToString(byte[] byteArray)
-        {
-            StringBuilder hex = new StringBuilder(byteArray.Length * 2);
-            foreach (byte b in byteArray)
-            {
-                hex.AppendFormat("{0:x2}", b);
-            }
-
-            return hex.ToString();
         }
 
         private class MySerializationBinder : SerializationBinder
@@ -223,6 +176,5 @@ namespace Parcs
                 return Assembly.GetAssembly(_type).GetType(typeName);
             }
         }
-
     }
 }

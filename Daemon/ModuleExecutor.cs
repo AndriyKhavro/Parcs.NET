@@ -1,7 +1,6 @@
 ﻿using System;
 using Parcs;
 using System.Reflection;
-using System.IO;
 using System.Threading;
 using Serilog;
 
@@ -10,25 +9,25 @@ namespace DaemonPr
     [Serializable]
     public class ModuleExecutor
     { 
-        private IChannel _channel;
-        private IJob _currentJob;
-        private int _pointNum;
-        private string _assemblyFullPath;
+        private readonly IChannel _channel;
+        private readonly IJob _currentJob;
+        private readonly int _pointNum;
+        private readonly ModuleFileStorage _moduleFileStorage;
         private static readonly ILogger _log = Log.Logger.ForContext<ModuleExecutor>();
         
-        public ModuleExecutor(IChannel chan, IJob curJob, int pointNum)
+        internal ModuleExecutor(IChannel chan, IJob curJob, int pointNum, ModuleFileStorage moduleFileStorage)
         {
-            _assemblyFullPath = curJob.FileName;
             _channel = chan;
             _currentJob = curJob;
             _pointNum = pointNum;
+            _moduleFileStorage = moduleFileStorage;
         }
 
         public void Run(CancellationToken token)
         {
             IModule module = null;
             string classname = _channel.ReadString();
-            byte[] file = File.ReadAllBytes(_assemblyFullPath);
+            byte[] file = _moduleFileStorage.ReadFile(_currentJob.FileName);
             Assembly assembly = Assembly.Load(file);
 
             try

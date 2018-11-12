@@ -1,5 +1,4 @@
 ﻿using CommandLine;
-using CommandLine.Text;
 
 namespace Parcs.Module.CommandLine
 {
@@ -12,10 +11,13 @@ namespace Parcs.Module.CommandLine
         [Option("serverip", Required = false, HelpText = "Host Server IP")]
         public string ServerIp { get; set; }
 
+        /// <summary>
+        /// Returns empty string for now due to breaking changes in CommandLine package
+        /// </summary>
+        /// <returns></returns>
         public string GetUsage()
         {
-            return HelpText.AutoBuild(this,
-                current => HelpText.DefaultParsingErrorsHandler(this, current));
+            return "";
         }
     }
 }

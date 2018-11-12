@@ -74,7 +74,7 @@ namespace Parcs
            _taskQueue.StartNewTask(() => _channel.WriteObject(obj));
         }
 
-        public string ReadFile()
+        public byte[] ReadFile()
         {
             _taskQueue.Wait();
             return _channel.ReadFile();

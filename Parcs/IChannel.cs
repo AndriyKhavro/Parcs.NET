@@ -19,7 +19,7 @@ namespace Parcs
         void WriteObject(object obj);
         object ReadObject();
         void WriteFile(string filePath);
-        string ReadFile();
+        byte[] ReadFile();
         int From { get; set; }
         object ReadObject(Type type);
         T ReadObject<T>();

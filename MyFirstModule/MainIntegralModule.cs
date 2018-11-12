@@ -1,27 +1,26 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading;
 using Parcs;
 
 namespace FirstModule
 {
-    class MainIntegralModule: IModule
+    class MainIntegralModule: MainModule
     {
         public static void Main(string[] args)
         {
-            
-            var job = new Job();
-            if (!job.AddFile(Assembly.GetExecutingAssembly().Location/*"MyFirstModule.exe"*/))
-            {
-                Console.WriteLine("File doesn't exist");
-                return;
-            }
-
-            (new MainIntegralModule()).Run(new ModuleInfo(job, null));
-            Console.ReadKey();
+            new MainIntegralModule().RunModule(new ModuleOptions());
         }
 
-        public void Run(ModuleInfo info, CancellationToken token = default(CancellationToken))
+        private class ModuleOptions : IModuleOptions
+        {
+            public int Priority { get; set; }
+
+            public string Username { get; set; }
+
+            public string ServerIp { get; set; } = "127.0.0.1";
+        }
+
+        public override void Run(ModuleInfo info, CancellationToken token = default(CancellationToken))
         {
             double a = 0;
             double b = Math.PI/2;
@@ -54,7 +53,6 @@ namespace FirstModule
             }
 
             Console.WriteLine("Result found: res = {0}, time = {1}", res, Math.Round((DateTime.Now - time).TotalSeconds,3));
-            
         }
     }
 }
