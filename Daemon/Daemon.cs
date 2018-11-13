@@ -89,6 +89,8 @@ namespace DaemonPr
 
         private void RunClient(NetworkStream clientStream)
         {
+            _log.Debug("New client is connected.");
+
             using (BinaryReader reader = new BinaryReader(clientStream))
             {
                 using (BinaryWriter writer = new BinaryWriter(clientStream))
@@ -103,6 +105,8 @@ namespace DaemonPr
                         try
                         {
                             byte signal = channel.ReadByte();
+
+                            _log.Debug($"New signal is received: {signal}");
 
                             switch (signal)
                             {
