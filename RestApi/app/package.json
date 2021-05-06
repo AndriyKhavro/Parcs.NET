@@ -21,7 +21,7 @@
     "gulp-cli": "^2.0.1",
     "gulp-jshint": "^2.1.0",
     "gulp-sass": "^4.0.1",
-    "highcharts": "^4.2.7",
+    "highcharts": "^9.0.0",
     "jshint": "^2.9.6",
     "vinyl-source-stream": "^1.1.2"
   }
